@@ -1034,7 +1034,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
         const firebaseConfig = {
@@ -1078,9 +1078,6 @@
         const pendingAvatarFetches = new Set();
         const itemWidth = 205; 
         const itemsCount = 45; 
-
-        // SYNC CHANNEL FOR OBS OVERLAYS
-        const overlayChannel = new BroadcastChannel('kick_tool_obs_sync');
 
         // SVG EYE ICONS
         const eyeOpenSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
@@ -1145,14 +1142,20 @@
             } catch(e) {}
         }
 
+        // --- GET CURRENT CHANNEL KEY FOR FIREBASE ---
+        function getActiveChannel() {
+            return targetChannelName || loggedInKickUser?.slug || localStorage.getItem('kick_target_channel') || 'default_streamer';
+        }
+
         // --- OBS OVERLAY MODAL ---
         function openObsModal() {
             playClickSound();
+            const channel = getActiveChannel().toLowerCase();
             const baseUrl = window.location.origin + window.location.pathname;
-            document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto`;
-            document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel`;
-            document.getElementById('obs-keyword-url').value = `${baseUrl}?mode=overlay&view=keyword`;
-            document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat`;
+            document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto&channel=${channel}`;
+            document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel&channel=${channel}`;
+            document.getElementById('obs-keyword-url').value = `${baseUrl}?mode=overlay&view=keyword&channel=${channel}`;
+            document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat&channel=${channel}`;
             document.getElementById('obs-modal').style.display = 'flex';
         }
         window.openObsModal = openObsModal;
@@ -1173,25 +1176,25 @@
         }
         window.copyObsUrl = copyObsUrl;
 
-        // SYNC KEYWORD & CHAT TARGET TO OVERLAYS
+        // SYNC KEYWORD & CHAT TARGET TO FIREBASE
         function syncKeyword(val) {
             const cleanVal = val.trim();
-            localStorage.setItem('obs_active_keyword', cleanVal);
+            const channel = getActiveChannel();
             
             const lottoIn = document.getElementById('lotto-keyword-input');
             const wheelIn = document.getElementById('wheel-keyword-input');
             if (lottoIn && lottoIn.value !== cleanVal) lottoIn.value = cleanVal;
             if (wheelIn && wheelIn.value !== cleanVal) wheelIn.value = cleanVal;
 
-            overlayChannel.postMessage({ action: 'UPDATE_KEYWORD', keyword: cleanVal });
+            set(ref(db, `channels/${channel}/keyword`), cleanVal);
             updateObsKeywordDisplay(cleanVal);
         }
         window.syncKeyword = syncKeyword;
 
         function syncChatTarget(val) {
             const cleanVal = val.trim();
-            localStorage.setItem('obs_chat_target', cleanVal);
-            overlayChannel.postMessage({ action: 'UPDATE_CHAT_TARGET', target: cleanVal });
+            const channel = getActiveChannel();
+            set(ref(db, `channels/${channel}/chatTarget`), cleanVal);
             updateObsChatTargetDisplay(cleanVal);
         }
         window.syncChatTarget = syncChatTarget;
@@ -1212,25 +1215,52 @@
             if (params.get('mode') === 'overlay') {
                 document.body.classList.add('obs-overlay-mode');
                 const view = params.get('view') || 'lotto';
+                const channel = (params.get('channel') || 'default_streamer').toLowerCase();
                 switchWorkspace(view);
 
-                const savedKw = localStorage.getItem('obs_active_keyword') || 'fishy';
-                updateObsKeywordDisplay(savedKw);
-                const savedTarget = localStorage.getItem('obs_chat_target') || '';
-                updateObsChatTargetDisplay(savedTarget);
+                // Listen to Firebase Real-Time DB for Keyword
+                onValue(ref(db, `channels/${channel}/keyword`), (snapshot) => {
+                    const kw = snapshot.val() || 'fishy';
+                    updateObsKeywordDisplay(kw);
+                });
+
+                // Listen to Firebase Real-Time DB for Chat Target
+                onValue(ref(db, `channels/${channel}/chatTarget`), (snapshot) => {
+                    const target = snapshot.val() || '';
+                    updateObsChatTargetDisplay(target);
+                });
+
+                // Listen to Firebase Real-Time DB for Actions (Spin/Roll)
+                onValue(ref(db, `channels/${channel}/action`), (snapshot) => {
+                    const action = snapshot.val();
+                    if (action && action.timestamp && (Date.now() - action.timestamp < 10000)) {
+                        if (action.type === 'START_LOTTO') {
+                            startLottoSpinSequence(action.winner, action.pool);
+                        } else if (action.type === 'START_WHEEL') {
+                            startWheelSpinSequence(action.winner, action.entries);
+                        }
+                    }
+                });
+
+                // Listen to Firebase Real-Time DB for Chat Messages
+                onValue(ref(db, `channels/${channel}/chatMessage`), (snapshot) => {
+                    const msg = snapshot.val();
+                    if (msg && msg.timestamp && (Date.now() - msg.timestamp < 10000)) {
+                        appendObsChatMessage(msg.username, msg.content, msg.target);
+                    }
+                });
+
             } else {
-                const savedKw = localStorage.getItem('obs_active_keyword');
-                if (savedKw) {
-                    const lottoIn = document.getElementById('lotto-keyword-input');
-                    const wheelIn = document.getElementById('wheel-keyword-input');
-                    if (lottoIn) lottoIn.value = savedKw;
-                    if (wheelIn) wheelIn.value = savedKw;
-                }
-                const savedTarget = localStorage.getItem('obs_chat_target');
-                if (savedTarget) {
-                    const targetIn = document.getElementById('active-winner-chat-target');
-                    if (targetIn) targetIn.value = savedTarget;
-                }
+                const channel = getActiveChannel();
+                onValue(ref(db, `channels/${channel}/keyword`), (snapshot) => {
+                    const kw = snapshot.val();
+                    if (kw) {
+                        const lottoIn = document.getElementById('lotto-keyword-input');
+                        const wheelIn = document.getElementById('wheel-keyword-input');
+                        if (lottoIn && lottoIn.value !== kw) lottoIn.value = kw;
+                        if (wheelIn && wheelIn.value !== kw) wheelIn.value = kw;
+                    }
+                });
             }
         }
 
@@ -1803,7 +1833,13 @@
                 container.scrollTop = container.scrollHeight;
             }
 
-            overlayChannel.postMessage({ action: 'ADD_CHAT_MSG', username: username, content: content, target: targetName });
+            const channel = getActiveChannel();
+            set(ref(db, `channels/${channel}/chatMessage`), {
+                username: username,
+                content: content,
+                target: targetName,
+                timestamp: Date.now()
+            });
             appendObsChatMessage(username, content, targetName);
         }
 
@@ -1830,7 +1866,14 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            overlayChannel.postMessage({ action: 'START_LOTTO', winner: winner, pool: pool });
+            const channel = getActiveChannel();
+            set(ref(db, `channels/${channel}/action`), {
+                type: 'START_LOTTO',
+                winner: winner,
+                pool: pool,
+                timestamp: Date.now()
+            });
+
             startLottoSpinSequence(winner, pool);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
@@ -2007,7 +2050,14 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            overlayChannel.postMessage({ action: 'START_WHEEL', winner: winner, entries: pool });
+            const channel = getActiveChannel();
+            set(ref(db, `channels/${channel}/action`), {
+                type: 'START_WHEEL',
+                winner: winner,
+                entries: pool,
+                timestamp: Date.now()
+            });
+
             startWheelSpinSequence(winner, pool);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
@@ -2053,22 +2103,6 @@
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
             autoCloseTimeout = setTimeout(closeReveal, 4000);
         }
-
-        // --- LISTEN FOR OBS OVERLAY BROADCASTS ---
-        overlayChannel.onmessage = (event) => {
-            const data = event.data;
-            if (data.action === 'START_LOTTO') {
-                startLottoSpinSequence(data.winner, data.pool);
-            } else if (data.action === 'START_WHEEL') {
-                startWheelSpinSequence(data.winner, data.entries);
-            } else if (data.action === 'UPDATE_KEYWORD') {
-                updateObsKeywordDisplay(data.keyword);
-            } else if (data.action === 'UPDATE_CHAT_TARGET') {
-                updateObsChatTargetDisplay(data.target);
-            } else if (data.action === 'ADD_CHAT_MSG') {
-                appendObsChatMessage(data.username, data.content, data.target);
-            }
-        };
 
         // --- Tournament Logic ---
         function initTournamentData(size) {
@@ -2323,3 +2357,4 @@
     </script>
 </body>
 </html>
+
