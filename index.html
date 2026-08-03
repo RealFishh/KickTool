@@ -94,7 +94,7 @@
             display: none;
         }
 
-        /* Top Navigation Controls - Perfectly Centered & Balanced */
+        /* Top Navigation Controls - Streamlined to prevent overflow */
         .workspace-navbar {
             position: fixed;
             top: 15px;
@@ -102,25 +102,27 @@
             transform: translateX(-50%);
             z-index: 999;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background-color: var(--bg-card);
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 14px;
             border: 1px solid var(--border-gray);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             align-items: center;
+            max-width: 95vw;
+            box-sizing: border-box;
         }
 
         .workspace-btn {
             background-color: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 6px 12px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             transition: all 0.2s ease;
             position: relative;
             white-space: nowrap;
@@ -139,9 +141,9 @@
         .circle-pointer {
             position: absolute;
             top: 3px;
-            right: 5px;
-            width: 6px;
-            height: 6px;
+            right: 4px;
+            width: 5px;
+            height: 5px;
             background-color: var(--accent-green);
             border-radius: 50%;
             box-shadow: 0 0 6px var(--accent-green);
@@ -152,15 +154,15 @@
             background-color: #000000;
             border: 1px solid var(--border-gray);
             color: var(--text-muted);
-            padding: 6px 10px;
-            border-radius: 10px;
+            padding: 5px 8px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 800;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             white-space: nowrap;
         }
 
@@ -264,7 +266,6 @@
             padding-right: 8px;
         }
 
-        /* Custom Scrollbars */
         .admin-panel-scrollable::-webkit-scrollbar,
         .lotto-scrollable::-webkit-scrollbar {
             width: 8px;
@@ -702,7 +703,7 @@
             margin: 0;
         }
 
-        /* Hide scrollbars specifically on tournament container */
+        /* Hide scrollbars completely on tournament container */
         #bracket-container::-webkit-scrollbar {
             display: none !important;
         }
@@ -727,14 +728,14 @@
         </div>
     </div>
 
-    <!-- Top Navigation Controls - Beautiful, compact, perfectly aligned layout -->
+    <!-- Top Navigation Controls - Perfectly styled and balanced -->
     <div class="workspace-navbar">
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
         <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">Profile <span id="profile-dot" class="circle-pointer"></span></button>
         <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Settings
         </button>
     </div>
@@ -888,7 +889,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW (Scrollbars cleanly removed) -->
+    <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW (Scrollbars removed, inputs perfectly sized, clean chevron arrows) -->
     <div id="tournament-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1500px; height: calc(100vh - 100px); box-sizing: border-box; gap: 14px; z-index: 10;">
             <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -909,7 +910,6 @@
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
             
-            <!-- Bracket Container with scrollbars hidden -->
             <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center;"></div>
         </div>
     </div>
@@ -1646,7 +1646,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Tournament Logic ---
+        // --- Tournament Logic with compact score boxes and perfectly aligned connector paths ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1778,7 +1778,7 @@
 
                         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         path.setAttribute("d", `M ${x1} ${y1} H ${xMid} V ${y2} H ${x2}`);
-                        path.setAttribute("stroke", "rgba(83, 252, 24, 0.4)");
+                        path.setAttribute("stroke", "rgba(83, 252, 24, 0.45)");
                         path.setAttribute("stroke-width", "2");
                         path.setAttribute("fill", "none");
                         svg.appendChild(path);
@@ -1814,28 +1814,29 @@
 
             tournamentRounds.forEach((round, r) => {
                 const col = document.createElement('div');
-                col.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-width: 180px; flex-grow: 1; z-index: 2;";
+                col.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-width: 175px; flex-grow: 1; z-index: 2;";
 
                 if (r === tournamentRounds.length - 1) {
                     col.innerHTML = `
                         <div id="slot-container-${r}-0" style="background: rgba(83,252,24,0.04); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 10px; text-align: center;">
-                            <input type="text" value="${round[0] || ''}" placeholder="" class="admin-field" style="text-align: center; font-weight: 800; border: none; background: transparent;" oninput="updateTournamentTeamName(${r}, 0, this.value)">
+                            <input type="text" value="${round[0] || ''}" placeholder="" class="admin-field" style="text-align: center; font-weight: 800; border: none; background: transparent; padding: 6px;" oninput="updateTournamentTeamName(${r}, 0, this.value)">
                         </div>
                     `;
                 } else {
                     const matches = document.createElement('div');
-                    matches.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; flex-grow: 1; gap: 12px;";
+                    matches.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; flex-grow: 1; gap: 8px;";
                     for (let m = 0; m < round.length / 2; m++) {
                         const idxA = m * 2, idxB = m * 2 + 1;
                         const matchBox = document.createElement('div');
                         matchBox.id = `match-box-${r}-${m}`;
-                        matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 6px; display: flex; flex-direction: column; gap: 4px;";
+                        matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
+                        // Clean, flush input styling with compact score boxes (22px width, perfectly aligned green chevrons)
                         const slotHTML = (team, score, idx) => `
-                            <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 4px 8px;">
-                                <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
-                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 28px; text-align: center; padding: 2px; color: var(--accent-green);" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
-                                <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-weight: 800;" title="Advance">&rarr;</button>
+                            <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 4px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
+                                <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px 4px; font-size: 0.9rem; width: 100%;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
+                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 22px; text-align: center; padding: 2px 0; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
+                                <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-weight: 900; font-size: 0.9rem; padding: 0 2px;" title="Advance">&rsaquo;</button>
                             </div>
                         `;
                         matchBox.innerHTML = slotHTML(round[idxA], tournamentScores[r][idxA], idxA) + slotHTML(round[idxB], tournamentScores[r][idxB], idxB);
