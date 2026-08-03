@@ -499,14 +499,14 @@
             height: 560px !important;
         }
 
-        /* EPIC WINNER OVERLAY (Slow Draw on Full Black Screen) */
+        /* EPIC WINNER OVERLAY (Slow Draw in Neon Box on Full Black Screen) */
         .epic-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: #000000;
+            background: rgba(0, 0, 0, 0.96);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -514,8 +514,10 @@
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.4s ease-out;
             cursor: pointer;
+            box-sizing: border-box;
+            padding: 30px;
         }
 
         .epic-overlay.active {
@@ -523,22 +525,34 @@
             pointer-events: auto;
         }
 
-        .revealed-winner-text {
-            font-size: 4.5rem;
-            font-weight: 950;
-            color: #ffffff;
-            letter-spacing: 4px;
-            text-align: center;
-            margin: 0;
-            opacity: 0;
+        .revealed-card {
+            border: 2px solid var(--accent-green);
+            border-radius: 18px;
+            background-color: var(--bg-card);
+            padding: 40px 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 420px;
+            box-shadow: 0 0 50px rgba(83, 252, 24, 0.3), 0 20px 50px rgba(0,0,0,0.9);
             transform: scale(0.9);
-            transition: opacity 1.8s ease-out, transform 1.8s cubic-bezier(0.1, 0.9, 0.2, 1);
-            text-shadow: 0 0 30px rgba(83, 252, 24, 0.4);
+            opacity: 0;
+            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.1, 0.9, 0.2, 1);
         }
 
-        .epic-overlay.active .revealed-winner-text {
+        .epic-overlay.active .revealed-card {
             opacity: 1;
             transform: scale(1);
+        }
+
+        .revealed-winner-text {
+            font-size: 3.5rem;
+            font-weight: 950;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-align: center;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(83, 252, 24, 0.5);
         }
 
         #bracket-container::-webkit-scrollbar {
@@ -806,8 +820,10 @@
 
     <!-- OVERLAYS -->
     <div id="epic-overlay" class="epic-overlay" onclick="closeReveal()">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%;">
-            <h2 id="lotto-winner-reveal-name" class="revealed-winner-text"></h2>
+        <div id="lotto-reveal-card" class="revealed-card">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; width: 100%;">
+                <h2 id="lotto-winner-reveal-name" class="revealed-winner-text"></h2>
+            </div>
         </div>
     </div>
 
