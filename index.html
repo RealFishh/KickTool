@@ -714,6 +714,19 @@
 </head>
 <body>
 
+    <!-- Professional Startup Kick Login Modal with Chat Verification -->
+    <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
+        <div class="kick-login-modal" id="kick-login-modal-box">
+            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px;">KICK LOGIN</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">Enter your Kick channel name to verify ownership via chat.</p>
+            
+            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamername" autocomplete="off">
+            <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
+            
+            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONNECT CHANNEL</button>
+        </div>
+    </div>
+
     <!-- Top Navigation Controls -->
     <div class="workspace-navbar">
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
@@ -924,7 +937,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
         const firebaseConfig = {
@@ -942,7 +955,6 @@
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
 
-        const pageLoadTime = Date.now();
         const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2353fc18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>';
 
         let targetChannelName = "";
@@ -989,6 +1001,8 @@
                     return;
                 } catch(e) {}
             }
+            document.getElementById('kick-login-modal').style.display = 'flex';
+            document.getElementById('kick-login-username').focus();
         }
 
         function handleKickLogout() {
@@ -999,6 +1013,9 @@
                 localStorage.removeItem('kick_target_chatroom');
                 updateProfileView();
                 switchWorkspace('lotto');
+                document.getElementById('kick-login-modal').style.display = 'flex';
+                document.getElementById('kick-login-username').value = '';
+                document.getElementById('kick-login-username').focus();
             }
         }
         window.handleKickLogout = handleKickLogout;
@@ -1261,10 +1278,6 @@
             } else if (mode === 'profile') {
                 updateProfileView();
             }
-
-            if (writeToDb && db) {
-                set(ref(db, 'state/currentView'), mode);
-            }
         }
         window.switchWorkspace = switchWorkspace;
 
@@ -1345,7 +1358,6 @@
                 if (!lottoEntries.has(senderName) && !lottoBlacklist.has(senderName)) {
                     lottoEntries.set(senderName, isSubscriber);
                     renderLottoEntries();
-                    if (db) set(ref(db, `lottoEntries/${senderName}`), isSubscriber);
                 }
             }
 
@@ -1354,7 +1366,6 @@
                 if (!wheelEntries.has(senderName) && !wheelBlacklist.has(senderName) && !wheelSpinning) {
                     wheelEntries.set(senderName, isSubscriber);
                     renderWheelEntries();
-                    if (db) set(ref(db, `wheelEntries/${senderName}`), isSubscriber);
                     drawWheel();
                 }
             }
@@ -1364,7 +1375,6 @@
             lottoEntries.clear();
             lottoBlacklist.clear();
             renderLottoEntries();
-            if (db) set(ref(db, 'lottoEntries'), null);
         }
         window.clearLottoEntries = clearLottoEntries;
 
@@ -1417,8 +1427,7 @@
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) { alert("Entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
-            if (db) set(ref(db, 'trigger/lottoSpin'), { winner, timestamp: Date.now() });
-            else startLottoSpinSequence(winner);
+            startLottoSpinSequence(winner);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
 
@@ -1464,7 +1473,6 @@
             lottoBlacklist.add(winner);
             lottoEntries.delete(winner);
             renderLottoEntries();
-            if (db) set(ref(db, `lottoEntries/${winner}`), null);
 
             document.getElementById('epic-overlay').classList.add('active');
             document.getElementById('lotto-winner-reveal-name').textContent = winner;
@@ -1478,7 +1486,6 @@
             wheelBlacklist.clear();
             renderWheelEntries();
             drawWheel();
-            if (db) set(ref(db, 'wheelEntries'), null);
         }
         window.clearWheelEntries = clearWheelEntries;
 
@@ -1585,8 +1592,7 @@
             const pool = Array.from(wheelEntries.keys());
             if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
-            if (db) set(ref(db, 'trigger/wheelSpin'), { winner, timestamp: Date.now() });
-            else startWheelSpinSequence(winner);
+            startWheelSpinSequence(winner);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
 
@@ -1614,7 +1620,6 @@
             wheelEntries.delete(winner);
             renderWheelEntries();
             drawWheel();
-            if (db) set(ref(db, `wheelEntries/${winner}`), null);
 
             document.getElementById('epic-overlay').classList.add('active');
             document.getElementById('lotto-winner-reveal-name').textContent = winner;
@@ -1627,11 +1632,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Tournament Logic (Fresh per visitor, using SessionStorage so it doesn't leak or conflict between users) ---
-        let tournamentSize = 8;
-        let tournamentRounds = [];
-        let tournamentScores = [];
-
+        // --- Tournament Logic with clean bold SVG advance arrows ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1647,8 +1648,7 @@
 
         function changeTournamentSize(size) {
             initTournamentData(parseInt(size, 10));
-            saveTournamentDataLocally();
-            renderTournamentBracket();
+            saveTournamentData();
         }
         window.changeTournamentSize = changeTournamentSize;
 
@@ -1660,23 +1660,21 @@
             }
             initTournamentData(tournamentSize);
             tournamentRounds[0] = round0;
-            saveTournamentDataLocally();
-            renderTournamentBracket();
+            saveTournamentData();
         }
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
         function resetTournamentBracket() {
             if (confirm("Reset tournament bracket?")) {
                 initTournamentData(tournamentSize);
-                saveTournamentDataLocally();
-                renderTournamentBracket();
+                saveTournamentData();
             }
         }
         window.resetTournamentBracket = resetTournamentBracket;
 
         function updateTournamentTeamName(r, idx, val) {
             tournamentRounds[r][idx] = val;
-            saveTournamentDataLocally();
+            saveTournamentData();
         }
         window.updateTournamentTeamName = updateTournamentTeamName;
 
@@ -1711,7 +1709,7 @@
                 }
             }
 
-            saveTournamentDataLocally();
+            saveTournamentData();
             updateBracketDOMValues();
         }
         window.updateTournamentScore = updateTournamentScore;
@@ -1720,32 +1718,10 @@
             const team = tournamentRounds[r][idx];
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
-            
-            saveTournamentDataLocally();
+            saveTournamentData();
             updateBracketDOMValues();
         }
         window.advanceTeam = advanceTeam;
-
-        function saveTournamentDataLocally() {
-            sessionStorage.setItem('session_tournament_size', tournamentSize);
-            sessionStorage.setItem('session_tournament_rounds', JSON.stringify(tournamentRounds));
-            sessionStorage.setItem('session_tournament_scores', JSON.stringify(tournamentScores));
-        }
-
-        function loadTournamentDataLocally() {
-            const savedSize = sessionStorage.getItem('session_tournament_size');
-            const savedRounds = sessionStorage.getItem('session_tournament_rounds');
-            const savedScores = sessionStorage.getItem('session_tournament_scores');
-            if (savedSize && savedRounds) {
-                tournamentSize = parseInt(savedSize, 10);
-                tournamentRounds = JSON.parse(savedRounds);
-                tournamentScores = savedScores ? JSON.parse(savedScores) : [];
-                const selectEl = document.getElementById('tournament-size-select');
-                if (selectEl) selectEl.value = tournamentSize;
-            } else {
-                initTournamentData(8);
-            }
-        }
 
         function drawConnectorLines() {
             const container = document.getElementById('bracket-container');
@@ -1810,7 +1786,7 @@
 
             tournamentRounds.forEach((round, r) => {
                 const col = document.createElement('div');
-                col.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-width: 185px; flex-grow: 1; z-index: 2;";
+                col.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-width: 175px; flex-grow: 1; z-index: 2;";
 
                 if (r === tournamentRounds.length - 1) {
                     col.innerHTML = `
@@ -1827,11 +1803,11 @@
                         matchBox.id = `match-box-${r}-${m}`;
                         matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
-                        // Wider score tab (52px) to perfectly fit decimals like 0.44 or 0.12, with larger bolder 18px advance arrows
+                        // Sleek, thick modern SVG arrow icon button (slightly bigger) with wider score input tabs for decimal values (0.44, 0.12)
                         const slotHTML = (team, score, idx) => `
-                            <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 4px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
+                            <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
                                 <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px 4px; font-size: 0.9rem; width: 100%; outline: none;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
-                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 52px; text-align: center; padding: 2px 0; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
+                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 48px; text-align: center; padding: 2px 2px; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
                                 <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 2px; transition: transform 0.1s;" title="Advance" onmousedown="this.style.transform='scale(1.2)'" onmouseup="this.style.transform='scale(1)'">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </button>
@@ -1847,38 +1823,43 @@
             setTimeout(drawConnectorLines, 50);
         }
 
-        checkStartupKickAuth();
-        loadTournamentDataLocally();
-        renderTournamentBracket();
-
-        if (db) {
-            onValue(ref(db, 'state/currentView'), snap => { if (snap.val()) switchWorkspace(snap.val(), false); });
-            onValue(ref(db, 'lottoEntries'), snap => {
-                lottoEntries.clear();
-                if (snap.val()) Object.entries(snap.val()).forEach(([u, sub]) => lottoEntries.set(u, !!sub));
-                renderLottoEntries();
-            });
-            onValue(ref(db, 'wheelEntries'), snap => {
-                wheelEntries.clear();
-                if (snap.val()) Object.entries(snap.val()).forEach(([u, sub]) => wheelEntries.set(u, !!sub));
-                renderWheelEntries();
-                drawWheel();
-            });
-            onValue(ref(db, 'trigger/lottoSpin'), snap => {
-                const data = snap.val();
-                if (data && data.timestamp > pageLoadTime) {
-                    switchWorkspace('lotto', false);
-                    startLottoSpinSequence(data.winner);
-                }
-            });
-            onValue(ref(db, 'trigger/wheelSpin'), snap => {
-                const data = snap.val();
-                if (data && data.timestamp > pageLoadTime) {
-                    switchWorkspace('wheel', false);
-                    startWheelSpinSequence(data.winner);
-                }
-            });
+        function saveTournamentData() {
+            localStorage.setItem('kick_tournament_size', tournamentSize);
+            localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
+            localStorage.setItem('kick_tournament_scores', JSON.stringify(tournamentScores));
         }
+
+        function loadTournamentData() {
+            const savedSize = localStorage.getItem('kick_tournament_size');
+            const savedRounds = localStorage.getItem('kick_tournament_rounds');
+            const savedScores = localStorage.getItem('kick_tournament_scores');
+            if (savedSize && savedRounds) {
+                tournamentSize = parseInt(savedSize, 10);
+                tournamentRounds = JSON.parse(savedRounds);
+                tournamentScores = savedScores ? JSON.parse(savedScores) : [];
+                const selectEl = document.getElementById('tournament-size-select');
+                if (selectEl) selectEl.value = tournamentSize;
+            } else {
+                initTournamentData(8);
+            }
+        }
+
+        function animateWheel(carouselEl, targetOffset, containerWidth, duration, onFinish) {
+            const startTime = performance.now();
+            function frame(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(1, elapsed / duration);
+                const eased = 1 - Math.pow(1 - progress, 5);
+                carouselEl.style.transform = `translate3d(-${targetOffset * eased}px, 0, 0)`;
+                if (progress < 1) requestAnimationFrame(frame);
+                else onFinish();
+            }
+            requestAnimationFrame(frame);
+        }
+
+        checkStartupKickAuth();
+        loadTournamentData();
+        renderTournamentBracket();
     </script>
 </body>
 </html>
