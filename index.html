@@ -51,6 +51,53 @@
             position: relative;
         }
 
+        /* OBS TRANSPARENT OVERLAY MODE */
+        body.obs-overlay-mode {
+            background: transparent !important;
+            overflow: hidden !important;
+        }
+        body.obs-overlay-mode .workspace-navbar,
+        body.obs-overlay-mode #bg-canvas,
+        body.obs-overlay-mode .lotto-card,
+        body.obs-overlay-mode .lotto-config-row,
+        body.obs-overlay-mode .lotto-roll-btn {
+            display: none !important;
+        }
+        body.obs-overlay-mode .workspace-view,
+        body.obs-overlay-mode .workspace-view.active {
+            display: flex !important;
+            margin: 0 !important;
+            height: 100vh !important;
+            width: 100vw !important;
+            background: transparent !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        body.obs-overlay-mode .lotto-workspace {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        body.obs-overlay-mode .lotto-center-layout {
+            width: 100% !important;
+            height: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: transparent !important;
+        }
+        body.obs-overlay-mode .lotto-spinner-outer {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -539,6 +586,10 @@
             padding: 30px;
         }
 
+        body.obs-overlay-mode .epic-overlay {
+            background: transparent !important;
+        }
+
         .epic-overlay.active {
             opacity: 1;
             pointer-events: auto;
@@ -557,6 +608,11 @@
             transform: scale(0.85);
             opacity: 0;
             transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        body.obs-overlay-mode .revealed-card {
+            background: rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(10px);
         }
 
         .epic-overlay.active .revealed-card {
@@ -595,6 +651,38 @@
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
             <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONNECT CHANNEL</button>
+        </div>
+    </div>
+
+    <!-- OBS Browser Source Link Modal -->
+    <div id="obs-modal" class="kick-login-modal-overlay" style="display: none;">
+        <div class="kick-login-modal" style="width: 520px; text-align: left;" onclick="event.stopPropagation()">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">OBS Browser Source Links</h2>
+                <button onclick="closeObsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.4;">
+                Copy these URLs and paste them into a new <strong style="color: #fff;">Browser Source</strong> in OBS. Recommended dimensions: <code style="color: var(--accent-green);">1920x1080</code>.
+            </p>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">Lotto Carousel Overlay URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-lotto-url" readonly class="password-input" style="margin: 0; font-size: 0.85rem; padding: 10px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 16px; background: var(--accent-green); color: #000000; font-size: 0.85rem;" onclick="copyObsUrl('obs-lotto-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">Spinning Wheel Overlay URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-wheel-url" readonly class="password-input" style="margin: 0; font-size: 0.85rem; padding: 10px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 16px; background: var(--accent-green); color: #000000; font-size: 0.85rem;" onclick="copyObsUrl('obs-wheel-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <button class="btn" style="background: var(--accent-green); color: #000000;" onclick="closeObsModal()">DONE</button>
         </div>
     </div>
 
@@ -648,6 +736,7 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
+        <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Link</button>
 
         <!-- Theme Picker Pill (Color Swatches Grid) -->
         <div style="position: relative; display: inline-block; margin-left: 2px;">
@@ -912,6 +1001,9 @@
         const itemWidth = 205; 
         const itemsCount = 45; 
 
+        // SYNC CHANNEL FOR OBS OVERLAYS
+        const overlayChannel = new BroadcastChannel('kick_tool_obs_sync');
+
         // SVG EYE ICONS
         const eyeOpenSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
         const eyeOffSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
@@ -959,7 +1051,7 @@
         function playWinFanfare() {
             try {
                 const ctx = getAudioContext();
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50]; 
                 notes.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
@@ -973,6 +1065,42 @@
                     osc.stop(ctx.currentTime + idx * 0.12 + 0.4);
                 });
             } catch(e) {}
+        }
+
+        // --- OBS OVERLAY MODAL ---
+        function openObsModal() {
+            playClickSound();
+            const baseUrl = window.location.origin + window.location.pathname;
+            document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto`;
+            document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel`;
+            document.getElementById('obs-modal').style.display = 'flex';
+        }
+        window.openObsModal = openObsModal;
+
+        function closeObsModal() {
+            playClickSound();
+            document.getElementById('obs-modal').style.display = 'none';
+        }
+        window.closeObsModal = closeObsModal;
+
+        function copyObsUrl(elementId, btnEl) {
+            playClickSound();
+            const input = document.getElementById(elementId);
+            navigator.clipboard.writeText(input.value);
+            const origText = btnEl.textContent;
+            btnEl.textContent = "COPIED!";
+            setTimeout(() => { btnEl.textContent = origText; }, 1200);
+        }
+        window.copyObsUrl = copyObsUrl;
+
+        // CHECK IF LOADED AS OBS OVERLAY ON STARTUP
+        function checkOverlayMode() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'overlay') {
+                document.body.classList.add('obs-overlay-mode');
+                const view = params.get('view') || 'lotto';
+                switchWorkspace(view);
+            }
         }
 
         // --- THEME MANAGER ---
@@ -1550,13 +1678,15 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            startLottoSpinSequence(winner);
+            // Broadcast to OBS Overlay
+            overlayChannel.postMessage({ action: 'START_LOTTO', winner: winner, pool: pool });
+
+            startLottoSpinSequence(winner, pool);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
 
-        async function startLottoSpinSequence(winner) {
-            const pool = Array.from(lottoEntries.keys());
-            if (pool.length === 0) return;
+        async function startLottoSpinSequence(winner, pool) {
+            if (!pool || pool.length === 0) return;
 
             const strip = [];
             const targetIdx = itemsCount - 6;
@@ -1564,6 +1694,7 @@
             strip[targetIdx] = winner;
 
             const carousel = document.getElementById('lotto-carousel');
+            if (!carousel) return;
             carousel.innerHTML = "";
 
             for (const u of strip) {
@@ -1585,7 +1716,8 @@
                 carousel.appendChild(node);
             }
 
-            const containerWidth = document.getElementById('lotto-spinner-inner').offsetWidth;
+            const containerInner = document.getElementById('lotto-spinner-inner');
+            const containerWidth = containerInner ? containerInner.offsetWidth : 800;
             const targetOffset = (targetIdx * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
 
             let lastTickOffset = 0;
@@ -1736,16 +1868,20 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            startWheelSpinSequence(winner);
+            // Broadcast to OBS Overlay
+            overlayChannel.postMessage({ action: 'START_WHEEL', winner: winner, entries: pool });
+
+            startWheelSpinSequence(winner, pool);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
 
-        function startWheelSpinSequence(winner) {
-            const entries = Array.from(wheelEntries.keys());
+        function startWheelSpinSequence(winner, entries) {
+            if (!entries || entries.length === 0) return;
             const index = entries.indexOf(winner);
             if (index === -1) return;
 
             const canvas = document.getElementById('wheel-canvas');
+            if (!canvas) return;
             const sliceAngle = 360 / entries.length;
             const targetRotation = 2160 + (360 - (index * sliceAngle + sliceAngle / 2));
 
@@ -1780,6 +1916,16 @@
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
             autoCloseTimeout = setTimeout(closeReveal, 4000);
         }
+
+        // --- LISTEN FOR OBS OVERLAY BROADCASTS ---
+        overlayChannel.onmessage = (event) => {
+            const data = event.data;
+            if (data.action === 'START_LOTTO') {
+                startLottoSpinSequence(data.winner, data.pool);
+            } else if (data.action === 'START_WHEEL') {
+                startWheelSpinSequence(data.winner, data.entries);
+            }
+        };
 
         // --- Tournament Logic ---
         function initTournamentData(size) {
@@ -2027,6 +2173,7 @@
             requestAnimationFrame(frame);
         }
 
+        checkOverlayMode();
         checkStartupKickAuth();
         loadTournamentData();
         renderTournamentBracket();
