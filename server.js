@@ -3,7 +3,7 @@ const axios = require('axios');
 const app = express();
 
 // ==========================================
-// CONFIGURATION (UPDATE THESE VALUES)
+// CONFIGURATION
 // ==========================================
 const CLIENT_ID = '01KZ4DP5SFJS1FHGD6XASY89TF';
 const CLIENT_SECRET = '74d7589975b1b84501783953e97e0c029ae7d39e796a417446e9d7ab65914b7d';
@@ -11,8 +11,8 @@ const CLIENT_SECRET = '74d7589975b1b84501783953e97e0c029ae7d39e796a417446e9d7ab6
 // Your live GitHub Pages URL (Where your index.html is hosted)
 const GITHUB_PAGES_URL = 'https://realfishh.github.io/KickTool';
 
-// Your server callback URL (Must match what you register on Kick)
-const REDIRECT_URI = 'https://103.151.40.47:3000/auth/kick/callback';
+// Your live Render Server Callback URL
+const REDIRECT_URI = 'https://kicktool.onrender.com/auth/kick/callback';
 // ==========================================
 
 // 1. Redirect user to Kick OAuth login page
@@ -29,7 +29,6 @@ app.get('/auth/kick/callback', async (req, res) => {
     }
 
     try {
-        // Securely exchange code for access token using client secret
         const tokenResponse = await axios.post('https://id.kick.com/oauth/token', {
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
@@ -40,14 +39,12 @@ app.get('/auth/kick/callback', async (req, res) => {
 
         const accessToken = tokenResponse.data.access_token;
 
-        // Fetch user information from Kick API
         const userResponse = await axios.get('https://api.kick.com/v1/users', {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
 
         const user = userResponse.data;
 
-        // Redirect back to your GitHub Pages site with the user data attached in the URL
         res.redirect(`${GITHUB_PAGES_URL}/?username=${encodeURIComponent(user.name)}&avatar=${encodeURIComponent(user.profile_pic)}`);
         
     } catch (error) {
@@ -56,7 +53,8 @@ app.get('/auth/kick/callback', async (req, res) => {
     }
 });
 
-// Start server on port 3000
-app.listen(3000, () => {
-    console.log('Kick OAuth server running on port 3000');
+// Render assigns a dynamic port, fall back to 3000 locally
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Kick OAuth server running on port ${PORT}`);
 });
