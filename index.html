@@ -1632,7 +1632,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Tournament Logic (Robust & Bug-Free State Management) ---
+        // --- Tournament Logic (Stable & Flicker-Free) ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1724,7 +1724,7 @@
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
             saveTournamentData();
-            renderTournamentBracket();
+            updateBracketDOMValues(); // Updates values in-place without destroying DOM elements (fixes flashing!)
         }
         window.advanceTeam = advanceTeam;
 
@@ -1732,12 +1732,13 @@
             const container = document.getElementById('bracket-container');
             if (!container) return;
             let svg = document.getElementById('bracket-svg-lines');
-            if (svg) svg.remove();
-
-            svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute('id', 'bracket-svg-lines');
+            if (!svg) {
+                svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute('id', 'bracket-svg-lines');
+                container.appendChild(svg);
+            }
             svg.style.cssText = `position: absolute; top: 0; left: 0; width: ${container.scrollWidth}px; height: ${container.scrollHeight}px; pointer-events: none; z-index: 1;`;
-            container.appendChild(svg);
+            svg.innerHTML = ""; // Clear existing paths without removing the SVG element itself, preventing any flash/flicker
 
             const containerRect = container.getBoundingClientRect();
             for (let r = 0; r < tournamentRounds.length - 1; r++) {
@@ -1781,7 +1782,7 @@
                     }
                 }
             });
-            setTimeout(drawConnectorLines, 30);
+            setTimeout(drawConnectorLines, 20);
         }
 
         function renderTournamentBracket() {
@@ -1808,7 +1809,6 @@
                         matchBox.id = `match-box-${r}-${m}`;
                         matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
-                        // Sleek, thick modern SVG arrow icon button (slightly bigger) with optimized score input width (40px, fits 4 chars like 0.33, 0.21)
                         const slotHTML = (team, score, idx) => `
                             <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
                                 <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px 4px; font-size: 0.9rem; width: 100%; outline: none;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
