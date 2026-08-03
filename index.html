@@ -1083,65 +1083,6 @@
         const eyeOpenSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
         const eyeOffSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
 
-        // --- WEB AUDIO API SYNTHESIZED SOUND EFFECTS ---
-        let audioCtx = null;
-        function getAudioContext() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            return audioCtx;
-        }
-
-        function playClickSound() {
-            try {
-                const ctx = getAudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(350, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.04);
-                gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.04);
-            } catch(e) {}
-        }
-
-        function playTickSound() {
-            try {
-                const ctx = getAudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(600, ctx.currentTime);
-                gain.gain.setValueAtTime(0.04, ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.02);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.02);
-            } catch(e) {}
-        }
-
-        function playWinFanfare() {
-            try {
-                const ctx = getAudioContext();
-                const notes = [523.25, 659.25, 783.99, 1046.50]; 
-                notes.forEach((freq, idx) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
-                    gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.12);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.4);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start(ctx.currentTime + idx * 0.12);
-                    osc.stop(ctx.currentTime + idx * 0.12 + 0.4);
-                });
-            } catch(e) {}
-        }
-
         // --- GET CURRENT CHANNEL KEY FOR FIREBASE ---
         function getActiveChannel() {
             return targetChannelName || loggedInKickUser?.slug || localStorage.getItem('kick_target_channel') || 'default_streamer';
@@ -1149,7 +1090,6 @@
 
         // --- OBS OVERLAY MODAL ---
         function openObsModal() {
-            playClickSound();
             const channel = getActiveChannel().toLowerCase();
             const baseUrl = window.location.origin + window.location.pathname;
             document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto&channel=${channel}`;
@@ -1161,13 +1101,11 @@
         window.openObsModal = openObsModal;
 
         function closeObsModal() {
-            playClickSound();
             document.getElementById('obs-modal').style.display = 'none';
         }
         window.closeObsModal = closeObsModal;
 
         function copyObsUrl(elementId, btnEl) {
-            playClickSound();
             const input = document.getElementById(elementId);
             navigator.clipboard.writeText(input.value);
             const origText = btnEl.textContent;
@@ -1179,7 +1117,7 @@
         // SYNC KEYWORD & CHAT TARGET TO FIREBASE
         function syncKeyword(val) {
             const cleanVal = val.trim();
-            const channel = getActiveChannel();
+            const channel = getActiveChannel().toLowerCase();
             
             const lottoIn = document.getElementById('lotto-keyword-input');
             const wheelIn = document.getElementById('wheel-keyword-input');
@@ -1193,7 +1131,7 @@
 
         function syncChatTarget(val) {
             const cleanVal = val.trim();
-            const channel = getActiveChannel();
+            const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/chatTarget`), cleanVal);
             updateObsChatTargetDisplay(cleanVal);
         }
@@ -1251,7 +1189,7 @@
                 });
 
             } else {
-                const channel = getActiveChannel();
+                const channel = getActiveChannel().toLowerCase();
                 onValue(ref(db, `channels/${channel}/keyword`), (snapshot) => {
                     const kw = snapshot.val();
                     if (kw) {
@@ -1270,7 +1208,6 @@
             localStorage.setItem('kick_tool_theme', themeName);
             const menu = document.getElementById('theme-dropdown-menu');
             if (menu) menu.style.display = 'none';
-            playClickSound();
 
             if (currentActiveView === 'tournament') {
                 renderTournamentBracket();
@@ -1318,7 +1255,6 @@
         }
 
         function handleKickLogout() {
-            playClickSound();
             const username = loggedInKickUser ? loggedInKickUser.username : '';
             document.getElementById('logout-modal-text').innerHTML = `Are you sure you want to log out from <strong style="color: #fff;">@${username}</strong>?`;
             document.getElementById('logout-confirm-modal').style.display = 'flex';
@@ -1326,13 +1262,11 @@
         window.handleKickLogout = handleKickLogout;
 
         function closeLogoutModal() {
-            playClickSound();
             document.getElementById('logout-confirm-modal').style.display = 'none';
         }
         window.closeLogoutModal = closeLogoutModal;
 
         function confirmKickLogout() {
-            playClickSound();
             document.getElementById('logout-confirm-modal').style.display = 'none';
             loggedInKickUser = null;
             totalRollsCount = 0;
@@ -1346,7 +1280,6 @@
         window.confirmKickLogout = confirmKickLogout;
 
         function openProfileStatsModal() {
-            playClickSound();
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) menu.style.display = 'none';
             const chevron = document.getElementById('profile-chevron');
@@ -1374,13 +1307,11 @@
         window.openProfileStatsModal = openProfileStatsModal;
 
         function closeProfileStatsModal() {
-            playClickSound();
             document.getElementById('profile-stats-modal').style.display = 'none';
         }
         window.closeProfileStatsModal = closeProfileStatsModal;
 
         function toggleProfileDropdown(e) {
-            playClickSound();
             e.stopPropagation();
             const menu = document.getElementById('profile-dropdown-menu');
             const chevron = document.getElementById('profile-chevron');
@@ -1405,7 +1336,6 @@
         });
 
         function handleProfileDropdownAction() {
-            playClickSound();
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) menu.style.display = 'none';
             const chevron = document.getElementById('profile-chevron');
@@ -1425,7 +1355,6 @@
         let verificationPollInterval = null;
 
         async function startKickVerificationFlow() {
-            playClickSound();
             const inputVal = document.getElementById('kick-login-username').value.trim();
             const errorEl = document.getElementById('kick-login-error');
             const modalBox = document.getElementById('kick-login-modal-box');
@@ -1676,7 +1605,6 @@
         animateDust();
 
         function switchWorkspace(mode) {
-            playClickSound();
             currentActiveView = mode;
             ['lotto', 'wheel', 'tournament', 'keyword', 'chat'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
@@ -1700,7 +1628,6 @@
         window.switchWorkspace = switchWorkspace;
 
         function toggleKeywordVisibility() {
-            playClickSound();
             const field = document.getElementById('lotto-keyword-input');
             const btn = document.getElementById('keyword-hide-btn');
             if (field.type === "password") { 
@@ -1714,7 +1641,6 @@
         window.toggleKeywordVisibility = toggleKeywordVisibility;
 
         function toggleWheelKeywordVisibility() {
-            playClickSound();
             const field = document.getElementById('wheel-keyword-input');
             const btn = document.getElementById('wheel-keyword-hide-btn');
             if (field.type === "password") { 
@@ -1778,7 +1704,6 @@
         }
 
         function clearLottoEntries() {
-            playClickSound();
             lottoEntries.clear();
             lottoBlacklist.clear();
             renderLottoEntries();
@@ -1833,7 +1758,7 @@
                 container.scrollTop = container.scrollHeight;
             }
 
-            const channel = getActiveChannel();
+            const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/chatMessage`), {
                 username: username,
                 content: content,
@@ -1858,7 +1783,6 @@
         }
 
         function startLottoSpinSequenceRemotely() {
-            playClickSound();
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) { alert("Entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
@@ -1866,7 +1790,7 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            const channel = getActiveChannel();
+            const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_LOTTO',
                 winner: winner,
@@ -1913,19 +1837,12 @@
             const containerWidth = containerInner ? containerInner.offsetWidth : 800;
             const targetOffset = (targetIdx * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
 
-            let lastTickOffset = 0;
-            animateWheel(carousel, targetOffset, containerWidth, 8000, (currentOffset) => {
-                if (Math.abs(currentOffset - lastTickOffset) > 40) {
-                    playTickSound();
-                    lastTickOffset = currentOffset;
-                }
-            }, () => {
+            animateWheel(carousel, targetOffset, containerWidth, 8000, () => {}, () => {
                 triggerLottoWinnerReveal(winner);
             });
         }
 
         function triggerLottoWinnerReveal(winner) {
-            playWinFanfare();
             lottoBlacklist.add(winner);
             lottoEntries.delete(winner);
             renderLottoEntries();
@@ -1938,14 +1855,12 @@
         }
 
         function closeReveal() {
-            playClickSound();
             document.getElementById('epic-overlay').classList.remove('active');
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
         }
         window.closeReveal = closeReveal;
 
         function clearWheelEntries() {
-            playClickSound();
             wheelEntries.clear();
             wheelBlacklist.clear();
             renderWheelEntries();
@@ -2042,7 +1957,6 @@
         }
 
         function startWheelSpinSequenceRemotely() {
-            playClickSound();
             const pool = Array.from(wheelEntries.keys());
             if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
@@ -2050,7 +1964,7 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            const channel = getActiveChannel();
+            const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_WHEEL',
                 winner: winner,
@@ -2076,22 +1990,13 @@
             canvas.style.transition = 'transform 8s cubic-bezier(0.1, 0.8, 0.1, 1)';
             canvas.style.transform = `rotate(${targetRotation}deg)`;
 
-            let tickCount = 0;
-            const tickInterval = setInterval(() => {
-                playTickSound();
-                tickCount++;
-                if (tickCount > 35) clearInterval(tickInterval);
-            }, 200);
-
             setTimeout(() => {
-                clearInterval(tickInterval);
                 wheelSpinning = false;
                 triggerWheelWinnerReveal(winner);
             }, 8000);
         }
 
         function triggerWheelWinnerReveal(winner) {
-            playWinFanfare();
             wheelBlacklist.add(winner);
             wheelEntries.delete(winner);
             renderWheelEntries();
@@ -2119,7 +2024,6 @@
         }
 
         function changeTournamentSize(size) {
-            playClickSound();
             const numSize = parseInt(size, 10);
             initTournamentData(numSize);
             saveTournamentData();
@@ -2128,7 +2032,6 @@
         window.changeTournamentSize = changeTournamentSize;
 
         function shuffleTournamentTeams() {
-            playClickSound();
             let round0 = [...tournamentRounds[0]];
             for (let i = round0.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -2142,7 +2045,6 @@
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
         function resetTournamentBracket() {
-            playClickSound();
             if (confirm("Reset tournament bracket?")) {
                 initTournamentData(tournamentSize);
                 saveTournamentData();
@@ -2195,7 +2097,6 @@
         window.updateTournamentScore = updateTournamentScore;
 
         function advanceTeam(r, idx) {
-            playClickSound();
             const team = tournamentRounds[r][idx];
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
@@ -2330,7 +2231,6 @@
 
         function animateWheel(carouselEl, targetOffset, containerWidth, duration, onTick, onFinish) {
             const startTime = performance.now();
-            let lastReportedOffset = 0;
             function frame(now) {
                 const elapsed = now - startTime;
                 const progress = Math.min(1, elapsed / duration);
@@ -2338,11 +2238,6 @@
                 const currentOffset = targetOffset * eased;
                 
                 carouselEl.style.transform = `translate3d(-${currentOffset}px, 0, 0)`;
-                
-                if (onTick && Math.abs(currentOffset - lastReportedOffset) > 45) {
-                    onTick(currentOffset);
-                    lastReportedOffset = currentOffset;
-                }
 
                 if (progress < 1) requestAnimationFrame(frame);
                 else onFinish();
