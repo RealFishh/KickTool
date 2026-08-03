@@ -43,14 +43,14 @@
             pointer-events: none;
         }
 
-        /* Professional Startup Kick Login Modal matching your screenshot */
+        /* Professional Sign In Modal Matching Your Screenshot */
         .kick-login-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.92);
             z-index: 99999;
             display: flex;
             align-items: center;
@@ -60,13 +60,50 @@
 
         .kick-login-modal {
             background-color: var(--bg-card);
-            padding: 40px 30px;
+            padding: 40px 35px;
             border-radius: 20px;
             border: 1px solid var(--border-gray);
             box-shadow: 0 25px 60px rgba(0,0,0,0.95);
             text-align: center;
-            width: 440px;
+            width: 420px;
             box-sizing: border-box;
+            position: relative;
+        }
+
+        .signin-option-btn {
+            width: 100%;
+            background-color: #1f1f23;
+            border: 1px solid var(--border-gray);
+            border-radius: 12px;
+            color: #ffffff;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .signin-option-btn:hover {
+            border-color: var(--accent-green);
+            background-color: #27272a;
+        }
+
+        .recommended-badge {
+            background-color: var(--accent-green);
+            color: #000000;
+            font-size: 0.65rem;
+            font-weight: 950;
+            padding: 3px 8px;
+            border-radius: 6px;
+            position: absolute;
+            right: 15px;
+            letter-spacing: 0.5px;
         }
 
         .password-input {
@@ -85,6 +122,14 @@
 
         .password-input:focus {
             border-color: var(--accent-green);
+        }
+
+        .password-error {
+            color: #f43f5e;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: none;
         }
 
         /* Top Navigation Controls - Perfectly Centered & Balanced */
@@ -558,15 +603,32 @@
 </head>
 <body>
 
-    <!-- Professional OAuth Kick Login Modal (Matching your screenshot style) -->
+    <!-- Professional Sign In Modal Matching Your Screenshot -->
     <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
-        <div class="kick-login-modal" style="background: #121215; border: 1px solid var(--border-gray); padding: 40px 30px; border-radius: 20px; text-align: center; width: 400px;">
+        <div class="kick-login-modal">
             <h2 style="color: #fff; margin-bottom: 25px; font-size: 1.6rem; font-weight: 950;">Sign in</h2>
             
-            <button onclick="window.location.href='http://103.151.40.47:3000/auth/kick'" style="width: 100%; background: #1f1f23; color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; transition: background 0.2s;" onmouseover="this.style.background='#27272a'" onmouseout="this.style.background='#1f1f23'">
-                <span style="color: var(--accent-green); font-size: 1.1rem; font-weight: 900;">K</span> Sign in with Kick
-                <span style="background: var(--accent-green); color: #000; font-size: 0.65rem; padding: 3px 8px; border-radius: 6px; font-weight: 900; position: absolute; right: 12px;">RECOMMENDED</span>
+            <button class="signin-option-btn" style="color: #a970ff;" onclick="alert('Twitch login coming soon!')">
+                <span style="font-size: 1.2rem;">🟣</span> Sign in with Twitch
             </button>
+
+            <button class="signin-option-btn" onclick="openChannelInputStep()">
+                <span style="color: var(--accent-green); font-size: 1.2rem; font-weight: 900;">K</span> Sign in with Kick
+                <span class="recommended-badge">RECOMMENDED</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Channel Name Step Modal -->
+    <div id="kick-channel-input-modal" class="kick-login-modal-overlay" style="display: none;">
+        <div class="kick-login-modal">
+            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.6rem;">KICK CHANNEL</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">Enter your Kick channel name to connect.</p>
+            
+            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamername" autocomplete="off">
+            <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
+            
+            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="submitChannelLogin()">CONNECT CHANNEL</button>
         </div>
     </div>
 
@@ -866,25 +928,6 @@
         const itemsCount = 45; 
 
         function checkStartupKickAuth() {
-            // Check if user just returned from OAuth login via URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const authUsername = urlParams.get('username');
-            const authAvatar = urlParams.get('avatar');
-
-            if (authUsername) {
-                const kickUser = {
-                    username: authUsername,
-                    slug: authUsername.toLowerCase(),
-                    avatar: authAvatar || DEFAULT_AVATAR
-                };
-                localStorage.setItem('kick_logged_in_user', JSON.stringify(kickUser));
-                localStorage.setItem('kick_target_channel', authUsername.toLowerCase());
-                if (!localStorage.getItem('kick_user_joined_date')) {
-                    localStorage.setItem('kick_user_joined_date', new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
-                }
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-
             const saved = localStorage.getItem('kick_logged_in_user');
             const savedChannel = localStorage.getItem('kick_target_channel');
             const savedRolls = localStorage.getItem('kick_user_total_rolls');
@@ -910,6 +953,51 @@
             }
             updateProfileView();
         }
+
+        function openChannelInputStep() {
+            document.getElementById('kick-login-modal').style.display = 'none';
+            document.getElementById('kick-channel-input-modal').style.display = 'flex';
+            document.getElementById('kick-login-username').value = '';
+            document.getElementById('kick-login-username').focus();
+        }
+        window.openChannelInputStep = openChannelInputStep;
+
+        async function submitChannelLogin() {
+            const inputVal = document.getElementById('kick-login-username').value.trim();
+            const errorEl = document.getElementById('kick-login-error');
+            const btn = document.getElementById('submit-kick-login');
+            
+            if (!inputVal) return;
+
+            btn.textContent = "Connecting...";
+            btn.disabled = true;
+
+            const resolved = await fetchChatroomId(inputVal);
+            if (!resolved) {
+                errorEl.style.display = 'block';
+                btn.textContent = "CONNECT CHANNEL";
+                btn.disabled = false;
+                return;
+            }
+
+            errorEl.style.display = 'none';
+            targetChannelName = resolved.slug;
+            targetChatroomId = resolved.chatroomId;
+            loggedInKickUser = { username: resolved.originalName, slug: resolved.slug, avatar: resolved.avatar };
+
+            const joinedDateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            localStorage.setItem('kick_logged_in_user', JSON.stringify(loggedInKickUser));
+            localStorage.setItem('kick_target_channel', targetChannelName);
+            localStorage.setItem('kick_target_chatroom', targetChatroomId);
+            localStorage.setItem('kick_user_joined_date', joinedDateStr);
+
+            document.getElementById('kick-channel-input-modal').style.display = 'none';
+            updateProfileView();
+            connectToKickChat();
+            btn.textContent = "CONNECT CHANNEL";
+            btn.disabled = false;
+        }
+        window.submitChannelLogin = submitChannelLogin;
 
         function handleKickLogout() {
             const username = loggedInKickUser ? loggedInKickUser.username : '';
@@ -1656,6 +1744,7 @@
                 col.style.cssText = "display: flex; flex-direction: column; justify-content: space-around; height: 100%; min-width: 175px; flex-grow: 1; z-index: 2;";
 
                 if (r === tournamentRounds.length - 1) {
+                    col.html = `...`; // kept safe
                     col.innerHTML = `
                         <div id="slot-container-${r}-0" style="background: rgba(83,252,24,0.04); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 10px; text-align: center;">
                             <input type="text" value="${round[0] || ''}" placeholder="" class="admin-field" style="text-align: center; font-weight: 800; border: none; background: transparent; padding: 6px;" oninput="updateTournamentTeamName(${r}, 0, this.value)">
