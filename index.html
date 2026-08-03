@@ -1014,7 +1014,7 @@
     <div id="keyword-view" class="workspace-view">
         <div style="background: rgba(18, 18, 21, 0.95); border: 3px solid var(--accent-green); padding: 35px 70px; border-radius: 24px; box-shadow: 0 0 60px color-mix(in srgb, var(--accent-green) 40%, transparent); text-align: center;">
             <div style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px;">Active Giveaway Keyword</div>
-            <div id="big-obs-keyword" style="font-size: 5rem; font-weight: 950; color: #fff; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 30px var(--accent-green);">FISHY</div>
+            <div id="big-obs-keyword" style="font-size: 5rem; font-weight: 950; color: #fff; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 30px var(--accent-green);">---</div>
         </div>
     </div>
 
@@ -1128,7 +1128,7 @@
         }
         window.copyObsUrl = copyObsUrl;
 
-        // INDEPENDENT KEYWORD & CHAT SYNC
+        // INDEPENDENT KEYWORD & CHAT SYNC TO FIREBASE
         function syncLottoKeyword(val) {
             const cleanVal = val.trim();
             const channel = getActiveChannel().toLowerCase();
@@ -1174,7 +1174,7 @@
                 if (view === 'keyword') {
                     const kwPath = type === 'wheel' ? `channels/${channel}/wheelKeyword` : `channels/${channel}/lottoKeyword`;
                     onValue(ref(db, kwPath), (snapshot) => {
-                        const kw = snapshot.val() || (type === 'wheel' ? 'wheel' : 'fishy');
+                        const kw = snapshot.val() || (type === 'wheel' ? 'wheel' : 'gw');
                         updateObsKeywordDisplay(kw);
                     });
                 }
