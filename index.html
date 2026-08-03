@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Giveaway Tool</title>
+    <title>Kick Giveaway Tool</title>
     <style>
         :root {
             --bg-black: #09090b;
@@ -901,8 +901,8 @@
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle Teams</button>
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
-            <!-- Horizontal and vertical scrollable container ensuring 16-teams fit nicely without clipping -->
-            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 45px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px 30px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center; min-width: 0;"></div>
+            <!-- Compact fit tournament container allowing vertical/horizontal scaling without overflow clipping -->
+            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 35px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 15px 25px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center; min-width: 0;"></div>
         </div>
     </div>
 
@@ -1638,7 +1638,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Logic & Precise SVG Connector Lines Engine
+        // Tournament Bracket Logic & Precise Bracket-Style SVG Connector Lines
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1715,18 +1715,9 @@
         window.advanceTeam = advanceTeam;
 
         function drawConnectorLines() {
-            const container = document.getElementById('bracket-container');
+            const container = document.getElementById('bracket-connection-svg');
             if (!container) return;
-            let svg = document.getElementById('bracket-svg-lines');
-            if (!svg) {
-                svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                svg.setAttribute('id', 'bracket-svg-lines');
-                svg.style.cssText = `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`;
-                container.appendChild(svg);
-            } else {
-                svg.setAttribute('style', `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`);
-                svg.innerHTML = "";
-            }
+            container.innerHTML = "";
 
             const containerRect = container.getBoundingClientRect();
             const totalRounds = tournamentRounds.length;
@@ -1745,30 +1736,33 @@
                         const rectB = matchBoxB.getBoundingClientRect();
                         const nextRect = nextMatchBox.getBoundingClientRect();
 
-                        const x1 = rectA.right - containerRect.left + container.scrollLeft;
-                        const yA = rectA.top + rectA.height / 2 - containerRect.top + container.scrollTop;
-                        const yB = rectB.top + rectB.height / 2 - containerRect.top + container.scrollTop;
+                        const x1 = rectA.right - containerRect.left;
+                        const yA = rectA.top + rectA.height / 2 - containerRect.top;
+                        const yB = rectB.top + rectB.height / 2 - containerRect.top;
                         
-                        const x2 = nextRect.left - containerRect.left + container.scrollLeft;
-                        const yNext = nextRect.top + nextRect.height / 2 - containerRect.top + container.scrollTop;
+                        const x2 = nextRect.left - containerRect.left;
+                        const yNext = nextRect.top + nextRect.height / 2 - containerRect.top;
 
                         const xMid = x1 + (x2 - x1) / 2;
 
-                        const pathA = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        pathA.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yNext} H ${x2}`);
-                        pathA.setAttribute("stroke", "#53fc18");
-                        pathA.setAttribute("stroke-width", "2.5");
-                        pathA.setAttribute("fill", "none");
-                        pathA.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
-                        svg.appendChild(pathA);
-
-                        const pathB = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        pathB.setAttribute("d", `M ${x1} ${yB} H ${xMid} V ${yNext} H ${x2}`);
-                        pathB.setAttribute("stroke", "#53fc18");
-                        pathB.setAttribute("stroke-width", "2.5");
-                        pathB.setAttribute("fill", "none");
-                        pathB.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
-                        svg.appendChild(pathB);
+                        // Clean professional bracket bracket connector line
+                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        path.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yB} M ${xMid} ${yNext} H ${x2}`);
+                        // Alternatively, standard tournament branching
+                        path.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yNext} H ${x2} M ${x1} ${yB} H ${xMid}`);
+                        
+                        const connector = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        connector.setAttribute("d", `M ${x1} ${yA} L ${xMid} ${yA} L ${xMid} ${yB} L ${x1} ${yB} M ${xMid} ${yNext} L ${x2} ${yNext}`); // Basic branch
+                        
+                        // Precise classic bracket path: Upper arm horizontal to midpoint, vertical bridge between top & bottom match, horizontal branch to next round match center
+                        const bracketPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        bracketPath.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yB} M ${x1} ${yB} H ${xMid} M ${xMid} ${yNext} H ${x2}`);
+                        
+                        bracketPath.setAttribute("stroke", "#53fc18");
+                        bracketPath.setAttribute("stroke-width", "2.5");
+                        bracketPath.setAttribute("fill", "none");
+                        bracketPath.setAttribute("style", "filter: drop-shadow(0 0 5px rgba(83, 252, 24, 0.6)); opacity: 0.9;");
+                        container.appendChild(bracketPath);
                     }
                 }
             }
@@ -1779,42 +1773,48 @@
             if (!container) return;
             container.innerHTML = "";
 
+            // Create SVG Overlay container inside bracket wrapper for lines
+            const svgOverlay = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svgOverlay.setAttribute('id', 'bracket-connection-svg');
+            svgOverlay.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;";
+            container.appendChild(svgOverlay);
+
             tournamentRounds.forEach((round, r) => {
                 const roundCol = document.createElement('div');
-                // Minimum width per column expanded to 230px, flex-shrink: 0 ensures scrolling works cleanly for 16 teams
-                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:230px;flex-shrink:0;z-index:2;box-sizing:border-box;padding:20px 0;";
+                // Aligned to top (flex-start) with compact spacing so all 16 teams fit cleanly inside normal screens without clipping vertically
+                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:flex-start;gap:12px;height:100%;min-width:210px;flex-shrink:0;z-index:2;box-sizing:border-box;padding-top:10px;";
                 
                 if (r === tournamentRounds.length - 1) {
                     roundCol.innerHTML = `
                         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
-                            <span style="color:var(--accent-green);font-size:0.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Champion</span>
-                            <div id="winner-box-${r}-0" style="background:#09090b;border:2px solid var(--accent-green);border-radius:12px;padding:12px;width:100%;box-shadow:0 0 20px rgba(83,252,24,0.3);box-sizing:border-box;">
-                                <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="" style="background:#121215;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:8px;width:100%;outline:none;font-size:1.1rem;" onchange="updateTournamentTeamName(${r},0,this.value)">
+                            <span style="color:var(--accent-green);font-size:0.75rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Champion</span>
+                            <div id="winner-box-${r}-0" style="background:#09090b;border:2px solid var(--accent-green);border-radius:10px;padding:10px;width:100%;box-shadow:0 0 20px rgba(83,252,24,0.3);box-sizing:border-box;">
+                                <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="" style="background:#121215;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:8px;border-radius:6px;width:100%;outline:none;font-size:1rem;" onchange="updateTournamentTeamName(${r},0,this.value)">
                             </div>
                         </div>`;
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
                         const matchWrapper = document.createElement('div');
-                        matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:8px;margin:10px 0;";
+                        matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:6px;margin-bottom:15px;";
                         
                         const boxA = document.createElement('div');
                         boxA.setAttribute('id', `match-box-${r}-${m}`);
-                        boxA.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
+                        boxA.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:8px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,0.5);width:190px;box-sizing:border-box;";
                         boxA.innerHTML = `
-                            <div style="display:flex;gap:8px;align-items:center;width:100%;">
-                                <input type="text" id="team-input-${r}-${m}" value="${round[m]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m},this.value)">
-                                <input type="text" id="score-input-${r}-${m}" value="${tournamentScores[r][m]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)">
-                                <button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
+                            <div style="display:flex;gap:6px;align-items:center;width:100%;">
+                                <input type="text" id="team-input-${r}-${m}" value="${round[m]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.88rem;" onchange="updateTournamentTeamName(${r},${m},this.value)">
+                                <input type="text" id="score-input-${r}-${m}" value="${tournamentScores[r][m]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:28px;text-align:center;border-radius:4px;outline:none;font-size:0.85rem;" oninput="updateTournamentScore(${r},${m},this.value)">
+                                <button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:0.9rem;" title="Advance">&rarr;</button>
                             </div>`;
 
                         const boxB = document.createElement('div');
                         boxB.setAttribute('id', `match-box-${r}-${m+1}`);
-                        boxB.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
+                        boxB.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:8px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,0.5);width:190px;box-sizing:border-box;";
                         boxB.innerHTML = `
-                            <div style="display:flex;gap:8px;align-items:center;width:100%;">
-                                <input type="text" id="team-input-${r}-${m+1}" value="${round[m+1]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m+1},this.value)">
-                                <input type="text" id="score-input-${r}-${m+1}" value="${tournamentScores[r][m+1]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)">
-                                <button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
+                            <div style="display:flex;gap:6px;align-items:center;width:100%;">
+                                <input type="text" id="team-input-${r}-${m+1}" value="${round[m+1]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.88rem;" onchange="updateTournamentTeamName(${r},${m+1},this.value)">
+                                <input type="text" id="score-input-${r}-${m+1}" value="${tournamentScores[r][m+1]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:28px;text-align:center;border-radius:4px;outline:none;font-size:0.85rem;" oninput="updateTournamentScore(${r},${m+1},this.value)">
+                                <button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:0.9rem;" title="Advance">&rarr;</button>
                             </div>`;
 
                         matchWrapper.appendChild(boxA);
