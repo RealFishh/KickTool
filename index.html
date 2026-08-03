@@ -99,6 +99,31 @@
             border: none !important;
             box-shadow: none !important;
         }
+        body.obs-overlay-mode #obs-keyword-badge {
+            display: flex !important;
+        }
+
+        /* OBS ACTIVE KEYWORD BADGE */
+        #obs-keyword-badge {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            background: rgba(18, 18, 21, 0.9);
+            border: 2px solid var(--accent-green);
+            padding: 12px 26px;
+            border-radius: 14px;
+            font-weight: 950;
+            font-size: 1.3rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px color-mix(in srgb, var(--accent-green) 30%, transparent);
+            display: none;
+            z-index: 999;
+            align-items: center;
+            gap: 10px;
+        }
 
         #bg-canvas {
             position: fixed;
@@ -643,6 +668,11 @@
 </head>
 <body>
 
+    <!-- OBS ACTIVE KEYWORD BADGE -->
+    <div id="obs-keyword-badge">
+        KEYWORD: <span id="obs-keyword-text" style="color: var(--accent-green);">---</span>
+    </div>
+
     <!-- Professional Startup Kick Login Modal -->
     <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal" id="kick-login-modal-box">
@@ -816,7 +846,7 @@
                             </span>
                         </div>
                         <div class="lotto-input-wrapper">
-                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy">
+                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy" oninput="syncKeyword(this.value)">
                         </div>
                     </div>
                     <div class="lotto-control-box" style="display: flex; flex-direction: column; justify-content: space-between;">
@@ -880,7 +910,7 @@
                             </span>
                         </div>
                         <div class="lotto-input-wrapper">
-                            <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel">
+                            <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel" oninput="syncKeyword(this.value)">
                         </div>
                     </div>
                     <div class="lotto-config-row" style="display: none;">
@@ -1095,6 +1125,19 @@
         }
         window.copyObsUrl = copyObsUrl;
 
+        // SYNC KEYWORD TO OVERLAY
+        function syncKeyword(val) {
+            const cleanVal = val.trim();
+            localStorage.setItem('obs_active_keyword', cleanVal);
+            overlayChannel.postMessage({ action: 'UPDATE_KEYWORD', keyword: cleanVal });
+        }
+        window.syncKeyword = syncKeyword;
+
+        function updateObsKeywordDisplay(keyword) {
+            const textEl = document.getElementById('obs-keyword-text');
+            if (textEl) textEl.textContent = keyword || '---';
+        }
+
         // CHECK IF LOADED AS OBS OVERLAY ON STARTUP
         function checkOverlayMode() {
             const params = new URLSearchParams(window.location.search);
@@ -1102,6 +1145,10 @@
                 document.body.classList.add('obs-overlay-mode');
                 const view = params.get('view') || 'lotto';
                 switchWorkspace(view);
+
+                // Load initial keyword
+                const savedKw = localStorage.getItem('obs_active_keyword') || (view === 'wheel' ? 'wheel' : 'fishy');
+                updateObsKeywordDisplay(savedKw);
             }
         }
 
@@ -1926,6 +1973,8 @@
                 startLottoSpinSequence(data.winner, data.pool);
             } else if (data.action === 'START_WHEEL') {
                 startWheelSpinSequence(data.winner, data.entries);
+            } else if (data.action === 'UPDATE_KEYWORD') {
+                updateObsKeywordDisplay(data.keyword);
             }
         };
 
