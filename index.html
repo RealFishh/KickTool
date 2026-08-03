@@ -1645,7 +1645,11 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Tournament Logic with clean bold SVG advance arrows ---
+        // --- Tournament Logic with local-only state (fresh for everyone individually, no database sharing) ---
+        let tournamentSize = 8;
+        let tournamentRounds = [];
+        let tournamentScores = [];
+
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1661,7 +1665,8 @@
 
         function changeTournamentSize(size) {
             initTournamentData(parseInt(size, 10));
-            saveTournamentData();
+            saveTournamentDataLocally();
+            renderTournamentBracket();
         }
         window.changeTournamentSize = changeTournamentSize;
 
@@ -1673,25 +1678,23 @@
             }
             initTournamentData(tournamentSize);
             tournamentRounds[0] = round0;
-            saveTournamentData();
+            saveTournamentDataLocally();
+            renderTournamentBracket();
         }
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
         function resetTournamentBracket() {
             if (confirm("Reset tournament bracket?")) {
                 initTournamentData(tournamentSize);
-                saveTournamentData();
+                saveTournamentDataLocally();
+                renderTournamentBracket();
             }
         }
         window.resetTournamentBracket = resetTournamentBracket;
 
         function updateTournamentTeamName(r, idx, val) {
             tournamentRounds[r][idx] = val;
-            if (db) {
-                set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
-            } else {
-                localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
-            }
+            saveTournamentDataLocally();
         }
         window.updateTournamentTeamName = updateTournamentTeamName;
 
@@ -1726,12 +1729,7 @@
                 }
             }
 
-            if (db) {
-                set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
-            } else {
-                localStorage.setItem('kick_tournament_scores', JSON.stringify(tournamentScores));
-                localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
-            }
+            saveTournamentDataLocally();
             updateBracketDOMValues();
         }
         window.updateTournamentScore = updateTournamentScore;
@@ -1741,14 +1739,31 @@
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
             
-            if (db) {
-                set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
-            } else {
-                localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
-            }
+            saveTournamentDataLocally();
             updateBracketDOMValues();
         }
         window.advanceTeam = advanceTeam;
+
+        function saveTournamentDataLocally() {
+            localStorage.setItem('local_tournament_size', tournamentSize);
+            localStorage.setItem('local_tournament_rounds', JSON.stringify(tournamentRounds));
+            localStorage.setItem('local_tournament_scores', JSON.stringify(tournamentScores));
+        }
+
+        function loadTournamentDataLocally() {
+            const savedSize = localStorage.getItem('local_tournament_size');
+            const savedRounds = localStorage.getItem('local_tournament_rounds');
+            const savedScores = localStorage.getItem('local_tournament_scores');
+            if (savedSize && savedRounds) {
+                tournamentSize = parseInt(savedSize, 10);
+                tournamentRounds = JSON.parse(savedRounds);
+                tournamentScores = savedScores ? JSON.parse(savedScores) : [];
+                const selectEl = document.getElementById('tournament-size-select');
+                if (selectEl) selectEl.value = tournamentSize;
+            } else {
+                initTournamentData(8);
+            }
+        }
 
         function drawConnectorLines() {
             const container = document.getElementById('bracket-container');
@@ -1830,13 +1845,13 @@
                         matchBox.id = `match-box-${r}-${m}`;
                         matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
-                        // Sleek, thick modern SVG arrow icon button for clean advancement
+                        // Wider score tab width (40px) allowing numbers like 0.44 / 0.12 to fit cleanly, with slightly larger 16px advance arrows
                         const slotHTML = (team, score, idx) => `
                             <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 4px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
                                 <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px 4px; font-size: 0.9rem; width: 100%; outline: none;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
-                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 20px; text-align: center; padding: 2px 0; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
+                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 40px; text-align: center; padding: 2px 0; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
                                 <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 2px; transition: transform 0.1s;" title="Advance" onmousedown="this.style.transform='scale(1.2)'" onmouseup="this.style.transform='scale(1)'">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </button>
                             </div>
                         `;
@@ -1848,17 +1863,6 @@
                 container.appendChild(col);
             });
             setTimeout(drawConnectorLines, 50);
-        }
-
-        function saveTournamentData() {
-            if (db) {
-                set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
-            } else {
-                localStorage.setItem('kick_tournament_size', tournamentSize);
-                localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
-                localStorage.setItem('kick_tournament_scores', JSON.stringify(tournamentScores));
-            }
-            renderTournamentBracket();
         }
 
         function animateWheel(carouselEl, targetOffset, containerWidth, duration, onFinish) {
@@ -1875,7 +1879,7 @@
         }
 
         checkStartupKickAuth();
-        initTournamentData(8);
+        loadTournamentDataLocally();
         renderTournamentBracket();
 
         if (db) {
@@ -1890,17 +1894,6 @@
                 if (snap.val()) Object.entries(snap.val()).forEach(([u, sub]) => wheelEntries.set(u, !!sub));
                 renderWheelEntries();
                 drawWheel();
-            });
-            onValue(ref(db, 'state/tournament'), snap => {
-                const data = snap.val();
-                if (data && data.rounds && currentActiveView === 'tournament') {
-                    tournamentSize = data.size || 8;
-                    tournamentRounds = data.rounds;
-                    tournamentScores = data.scores || [];
-                    const selectEl = document.getElementById('tournament-size-select');
-                    if (selectEl) selectEl.value = tournamentSize;
-                    updateBracketDOMValues();
-                }
             });
             onValue(ref(db, 'trigger/lottoSpin'), snap => {
                 const data = snap.val();
