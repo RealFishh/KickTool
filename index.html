@@ -697,17 +697,17 @@
 
     <!-- OBS Browser Source Link Modal -->
     <div id="obs-modal" class="kick-login-modal-overlay" style="display: none;">
-        <div class="kick-login-modal" style="width: 540px; text-align: left;" onclick="event.stopPropagation()">
+        <div class="kick-login-modal" style="width: 560px; text-align: left;" onclick="event.stopPropagation()">
             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
                 <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">OBS Browser Source Links</h2>
                 <button onclick="closeObsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
             </div>
             
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.4;">
-                Copy these URLs for your 4 separate <strong style="color: #fff;">Browser Sources</strong> in OBS (Recommended size: 1920x1080).
+                Copy these URLs for your separate <strong style="color: #fff;">Browser Sources</strong> in OBS (Recommended size: 1920x1080).
             </p>
 
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 10px;">
                 <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">1. Lotto Carousel Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-lotto-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
@@ -715,7 +715,7 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 10px;">
                 <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">2. Spinning Wheel Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-wheel-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
@@ -723,16 +723,24 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 12px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Active Keyword Overlay</label>
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Lotto Keyword Overlay</label>
                 <div style="display: flex; gap: 8px;">
-                    <input type="text" id="obs-keyword-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
-                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-keyword-url', this)">Copy</button>
+                    <input type="text" id="obs-lotto-kw-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-lotto-kw-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">4. Wheel Keyword Overlay</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-wheel-kw-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-wheel-kw-url', this)">Copy</button>
                 </div>
             </div>
 
             <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">4. Winner Live Chat Overlay</label>
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">5. Winner Live Chat Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-chat-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-chat-url', this)">Copy</button>
@@ -871,7 +879,7 @@
                             </span>
                         </div>
                         <div class="lotto-input-wrapper">
-                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy" oninput="syncKeyword(this.value)">
+                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy" oninput="syncLottoKeyword(this.value)">
                         </div>
                     </div>
                     <div class="lotto-control-box" style="display: flex; flex-direction: column; justify-content: space-between;">
@@ -935,7 +943,7 @@
                             </span>
                         </div>
                         <div class="lotto-input-wrapper">
-                            <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel" oninput="syncKeyword(this.value)">
+                            <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel" oninput="syncWheelKeyword(this.value)">
                         </div>
                     </div>
                     <div class="lotto-config-row" style="display: none;">
@@ -1082,14 +1090,13 @@
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
-        const itemWidth = 220; // Corrected item width matching CSS (.carousel-item width + margins)
+        const itemWidth = 220; 
         const itemsCount = 45; 
 
         // SVG EYE ICONS
         const eyeOpenSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
         const eyeOffSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
 
-        // --- GET CURRENT CHANNEL KEY FOR FIREBASE ---
         function getActiveChannel() {
             return targetChannelName || loggedInKickUser?.slug || localStorage.getItem('kick_target_channel') || 'default_streamer';
         }
@@ -1100,7 +1107,8 @@
             const baseUrl = window.location.origin + window.location.pathname;
             document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto&channel=${channel}`;
             document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel&channel=${channel}`;
-            document.getElementById('obs-keyword-url').value = `${baseUrl}?mode=overlay&view=keyword&channel=${channel}`;
+            document.getElementById('obs-lotto-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=lotto&channel=${channel}`;
+            document.getElementById('obs-wheel-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=wheel&channel=${channel}`;
             document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat&channel=${channel}`;
             document.getElementById('obs-modal').style.display = 'flex';
         }
@@ -1120,20 +1128,20 @@
         }
         window.copyObsUrl = copyObsUrl;
 
-        // SYNC KEYWORD & CHAT TARGET TO FIREBASE
-        function syncKeyword(val) {
+        // INDEPENDENT KEYWORD & CHAT SYNC
+        function syncLottoKeyword(val) {
             const cleanVal = val.trim();
             const channel = getActiveChannel().toLowerCase();
-            
-            const lottoIn = document.getElementById('lotto-keyword-input');
-            const wheelIn = document.getElementById('wheel-keyword-input');
-            if (lottoIn && lottoIn.value !== cleanVal) lottoIn.value = cleanVal;
-            if (wheelIn && wheelIn.value !== cleanVal) wheelIn.value = cleanVal;
-
-            set(ref(db, `channels/${channel}/keyword`), cleanVal);
-            updateObsKeywordDisplay(cleanVal);
+            set(ref(db, `channels/${channel}/lottoKeyword`), cleanVal);
         }
-        window.syncKeyword = syncKeyword;
+        window.syncLottoKeyword = syncLottoKeyword;
+
+        function syncWheelKeyword(val) {
+            const cleanVal = val.trim();
+            const channel = getActiveChannel().toLowerCase();
+            set(ref(db, `channels/${channel}/wheelKeyword`), cleanVal);
+        }
+        window.syncWheelKeyword = syncWheelKeyword;
 
         function syncChatTarget(val) {
             const cleanVal = val.trim();
@@ -1159,22 +1167,23 @@
             if (params.get('mode') === 'overlay') {
                 document.body.classList.add('obs-overlay-mode');
                 const view = params.get('view') || 'lotto';
+                const type = params.get('type') || 'lotto';
                 const channel = (params.get('channel') || 'default_streamer').toLowerCase();
                 switchWorkspace(view);
 
-                // Listen to Firebase Real-Time DB for Keyword
-                onValue(ref(db, `channels/${channel}/keyword`), (snapshot) => {
-                    const kw = snapshot.val() || 'fishy';
-                    updateObsKeywordDisplay(kw);
-                });
+                if (view === 'keyword') {
+                    const kwPath = type === 'wheel' ? `channels/${channel}/wheelKeyword` : `channels/${channel}/lottoKeyword`;
+                    onValue(ref(db, kwPath), (snapshot) => {
+                        const kw = snapshot.val() || (type === 'wheel' ? 'wheel' : 'fishy');
+                        updateObsKeywordDisplay(kw);
+                    });
+                }
 
-                // Listen to Firebase Real-Time DB for Chat Target
                 onValue(ref(db, `channels/${channel}/chatTarget`), (snapshot) => {
                     const target = snapshot.val() || '';
                     updateObsChatTargetDisplay(target);
                 });
 
-                // Listen to Firebase Real-Time DB for Actions (Spin/Roll)
                 onValue(ref(db, `channels/${channel}/action`), (snapshot) => {
                     const action = snapshot.val();
                     if (action && action.timestamp && (Date.now() - action.timestamp < 10000)) {
@@ -1186,7 +1195,6 @@
                     }
                 });
 
-                // Listen to Firebase Real-Time DB for Chat Messages
                 onValue(ref(db, `channels/${channel}/chatMessage`), (snapshot) => {
                     const msg = snapshot.val();
                     if (msg && msg.timestamp && (Date.now() - msg.timestamp < 10000)) {
@@ -1196,12 +1204,17 @@
 
             } else {
                 const channel = getActiveChannel().toLowerCase();
-                onValue(ref(db, `channels/${channel}/keyword`), (snapshot) => {
+                onValue(ref(db, `channels/${channel}/lottoKeyword`), (snapshot) => {
                     const kw = snapshot.val();
                     if (kw) {
                         const lottoIn = document.getElementById('lotto-keyword-input');
-                        const wheelIn = document.getElementById('wheel-keyword-input');
                         if (lottoIn && lottoIn.value !== kw) lottoIn.value = kw;
+                    }
+                });
+                onValue(ref(db, `channels/${channel}/wheelKeyword`), (snapshot) => {
+                    const kw = snapshot.val();
+                    if (kw) {
+                        const wheelIn = document.getElementById('wheel-keyword-input');
                         if (wheelIn && wheelIn.value !== kw) wheelIn.value = kw;
                     }
                 });
@@ -1219,7 +1232,6 @@
                 renderTournamentBracket();
             }
 
-            // Update all rendered default avatars on screen to match new theme color
             document.querySelectorAll('img').forEach(img => {
                 if (img.src.startsWith('data:image/svg+xml')) {
                     img.src = getDefaultAvatar();
@@ -1859,7 +1871,7 @@
         }
 
         function triggerLottoWinnerReveal(winner) {
-            // CLEAR PREVIOUS WINNER CHAT AND SET NEW WINNER TARGET
+            // CLEAR PREVIOUS CHAT & ASSIGN WINNER NOW (NO SPOILERS)
             const lottoChat = document.getElementById('lotto-chat-container');
             if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
             
@@ -2023,7 +2035,7 @@
         }
 
         function triggerWheelWinnerReveal(winner) {
-            // CLEAR PREVIOUS WINNER CHAT AND SET NEW WINNER TARGET
+            // CLEAR PREVIOUS CHAT & ASSIGN WINNER NOW (NO SPOILERS)
             const lottoChat = document.getElementById('lotto-chat-container');
             if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
             
