@@ -7,17 +7,18 @@
     <style>
         :root {
             --accent-green: #22c55e;
-            --accent-green-dark: #15803d;
-            --bg-dark: #020402;
-            --bg-card: #060a06;
-            --border-color: #142417;
-            --text-muted: #6b7280;
+            --accent-green-hover: #16a34a;
+            --bg-dark: #07120a;
+            --bg-card: #0c1a10;
+            --border-color: #1e3a24;
+            --text-main: #f0fdf4;
+            --text-muted: #86efac;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg-dark);
-            color: #ffffff;
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,6 +43,56 @@
             pointer-events: none;
         }
 
+        /* Mandatory Kick Login Modal on Startup */
+        .kick-login-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(5, 15, 8, 0.92);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .kick-login-modal {
+            background-color: var(--bg-card);
+            padding: 45px;
+            border-radius: 24px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+            text-align: center;
+            width: 440px;
+        }
+
+        .password-input {
+            width: calc(100% - 30px);
+            background-color: #040a06;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: #ffffff;
+            padding: 14px 18px;
+            font-size: 1.3rem;
+            outline: none;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .password-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        .password-error {
+            color: #f43f5e;
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            display: none;
+        }
+
         /* Top Navigation Controls */
         .workspace-navbar {
             position: fixed;
@@ -51,11 +102,11 @@
             z-index: 999;
             display: flex;
             gap: 10px;
-            background-color: #060a06;
-            padding: 6px 12px;
-            border-radius: 12px;
+            background-color: var(--bg-card);
+            padding: 6px 14px;
+            border-radius: 14px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             align-items: center;
         }
 
@@ -64,7 +115,7 @@
             border: 1px solid transparent;
             color: var(--text-muted);
             padding: 6px 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
             text-transform: uppercase;
@@ -75,19 +126,19 @@
         .workspace-btn.active {
             background-color: var(--accent-green);
             border-color: var(--accent-green);
-            color: #020402;
+            color: #040c06;
         }
 
         .workspace-btn:hover:not(.active) {
-            color: #e2e8f0;
+            color: #ffffff;
         }
 
         .admin-toggle-btn, .kick-auth-btn {
-            background-color: #060a06;
+            background-color: #040c06;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             padding: 6px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
             font-size: 0.78rem;
@@ -105,7 +156,7 @@
         .kick-auth-btn.logged-in {
             border-color: var(--accent-green);
             color: var(--accent-green);
-            background-color: rgba(34, 197, 94, 0.08);
+            background-color: rgba(34, 197, 94, 0.12);
         }
 
         .kick-user-avatar {
@@ -116,55 +167,6 @@
             border: 1px solid var(--accent-green);
         }
 
-        /* Kick Login Modal */
-        .kick-login-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(2, 4, 2, 0.85);
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .kick-login-modal {
-            background-color: #060a06;
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-            text-align: center;
-            width: 420px;
-        }
-
-        .password-input {
-            width: calc(100% - 30px);
-            background-color: #020402;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            color: #ffffff;
-            padding: 12px 15px;
-            font-size: 1.3rem;
-            outline: none;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .password-input:focus {
-            border-color: var(--accent-green);
-        }
-
-        .password-error {
-            color: #f43f5e;
-            font-weight: 800;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            display: none;
-        }
-
         /* Slide-out Admin Panel */
         .admin-panel {
             position: fixed;
@@ -172,7 +174,7 @@
             right: -500px;
             width: 480px;
             height: 100vh;
-            background-color: #040704;
+            background-color: #060f08;
             border-left: 1px solid var(--border-color);
             z-index: 1000;
             box-shadow: -15px 0 50px rgba(0,0,0,0.9);
@@ -211,7 +213,7 @@
 
         .admin-section {
             margin-bottom: 30px;
-            background-color: #060a06;
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
             padding: 18px;
@@ -242,11 +244,11 @@
         }
 
         .admin-field {
-            background-color: #020402;
+            background-color: #040a06;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: #ffffff;
-            padding: 9px 12px;
+            padding: 10px 14px;
             font-size: 1.1rem;
             outline: none;
         }
@@ -268,11 +270,11 @@
         }
         .admin-panel-scrollable::-webkit-scrollbar-track,
         .lotto-scrollable::-webkit-scrollbar-track {
-            background: #020402;
+            background: #040a06;
         }
         .admin-panel-scrollable::-webkit-scrollbar-thumb,
         .lotto-scrollable::-webkit-scrollbar-thumb {
-            background: #142417;
+            background: var(--border-color);
             border-radius: 4px;
         }
         .admin-panel-scrollable::-webkit-scrollbar-thumb:hover,
@@ -304,13 +306,13 @@
         }
 
         .btn {
-            background: #090e09;
+            background: #0c1a10;
             color: var(--text-muted);
             border: 1px solid var(--border-color);
             padding: 12px 24px;
             font-size: 1.2rem;
             font-weight: 900;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
@@ -319,7 +321,7 @@
         }
 
         .btn:hover:not(:disabled) {
-            background: #0d170e;
+            background: #122b17;
             color: var(--accent-green);
             border-color: var(--accent-green);
         }
@@ -359,7 +361,7 @@
         .lotto-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border-radius: 18px;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -367,6 +369,7 @@
             position: relative;
             height: 100%;
             overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
         .lotto-card-title {
@@ -386,9 +389,9 @@
         }
 
         .lotto-pill-count {
-            background-color: rgba(34, 197, 94, 0.15);
+            background-color: rgba(34, 197, 94, 0.2);
             color: var(--accent-green);
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 900;
@@ -417,10 +420,10 @@
         }
 
         .lotto-control-box {
-            background-color: #030603;
+            background-color: #040a06;
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 18px;
+            border-radius: 14px;
+            padding: 14px 18px;
             box-sizing: border-box;
         }
 
@@ -436,7 +439,7 @@
 
         .lotto-keyword-field {
             width: 100%;
-            background-color: #010301;
+            background-color: #020503;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             color: #fff;
@@ -462,7 +465,7 @@
         .lotto-slider {
             -webkit-appearance: none;
             width: 100%;
-            background: #142417;
+            background: #193820;
             height: 6px;
             border-radius: 3px;
             outline: none;
@@ -480,11 +483,11 @@
 
         .lotto-roll-btn {
             background: var(--accent-green);
-            color: #020402;
+            color: #040c06;
             border: none;
             width: 100%;
             padding: 16px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 1.4rem;
             font-weight: 950;
             letter-spacing: 2px;
@@ -496,10 +499,12 @@
             gap: 12px;
             transition: all 0.2s ease;
             flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(34, 197, 94, 0.3);
         }
 
         .lotto-roll-btn:hover {
-            background: #16a34a;
+            background: var(--accent-green-hover);
+            transform: scale(1.01);
         }
 
         .eligible-user-row {
@@ -507,9 +512,9 @@
             align-items: center;
             gap: 12px;
             padding: 8px 12px;
-            background-color: #030603;
+            background-color: #040a06;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 8px;
             font-size: 1rem;
             font-weight: bold;
@@ -523,7 +528,7 @@
             border: 1.5px solid var(--accent-green);
             object-fit: cover;
             flex-shrink: 0;
-            background-color: #060a06;
+            background-color: #060f08;
         }
 
         .lotto-chat-row {
@@ -542,9 +547,9 @@
         .lotto-spinner-outer {
             width: 100%;
             height: 260px; 
-            background-color: #030603;
+            background-color: #040a06;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -557,7 +562,7 @@
             position: absolute;
             width: 100%;
             height: 180px;
-            background-color: #020402;
+            background-color: #020503;
             border: 1px solid var(--border-color);
             border-radius: 16px;
             overflow: hidden;
@@ -595,10 +600,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
+            border-radius: 14px;
             margin: 0 12px;
             text-align: center;
-            background-color: #060a06;
+            background-color: #08120b;
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
@@ -622,7 +627,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 85%;
-            background: #020402;
+            background: #040a06;
             padding: 3px;
             font-weight: 800;
             font-size: 0.8rem;
@@ -631,7 +636,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border-radius: 4px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
         }
 
@@ -660,7 +665,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(2, 4, 2, 0.92);
+            background: rgba(5, 15, 8, 0.92);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -680,13 +685,14 @@
 
         .revealed-card {
             border: 2px solid var(--accent-green);
-            border-radius: 16px;
-            background-color: #060a06;
+            border-radius: 18px;
+            background-color: var(--bg-card);
             padding: 30px 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             min-width: 380px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
         .revealed-winner-text {
@@ -701,19 +707,16 @@
 </head>
 <body>
 
-    <!-- Kick Login Modal -->
+    <!-- Mandatory Kick Login Modal on Startup -->
     <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal">
-            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.6rem;">LOGIN WITH KICK</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Enter your Kick username to link your session.</p>
+            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem;">CONNECT KICK ACCOUNT</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">Enter your Kick channel name to login and link your live chat stream.</p>
             
-            <input type="text" id="kick-login-username" class="password-input" placeholder="Username..." autocomplete="off">
+            <input type="text" id="kick-login-username" class="password-input" placeholder="Kick Channel Name..." autocomplete="off">
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
-            <div style="display: flex; gap: 10px;">
-                <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #020402;" onclick="verifyAndLoginKick()">CONNECT</button>
-                <button class="btn" style="background: #142417; color: var(--text-muted);" onclick="closeKickLoginModal()">CANCEL</button>
-            </div>
+            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #040c06;" onclick="verifyAndLoginKick()">CONNECT & LOGIN</button>
         </div>
     </div>
 
@@ -745,7 +748,7 @@
             <div class="admin-section">
                 <h3 class="admin-section-title">Stream Configuration</h3>
                 <div class="admin-input-group">
-                    <label for="kick-channel-input">Target Kick Channel</label>
+                    <label for="kick-channel-input">Connected Kick Channel</label>
                     <input type="text" id="kick-channel-input" class="admin-field" placeholder="Kick Channel" value="">
                 </div>
                 <button id="btn-update-channel" class="btn-clear-board" style="width: 100%; margin-top: 12px; padding: 10px;" onclick="updateKickChannel()">Update Connection</button>
@@ -808,7 +811,7 @@
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #020402; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #020503; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
                 </div>
                 <div id="lotto-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -874,7 +877,7 @@
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #020402; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #020503; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
                 </div>
                 <div id="wheel-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -886,12 +889,12 @@
     <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW -->
     <div id="tournament-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1400px; height: calc(100vh - 100px); box-sizing: border-box; gap: 10px; z-index: 10;">
-            <div style="display: flex; gap: 15px; background-color: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0;">
+            <div style="display: flex; gap: 15px; background-color: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 14px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem;">Tournament Bracket</span>
                 
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="color: var(--text-muted); font-weight: 800; font-size: 0.9rem;">Size:</span>
-                    <select id="tournament-size-select" class="admin-field" style="padding: 4px 8px; font-size: 0.95rem; font-weight: 900; color: var(--accent-green); cursor: pointer;" onchange="changeTournamentSize(this.value)">
+                    <select id="tournament-size-select" class="admin-field" style="padding: 4px 10px; font-size: 0.95rem; font-weight: 900; color: var(--accent-green); cursor: pointer;" onchange="changeTournamentSize(this.value)">
                         <option value="2">2 Teams</option>
                         <option value="4">4 Teams</option>
                         <option value="8" selected>8 Teams</option>
@@ -900,10 +903,10 @@
                 </div>
 
                 <div style="width: 1px; height: 20px; background-color: var(--border-color); margin: 0 5px;"></div>
-                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle</button>
-                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset</button>
+                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle Teams</button>
+                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
-            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 10px 15px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%;"></div>
+            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 10px 15px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%;"></div>
         </div>
     </div>
 
@@ -962,32 +965,47 @@
         const itemWidth = 140; 
         const itemsCount = 45; 
 
-        // --- KICK LOGIN HANDLERS ---
+        // --- MANDATORY KICK LOGIN ON STARTUP ---
+        function checkStartupKickAuth() {
+            const saved = localStorage.getItem('kick_logged_in_user');
+            const savedChannel = localStorage.getItem('kick_target_channel');
+            if (saved) {
+                try {
+                    loggedInKickUser = JSON.parse(saved);
+                    updateKickAuthUI();
+                    if (savedChannel) {
+                        targetChannelName = savedChannel;
+                        document.getElementById('kick-channel-input').value = savedChannel;
+                        fetchChatroomId(savedChannel).then(res => {
+                            if (res) {
+                                targetChatroomId = res.chatroomId;
+                                connectToKickChat();
+                            }
+                        });
+                    }
+                    return;
+                } catch(e) {}
+            }
+            // If not logged in, prompt modal
+            document.getElementById('kick-login-modal').style.display = 'flex';
+            document.getElementById('kick-login-username').focus();
+        }
+
         function handleKickAuthClick() {
             if (loggedInKickUser) {
                 if (confirm(`Logout from @${loggedInKickUser.username}?`)) {
                     loggedInKickUser = null;
                     localStorage.removeItem('kick_logged_in_user');
+                    localStorage.removeItem('kick_target_channel');
+                    localStorage.removeItem('kick_target_chatroom');
                     updateKickAuthUI();
+                    document.getElementById('kick-login-modal').style.display = 'flex';
                 }
             } else {
-                openKickLoginModal();
+                document.getElementById('kick-login-modal').style.display = 'flex';
             }
         }
         window.handleKickAuthClick = handleKickAuthClick;
-
-        function openKickLoginModal() {
-            document.getElementById('kick-login-modal').style.display = 'flex';
-            document.getElementById('kick-login-username').focus();
-        }
-        window.openKickLoginModal = openKickLoginModal;
-
-        function closeKickLoginModal() {
-            document.getElementById('kick-login-modal').style.display = 'none';
-            document.getElementById('kick-login-username').value = '';
-            document.getElementById('kick-login-error').style.display = 'none';
-        }
-        window.closeKickLoginModal = closeKickLoginModal;
 
         async function verifyAndLoginKick() {
             const inputVal = document.getElementById('kick-login-username').value.trim();
@@ -996,19 +1014,30 @@
             
             if (!inputVal) return;
 
-            btn.textContent = "Verifying...";
+            btn.textContent = "Connecting Channel...";
             btn.disabled = true;
 
-            const avatarUrl = await fetchKickAvatar(inputVal);
-            if (avatarUrl && avatarUrl !== DEFAULT_AVATAR) {
-                loggedInKickUser = { username: inputVal, avatar: avatarUrl };
+            const resolved = await fetchChatroomId(inputVal);
+            if (resolved) {
+                targetChannelName = resolved.slug;
+                targetChatroomId = resolved.chatroomId;
+                
+                const avatarUrl = resolved.avatar || DEFAULT_AVATAR;
+                loggedInKickUser = { username: targetChannelName, avatar: avatarUrl };
+                
                 localStorage.setItem('kick_logged_in_user', JSON.stringify(loggedInKickUser));
-                closeKickLoginModal();
+                localStorage.setItem('kick_target_channel', targetChannelName);
+                localStorage.setItem('kick_target_chatroom', targetChatroomId);
+
+                document.getElementById('kick-channel-input').value = targetChannelName;
+                document.getElementById('kick-login-modal').style.display = 'none';
+                
                 updateKickAuthUI();
+                connectToKickChat();
             } else {
                 errorEl.style.display = 'block';
             }
-            btn.textContent = "CONNECT";
+            btn.textContent = "CONNECT & LOGIN";
             btn.disabled = false;
         }
         window.verifyAndLoginKick = verifyAndLoginKick;
@@ -1034,21 +1063,26 @@
             }
         }
 
-        async function fetchKickAvatar(username) {
-            if (!username) return DEFAULT_AVATAR;
+        async function fetchChatroomId(channelName) {
+            const cleanName = channelName.trim().toLowerCase();
+            if (!cleanName) return null;
             try {
-                const response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(username)}`);
+                const response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName)}`);
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.user && data.user.profile_pic) {
-                        return data.user.profile_pic;
+                    if (data && data.chatroom && data.chatroom.id) {
+                        return {
+                            chatroomId: data.chatroom.id,
+                            slug: data.slug,
+                            avatar: (data.user && data.user.profile_pic) ? data.user.profile_pic : DEFAULT_AVATAR
+                        };
                     }
                 }
             } catch (e) {}
-            return DEFAULT_AVATAR;
+            return null;
         }
 
-        // Canvas Dust Animation
+        // Canvas Background Dust Animation
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let dustParticles = [];
@@ -1120,9 +1154,6 @@
         }
         window.switchWorkspace = switchWorkspace;
 
-        function workspace_btn_wheel_click() { switchWorkspace('wheel'); }
-        window.workspace_btn_wheel_click = workspace_btn_wheel_click;
-
         function toggleKeywordVisibility() {
             const field = document.getElementById('lotto-keyword-input');
             const btn = document.getElementById('keyword-hide-btn');
@@ -1147,21 +1178,6 @@
         // Chat & WebSocket Connection
         let chatSocket = null;
 
-        async function fetchChatroomId(channelName) {
-            const cleanName = channelName.trim().toLowerCase();
-            if (!cleanName) return null;
-            try {
-                const response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.chatroom && data.chatroom.id) {
-                        return { chatroomId: data.chatroom.id, slug: data.slug };
-                    }
-                }
-            } catch (e) {}
-            return null;
-        }
-
         async function updateKickChannel() {
             const inputEl = document.getElementById('kick-channel-input');
             const newChannelName = inputEl.value.trim().replace(/\s+/g, '');
@@ -1174,6 +1190,7 @@
                 localStorage.setItem('kick_target_channel', targetChannelName);
                 localStorage.setItem('kick_target_chatroom', targetChatroomId);
                 connectToKickChat();
+                alert(`Connected successfully to @${targetChannelName}`);
             } else {
                 alert("Could not fetch channel chatroom ID.");
             }
@@ -1181,7 +1198,9 @@
         window.updateKickChannel = updateKickChannel;
 
         function connectToKickChat() {
-            if (!targetChannelName) return;
+            if (!targetChannelName || !targetChatroomId) return;
+            if (chatSocket) { try { chatSocket.close(); } catch(e) {} }
+
             const wsUrl = "wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&cluster=us2";
             try {
                 chatSocket = new WebSocket(wsUrl);
@@ -1316,8 +1335,7 @@
             if (db) set(ref(db, `lottoEntries/${winner}`), null);
 
             document.getElementById('epic-overlay').classList.add('active');
-            const revealText = document.getElementById('lotto-winner-reveal-name');
-            revealText.textContent = winner;
+            document.getElementById('lotto-winner-reveal-name').textContent = winner;
 
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
             autoCloseTimeout = setTimeout(closeReveal, 3500);
@@ -1385,7 +1403,7 @@
                 ctx.fillStyle = '#060a06';
                 ctx.fill();
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#142417';
+                ctx.strokeStyle = '#1e3a24';
                 ctx.stroke();
                 ctx.fillStyle = 'var(--text-muted)';
                 ctx.font = 'bold 16px Segoe UI';
@@ -1396,7 +1414,7 @@
             }
 
             const angleStep = (Math.PI * 2) / entries.length;
-            const colors = ['#090e09', '#0f1c10', '#132815'];
+            const colors = ['#0c1a10', '#102416', '#152f1c'];
 
             entries.forEach((user, index) => {
                 const startAng = index * angleStep;
@@ -1407,7 +1425,7 @@
                 ctx.fillStyle = colors[index % colors.length];
                 ctx.fill();
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = '#142417';
+                ctx.strokeStyle = '#1e3a24';
                 ctx.stroke();
 
                 ctx.save();
@@ -1468,7 +1486,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Functions
+        // Tournament Bracket Functions (Fully Restored)
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1548,19 +1566,19 @@
 
             tournamentRounds.forEach((round, r) => {
                 const roundCol = document.createElement('div');
-                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:160px;flex-grow:1;";
+                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:180px;flex-grow:1;z-index:2;";
                 
                 if (r === tournamentRounds.length - 1) {
                     roundCol.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;">
-                        <input type="text" value="${round[0] || ''}" placeholder="Winner" style="background:#090e09;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:8px;border-radius:8px;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},0,this.value)">
+                        <input type="text" value="${round[0] || ''}" placeholder="Winner" style="background:#0c1a10;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(34,197,94,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
                     </div>`;
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
                         const box = document.createElement('div');
-                        box.style.cssText = "background:#030603;border:1px solid var(--border-color);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:4px;";
+                        box.style.cssText = "background:#040a06;border:1px solid var(--border-color);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 15px rgba(0,0,0,0.4);";
                         box.innerHTML = `
-                            <div style="display:flex;gap:4px;"><input type="text" value="${round[m]||''}" style="background:transparent;border:none;color:#fff;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" value="${tournamentScores[r][m]||''}" style="background:#020402;border:1px solid var(--border-color);color:var(--accent-green);width:35px;text-align:center;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;">➔</button></div>
-                            <div style="display:flex;gap:4px;"><input type="text" value="${round[m+1]||''}" style="background:transparent;border:none;color:#fff;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" value="${tournamentScores[r][m+1]||''}" style="background:#020402;border:1px solid var(--border-color);color:var(--accent-green);width:35px;text-align:center;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;">➔</button></div>
+                            <div style="display:flex;gap:6px;background:#08140b;padding:4px 8px;border-radius:6px;border:1px solid #142818;"><input type="text" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#040a06;border:1px solid var(--border-color);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
+                            <div style="display:flex;gap:6px;background:#08140b;padding:4px 8px;border-radius:6px;border:1px solid #142818;"><input type="text" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#040a06;border:1px solid var(--border-color);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
                         `;
                         roundCol.appendChild(box);
                     }
@@ -1590,10 +1608,7 @@
         }
 
         // Initialization
-        const savedKickUser = localStorage.getItem('kick_logged_in_user');
-        if (savedKickUser) {
-            try { loggedInKickUser = JSON.parse(savedKickUser); updateKickAuthUI(); } catch(e) {}
-        }
+        checkStartupKickAuth();
         initTournamentData(8);
         renderTournamentBracket();
 
