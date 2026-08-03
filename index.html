@@ -138,145 +138,6 @@
             color: #ffffff;
         }
 
-        .admin-toggle-btn {
-            background-color: #000000;
-            border: 1px solid var(--border-gray);
-            color: var(--text-muted);
-            padding: 5px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 0.72rem;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-        }
-
-        .admin-toggle-btn:hover {
-            border-color: var(--accent-green);
-            color: var(--accent-green);
-        }
-
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            right: -500px;
-            width: 480px;
-            height: 100vh;
-            background-color: #0b0b0e;
-            border-left: 1px solid var(--border-gray);
-            z-index: 1000;
-            box-shadow: -15px 0 50px rgba(0,0,0,0.95);
-            transition: right 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            padding: 30px;
-        }
-
-        .admin-panel.open {
-            right: 0;
-        }
-
-        .admin-panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-gray);
-            padding-bottom: 18px;
-            margin-bottom: 22px;
-        }
-
-        .admin-panel-close {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 2rem;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .admin-panel-close:hover {
-            color: #f43f5e;
-        }
-
-        .admin-section {
-            margin-bottom: 30px;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-gray);
-            border-radius: 14px;
-            padding: 18px;
-        }
-
-        .admin-section-title {
-            color: var(--accent-green);
-            font-size: 1.1rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 0 0 15px 0;
-        }
-
-        .admin-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 15px;
-        }
-
-        .admin-input-group label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 0.75px;
-        }
-
-        .admin-field {
-            background-color: #000000;
-            border: 1px solid var(--border-gray);
-            border-radius: 8px;
-            color: #ffffff;
-            padding: 10px 14px;
-            font-size: 1.1rem;
-            outline: none;
-        }
-
-        .admin-field:focus {
-            border-color: var(--accent-green);
-        }
-
-        .admin-panel-scrollable {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 8px;
-        }
-
-        .admin-panel-scrollable::-webkit-scrollbar,
-        .lotto-scrollable::-webkit-scrollbar {
-            width: 8px;
-        }
-        .admin-panel-scrollable::-webkit-scrollbar-track,
-        .lotto-scrollable::-webkit-scrollbar-track {
-            background: #000000;
-        }
-        .admin-panel-scrollable::-webkit-scrollbar-thumb,
-        .lotto-scrollable::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 4px;
-        }
-
-        #lotto-users-container, #wheel-users-container {
-            overflow-y: scroll !important;
-        }
-        #lotto-users-container::-webkit-scrollbar-thumb,
-        #wheel-users-container::-webkit-scrollbar-thumb {
-            background: var(--accent-green);
-            border-radius: 4px;
-        }
-
         .workspace-view {
             display: none;
             width: 100%;
@@ -720,10 +581,6 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
-        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            Settings
-        </button>
 
         <!-- Kick-Style Profile Pill & Dropdown Menu -->
         <div id="profile-pill-container" style="position: relative; display: inline-block; margin-left: 4px;">
@@ -750,25 +607,6 @@
                     <button id="dropdown-action-btn" onclick="handleProfileDropdownAction()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Side Admin Panel -->
-    <div id="admin-panel" class="admin-panel">
-        <div class="admin-panel-header">
-            <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">Control Console</h2>
-            <button class="admin-panel-close" onclick="toggleAdminPanel()">&times;</button>
-        </div>
-
-        <div class="admin-panel-scrollable">
-            <div class="admin-section">
-                <h3 class="admin-section-title">Stream Configuration</h3>
-                <div class="admin-input-group">
-                    <label for="kick-channel-input">Connected Kick Channel</label>
-                    <input type="text" id="kick-channel-input" class="admin-field" placeholder="Kick Channel" value="">
-                </div>
-                <button id="btn-update-channel" class="btn-clear-board" style="width: 100%; margin-top: 12px; padding: 10px;" onclick="updateKickChannel()">Update Connection</button>
             </div>
         </div>
     </div>
@@ -911,7 +749,7 @@
                 
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="color: var(--text-muted); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Size:</span>
-                    <select id="tournament-size-select" class="admin-field" style="width: auto; padding: 6px 12px; font-weight: 900; color: var(--accent-green); cursor: pointer;" onchange="changeTournamentSize(this.value)">
+                    <select id="tournament-size-select" style="background: #000000; border: 1px solid var(--border-gray); border-radius: 8px; color: #ffffff; padding: 6px 14px; font-size: 1rem; outline: none; width: auto; font-weight: 900; color: var(--accent-green); cursor: pointer;" onchange="changeTournamentSize(this.value)">
                         <option value="2">2 Teams</option>
                         <option value="4">4 Teams</option>
                         <option value="8" selected>8 Teams</option>
@@ -992,7 +830,6 @@
                     loggedInKickUser = JSON.parse(saved);
                     if (savedChannel) {
                         targetChannelName = savedChannel;
-                        document.getElementById('kick-channel-input').value = savedChannel;
                         fetchChatroomId(savedChannel).then(res => {
                             if (res) {
                                 targetChatroomId = res.chatroomId;
@@ -1167,7 +1004,6 @@
             localStorage.setItem('kick_target_channel', targetChannelName);
             localStorage.setItem('kick_target_chatroom', targetChatroomId);
 
-            document.getElementById('kick-channel-input').value = targetChannelName;
             document.getElementById('kick-login-modal').style.display = 'none';
 
             updateProfileView();
@@ -1343,31 +1179,7 @@
         }
         window.toggleWheelKeywordVisibility = toggleWheelKeywordVisibility;
 
-        function toggleAdminPanel() {
-            document.getElementById('admin-panel').classList.toggle('open');
-        }
-        window.toggleAdminPanel = toggleAdminPanel;
-
         let chatSocket = null;
-
-        async function updateKickChannel() {
-            const inputEl = document.getElementById('kick-channel-input');
-            const newChannelName = inputEl.value.trim().replace(/\s+/g, '');
-            if (!newChannelName) return;
-
-            const resolved = await fetchChatroomId(newChannelName);
-            if (resolved) {
-                targetChannelName = resolved.slug;
-                targetChatroomId = resolved.chatroomId;
-                localStorage.setItem('kick_target_channel', targetChannelName);
-                localStorage.setItem('kick_target_chatroom', targetChatroomId);
-                connectToKickChat();
-                alert(`Connected successfully to @${resolved.originalName}`);
-            } else {
-                alert("Could not fetch channel chatroom ID.");
-            }
-        }
-        window.updateKickChannel = updateKickChannel;
 
         function connectToKickChat() {
             if (!targetChannelName || !targetChatroomId) return;
