@@ -1806,6 +1806,10 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
+            // AUTO-SET WINNER CHAT TARGET
+            document.getElementById('active-winner-chat-target').value = winner;
+            syncChatTarget(winner);
+
             const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_LOTTO',
@@ -1820,6 +1824,10 @@
 
         async function startLottoSpinSequence(winner, pool) {
             if (!pool || pool.length === 0) return;
+
+            // Auto-populate winner chat target if triggered remotely via OBS/sync
+            document.getElementById('active-winner-chat-target').value = winner;
+            updateObsChatTargetDisplay(winner);
 
             const strip = [];
             const targetIdx = itemsCount - 6;
@@ -1980,6 +1988,10 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
+            // AUTO-SET WINNER CHAT TARGET
+            document.getElementById('active-winner-chat-target').value = winner;
+            syncChatTarget(winner);
+
             const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_WHEEL',
@@ -1996,6 +2008,10 @@
             if (!entries || entries.length === 0) return;
             const index = entries.indexOf(winner);
             if (index === -1) return;
+
+            // Auto-populate winner chat target if triggered remotely via OBS/sync
+            document.getElementById('active-winner-chat-target').value = winner;
+            updateObsChatTargetDisplay(winner);
 
             const canvas = document.getElementById('wheel-canvas');
             if (!canvas) return;
