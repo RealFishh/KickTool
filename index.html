@@ -753,7 +753,7 @@
 
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #000000; border: 1px solid var(--border-gray); padding: 15px; border-radius: 12px;">
                 <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
-                    <img id="modal-stat-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+                    <img id="modal-stat-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=getDefaultAvatar()">
                 </div>
                 <div style="display: flex; flex-direction: column; overflow: hidden;">
                     <span id="modal-stat-username" style="font-size: 1.2rem; font-weight: 950; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">---</span>
@@ -814,7 +814,7 @@
         <div id="profile-pill-container" style="position: relative; display: inline-block; margin-left: 4px;">
             <button id="profile-pill-btn" onclick="toggleProfileDropdown(event)" style="background: transparent; border: 1px solid var(--border-gray); padding: 3px 10px 3px 3px; border-radius: 30px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border-gray)'">
                 <div style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
-                    <img id="nav-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+                    <img id="nav-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=getDefaultAvatar()">
                 </div>
                 <span id="nav-profile-username" style="font-size: 0.75rem; font-weight: 800; color: #fff; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Log In</span>
                 <svg id="profile-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -824,7 +824,7 @@
             <div id="profile-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.9); width: 220px; z-index: 9999; overflow: hidden; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-gray);">
                     <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
-                        <img id="dropdown-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+                        <img id="dropdown-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=getDefaultAvatar()">
                     </div>
                     <div style="display: flex; flex-direction: column; overflow: hidden;">
                         <span id="dropdown-username" style="font-size: 0.95rem; font-weight: 950; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Not Logged In</span>
@@ -1052,7 +1052,13 @@
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
 
-        const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2353fc18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>';
+        // DYNAMIC DEFAULT AVATAR MATCHING CURRENT THEME COLOR
+        function getDefaultAvatar() {
+            const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#53fc18';
+            const encodedColor = encodeURIComponent(accent);
+            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${encodedColor}"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>`;
+        }
+        window.getDefaultAvatar = getDefaultAvatar;
 
         let targetChannelName = "";
         let targetChatroomId = ""; 
@@ -1294,7 +1300,7 @@
             const channelSlug = loggedInKickUser.slug || loggedInKickUser.username.toLowerCase();
             const channelUrl = `https://kick.com/${channelSlug}`;
 
-            document.getElementById('modal-stat-pfp').src = loggedInKickUser.avatar || DEFAULT_AVATAR;
+            document.getElementById('modal-stat-pfp').src = loggedInKickUser.avatar || getDefaultAvatar();
             document.getElementById('modal-stat-username').textContent = `@${loggedInKickUser.username}`;
             const linkEl = document.getElementById('modal-stat-link');
             linkEl.href = channelUrl;
@@ -1493,9 +1499,9 @@
                     `;
                 }
             } else {
-                if (navPfp) navPfp.src = DEFAULT_AVATAR;
+                if (navPfp) navPfp.src = getDefaultAvatar();
                 if (navUser) navUser.textContent = "Log In";
-                if (dropdownPfp) dropdownPfp.src = DEFAULT_AVATAR;
+                if (dropdownPfp) dropdownPfp.src = getDefaultAvatar();
                 if (dropdownUser) dropdownUser.textContent = "Not Logged In";
                 if (actionBtn) {
                     actionBtn.innerHTML = `
@@ -1507,10 +1513,10 @@
         }
 
         async function fetchKickAvatar(username) {
-            if (!username) return DEFAULT_AVATAR;
+            if (!username) return getDefaultAvatar();
             const cleanName = username.trim();
             if (kickAvatarCache.has(cleanName)) return kickAvatarCache.get(cleanName);
-            if (pendingAvatarFetches.has(cleanName)) return DEFAULT_AVATAR;
+            if (pendingAvatarFetches.has(cleanName)) return getDefaultAvatar();
 
             pendingAvatarFetches.add(cleanName);
             try {
@@ -1529,8 +1535,8 @@
             } catch (e) {}
 
             pendingAvatarFetches.delete(cleanName);
-            kickAvatarCache.set(cleanName, DEFAULT_AVATAR);
-            return DEFAULT_AVATAR;
+            kickAvatarCache.set(cleanName, getDefaultAvatar());
+            return getDefaultAvatar();
         }
 
         async function fetchChatroomId(channelName) {
@@ -1542,7 +1548,7 @@
                     const data = await response.json();
                     if (data && data.chatroom && data.chatroom.id) {
                         const originalName = (data.user && data.user.username) ? data.user.username : cleanName;
-                        const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : DEFAULT_AVATAR;
+                        const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : getDefaultAvatar();
                         kickAvatarCache.set(data.slug, avatar);
                         return {
                             chatroomId: data.chatroom.id,
@@ -1730,7 +1736,7 @@
                 
                 const img = document.createElement('img');
                 img.src = avatarUrl;
-                img.onerror = () => { img.src = DEFAULT_AVATAR; };
+                img.onerror = () => { img.src = getDefaultAvatar(); };
                 el.appendChild(img);
 
                 const span = document.createElement('span');
@@ -1822,7 +1828,7 @@
                 const img = document.createElement('img');
                 img.src = avatar;
                 img.className = 'lotto-carousel-avatar';
-                img.onerror = () => { img.src = DEFAULT_AVATAR; };
+                img.onerror = () => { img.src = getDefaultAvatar(); };
                 node.appendChild(img);
 
                 const span = document.createElement('span');
@@ -1888,7 +1894,7 @@
                 
                 const img = document.createElement('img');
                 img.src = avatarUrl;
-                img.onerror = () => { img.src = DEFAULT_AVATAR; };
+                img.onerror = () => { img.src = getDefaultAvatar(); };
                 el.appendChild(img);
 
                 const span = document.createElement('span');
@@ -2252,4 +2258,3 @@
     </script>
 </body>
 </html>
-
