@@ -717,7 +717,7 @@
             <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamername" autocomplete="off">
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
-            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONTINUE</button>
+            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONNECT CHANNEL</button>
         </div>
     </div>
 
@@ -726,12 +726,8 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Spinning Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
+        <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">Profile</button>
         
-        <button id="kick-auth-btn" class="kick-auth-btn" onclick="handleKickAuthClick()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-            <span id="kick-auth-btn-text">Login with Kick</span>
-        </button>
-
         <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Settings
@@ -911,6 +907,18 @@
         </div>
     </div>
 
+    <!-- WORKSPACE 4: PROFILE VIEW -->
+    <div id="profile-view" class="workspace-view">
+        <div class="lotto-card" style="width: 420px; height: 380px; margin: auto; align-items: center; justify-content: center; text-align: center; gap: 18px;">
+            <div class="lotto-card-title" style="width: 100%; justify-content: center;">Kick Profile</div>
+            <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 20px rgba(83, 252, 24, 0.3);">
+                <img id="profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+            </div>
+            <div id="profile-username-display" style="font-size: 1.6rem; font-weight: 900; color: #fff;">@username</div>
+            <button class="btn" style="background: #f43f5e; color: #fff; width: 220px; margin-top: 10px;" onclick="handleKickLogout()">Log Out</button>
+        </div>
+    </div>
+
     <!-- OVERLAYS -->
     <div id="epic-overlay" class="epic-overlay">
         <div id="lotto-reveal-card" class="revealed-card">
@@ -975,7 +983,7 @@
             if (saved) {
                 try {
                     loggedInKickUser = JSON.parse(saved);
-                    updateKickAuthUI();
+                    updateProfileView();
                     if (savedChannel) {
                         targetChannelName = savedChannel;
                         document.getElementById('kick-channel-input').value = savedChannel;
@@ -993,21 +1001,20 @@
             document.getElementById('kick-login-username').focus();
         }
 
-        function handleKickAuthClick() {
-            if (loggedInKickUser) {
-                if (confirm(`Logout from @${loggedInKickUser.username}?`)) {
-                    loggedInKickUser = null;
-                    localStorage.removeItem('kick_logged_in_user');
-                    localStorage.removeItem('kick_target_channel');
-                    localStorage.removeItem('kick_target_chatroom');
-                    updateKickAuthUI();
-                    document.getElementById('kick-login-modal').style.display = 'flex';
-                }
-            } else {
+        function handleKickLogout() {
+            if (confirm(`Logout from @${loggedInKickUser ? loggedInKickUser.username : ''}?`)) {
+                loggedInKickUser = null;
+                localStorage.removeItem('kick_logged_in_user');
+                localStorage.removeItem('kick_target_channel');
+                localStorage.removeItem('kick_target_chatroom');
+                updateProfileView();
+                switchWorkspace('lotto');
                 document.getElementById('kick-login-modal').style.display = 'flex';
+                document.getElementById('kick-login-username').value = '';
+                document.getElementById('kick-login-username').focus();
             }
         }
-        window.handleKickAuthClick = handleKickAuthClick;
+        window.handleKickLogout = handleKickLogout;
 
         let verificationWs = null;
         let verificationPollInterval = null;
@@ -1037,15 +1044,16 @@
             const chatroomId = resolved.chatroomId;
             const avatar = resolved.avatar;
 
-            // Render Verification Step in Modal
+            // Render Verification Step with Click-to-Copy
             modalBox.innerHTML = `
                 <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.6rem;">CHAT VERIFICATION</h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
                     To confirm ownership of <strong style="color:#fff;">@${channelSlug}</strong>, please send this exact command in your Kick chat:
                 </p>
-                <div style="background:#000000; border:2px dashed var(--accent-green); padding:15px; border-radius:12px; font-size:1.6rem; font-weight:900; color:var(--accent-green); letter-spacing:2px; margin-bottom:20px;">
+                <div title="Click to copy!" onclick="copyVerificationCode(this, '${verifyCode}')" style="background:#000000; border:2px dashed var(--accent-green); padding:15px; border-radius:12px; font-size:1.6rem; font-weight:900; color:var(--accent-green); letter-spacing:2px; margin-bottom:15px; cursor:pointer; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
                     !verify ${verifyCode}
                 </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">(Click code box to copy to clipboard)</div>
                 <div style="display:flex; align-items:center; justify-content:center; gap:8px; color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
                     <span style="display:inline-block; width:10px; height:10px; background:var(--accent-green); border-radius:50%; box-shadow:0 0 10px var(--accent-green);"></span>
                     Waiting for chat message...
@@ -1053,7 +1061,7 @@
                 <button class="btn" style="background:#27272a; color:#fff;" onclick="location.reload()">Cancel</button>
             `;
 
-            // Listen via WebSocket & Polling for the verification code
+            // Listen via WebSocket & Polling
             const wsUrl = "wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&cluster=us2";
             try {
                 verificationWs = new WebSocket(wsUrl);
@@ -1100,6 +1108,18 @@
         }
         window.startKickVerificationFlow = startKickVerificationFlow;
 
+        function copyVerificationCode(el, code) {
+            navigator.clipboard.writeText(`!verify ${code}`);
+            const originalHTML = el.innerHTML;
+            el.innerHTML = "COPIED!";
+            el.style.color = "#ffffff";
+            setTimeout(() => {
+                el.innerHTML = originalHTML;
+                el.style.color = "var(--accent-green)";
+            }, 1200);
+        }
+        window.copyVerificationCode = copyVerificationCode;
+
         function finalizeLogin(channelSlug, avatar, chatroomId) {
             if (verificationWs) { try { verificationWs.close(); } catch(e) {} }
             if (verificationPollInterval) clearInterval(verificationPollInterval);
@@ -1115,28 +1135,19 @@
             document.getElementById('kick-channel-input').value = targetChannelName;
             document.getElementById('kick-login-modal').style.display = 'none';
 
-            updateKickAuthUI();
+            updateProfileView();
             connectToKickChat();
         }
 
-        function updateKickAuthUI() {
-            const btn = document.getElementById('kick-auth-btn');
-            const textEl = document.getElementById('kick-auth-btn-text');
-            if (!btn) return;
-
-            const existingImg = btn.querySelector('img');
-            if (existingImg) existingImg.remove();
-
+        function updateProfileView() {
+            const pfpImg = document.getElementById('profile-pfp');
+            const userDisplay = document.getElementById('profile-username-display');
             if (loggedInKickUser) {
-                btn.classList.add('logged-in');
-                const img = document.createElement('img');
-                img.className = 'kick-user-avatar';
-                img.src = loggedInKickUser.avatar;
-                btn.prepend(img);
-                textEl.textContent = loggedInKickUser.username;
+                if (pfpImg) pfpImg.src = loggedInKickUser.avatar;
+                if (userDisplay) userDisplay.textContent = `@${loggedInKickUser.username}`;
             } else {
-                btn.classList.remove('logged-in');
-                textEl.textContent = "Login with Kick";
+                if (pfpImg) pfpImg.src = DEFAULT_AVATAR;
+                if (userDisplay) userDisplay.textContent = `@Not Logged In`;
             }
         }
 
@@ -1239,19 +1250,25 @@
 
         function switchWorkspace(mode, writeToDb = true) {
             currentActiveView = mode;
-            ['lotto', 'wheel', 'tournament'].forEach(m => {
-                document.getElementById(`ws-btn-${m}`).classList.remove('active');
-                document.getElementById(`${m}-view`).classList.remove('active');
+            ['lotto', 'wheel', 'tournament', 'profile'].forEach(m => {
+                const btn = document.getElementById(`ws-btn-${m}`);
+                const view = document.getElementById(`${m}-view`);
+                if (btn) btn.classList.remove('active');
+                if (view) view.classList.remove('active');
             });
 
-            document.getElementById(`ws-btn-${mode}`).classList.add('active');
-            document.getElementById(`${mode}-view`).classList.add('active');
+            const activeBtn = document.getElementById(`ws-btn-${mode}`);
+            const activeView = document.getElementById(`${mode}-view`);
+            if (activeBtn) activeBtn.classList.add('active');
+            if (activeView) activeView.classList.add('active');
 
             if (mode === 'tournament') {
                 renderTournamentBracket();
                 setTimeout(drawConnectorLines, 100);
             } else if (mode === 'wheel') {
                 drawWheel();
+            } else if (mode === 'profile') {
+                updateProfileView();
             }
 
             if (writeToDb && db) {
