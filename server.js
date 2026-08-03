@@ -9,7 +9,7 @@ const CLIENT_ID = '01KZ4DP5SFJS1FHGD6XASY89TF';
 const CLIENT_SECRET = '74d7589975b1b84501783953e97e0c029ae7d39e796a417446e9d7ab65914b7d';
 
 // Your live GitHub Pages URL (Where your index.html is hosted)
-const GITHUB_PAGES_URL = 'https://realfishh.github.io/KickTool';
+const GITHUB_PAGES_URL = 'https://kicktool.pages.dev';
 
 // Your live Render Server Callback URL
 const REDIRECT_URI = 'https://kicktool.onrender.com/auth/kick/callback';
