@@ -94,7 +94,7 @@
             display: none;
         }
 
-        /* Top Navigation Controls */
+        /* Top Navigation Controls - Perfectly Centered & Balanced */
         .workspace-navbar {
             position: fixed;
             top: 15px;
@@ -102,9 +102,9 @@
             transform: translateX(-50%);
             z-index: 999;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             background-color: var(--bg-card);
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 14px;
             border: 1px solid var(--border-gray);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
@@ -115,14 +115,15 @@
             background-color: transparent;
             border: 1px solid transparent;
             color: var(--text-muted);
-            padding: 6px 14px;
+            padding: 6px 12px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
             text-transform: uppercase;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             transition: all 0.2s ease;
             position: relative;
+            white-space: nowrap;
         }
 
         .workspace-btn.active {
@@ -147,22 +148,23 @@
             display: none;
         }
 
-        .admin-toggle-btn, .kick-auth-btn {
+        .admin-toggle-btn {
             background-color: #000000;
             border: 1px solid var(--border-gray);
             color: var(--text-muted);
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .admin-toggle-btn:hover, .kick-auth-btn:hover {
+        .admin-toggle-btn:hover {
             border-color: var(--accent-green);
             color: var(--accent-green);
         }
@@ -262,6 +264,7 @@
             padding-right: 8px;
         }
 
+        /* Custom Scrollbars */
         .admin-panel-scrollable::-webkit-scrollbar,
         .lotto-scrollable::-webkit-scrollbar {
             width: 8px;
@@ -698,6 +701,15 @@
             text-align: center;
             margin: 0;
         }
+
+        /* Hide scrollbars specifically on tournament container */
+        #bracket-container::-webkit-scrollbar {
+            display: none !important;
+        }
+        #bracket-container {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
     </style>
 </head>
 <body>
@@ -715,19 +727,14 @@
         </div>
     </div>
 
-    <!-- Top Navigation Controls -->
+    <!-- Top Navigation Controls - Beautiful, compact, perfectly aligned layout -->
     <div class="workspace-navbar">
-        <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword Lotto</button>
-        <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Spinning Wheel</button>
+        <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
+        <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
-        
-        <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">
-            Profile
-            <span id="profile-dot" class="circle-pointer"></span>
-        </button>
-
+        <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">Profile <span id="profile-dot" class="circle-pointer"></span></button>
         <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Settings
         </button>
     </div>
@@ -881,7 +888,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW (Ported exact layout & connector positioning) -->
+    <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW (Scrollbars cleanly removed) -->
     <div id="tournament-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1500px; height: calc(100vh - 100px); box-sizing: border-box; gap: 14px; z-index: 10;">
             <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -902,7 +909,7 @@
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
             
-            <!-- Bracket Container with exact centering and auto-scrolling -->
+            <!-- Bracket Container with scrollbars hidden -->
             <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center;"></div>
         </div>
     </div>
@@ -1639,7 +1646,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Ported Tournament Logic & Connector Alignment Engine ---
+        // --- Tournament Logic ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1827,8 +1834,8 @@
                         const slotHTML = (team, score, idx) => `
                             <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 4px 8px;">
                                 <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
-                                <input type="text" value="${score}" placeholder="0" class="admin-field" style="width: 36px; text-align: center; padding: 2px; color: var(--accent-green);" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
-                                <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-weight: 800;">➔</button>
+                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 28px; text-align: center; padding: 2px; color: var(--accent-green);" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
+                                <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; font-weight: 800;" title="Advance">&rarr;</button>
                             </div>
                         `;
                         matchBox.innerHTML = slotHTML(round[idxA], tournamentScores[r][idxA], idxA) + slotHTML(round[idxB], tournamentScores[r][idxB], idxB);
@@ -1852,7 +1859,6 @@
             renderTournamentBracket();
         }
 
-        // Animation Helper
         function animateWheel(carouselEl, targetOffset, containerWidth, duration, onFinish) {
             const startTime = performance.now();
             function frame(now) {
@@ -1866,12 +1872,10 @@
             requestAnimationFrame(frame);
         }
 
-        // Initialization
         checkStartupKickAuth();
         initTournamentData(8);
         renderTournamentBracket();
 
-        // Firebase Sync Listeners
         if (db) {
             onValue(ref(db, 'state/currentView'), snap => { if (snap.val()) switchWorkspace(snap.val(), false); });
             onValue(ref(db, 'lottoEntries'), snap => {
