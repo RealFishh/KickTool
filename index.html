@@ -63,7 +63,9 @@
         body.obs-overlay-mode .lotto-roll-btn {
             display: none !important;
         }
-        body.obs-overlay-mode .workspace-view,
+        body.obs-overlay-mode .workspace-view:not(.active) {
+            display: none !important;
+        }
         body.obs-overlay-mode .workspace-view.active {
             display: flex !important;
             margin: 0 !important;
