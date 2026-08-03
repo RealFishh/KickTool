@@ -586,7 +586,6 @@
             height: 100%;
         }
 
-        /* Stylish Circular Giveaway Bot Picker Carousel Item */
         .carousel-item {
             width: 130px;
             height: 130px;
@@ -902,7 +901,8 @@
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle Teams</button>
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
-            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 40px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 10px 25px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%; align-items: center;"></div>
+            <!-- Horizontal and vertical scrollable container ensuring 16-teams fit nicely without clipping -->
+            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 45px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px 30px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center; min-width: 0;"></div>
         </div>
     </div>
 
@@ -1638,7 +1638,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Logic & Precise SVG Connector Lines Engine (Flashing Prevented)
+        // Tournament Bracket Logic & Precise SVG Connector Lines Engine
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1724,6 +1724,7 @@
                 svg.style.cssText = `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`;
                 container.appendChild(svg);
             } else {
+                svg.setAttribute('style', `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`);
                 svg.innerHTML = "";
             }
 
@@ -1780,7 +1781,8 @@
 
             tournamentRounds.forEach((round, r) => {
                 const roundCol = document.createElement('div');
-                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:210px;flex-grow:1;z-index:2;box-sizing:border-box;padding:20px 0;";
+                // Minimum width per column expanded to 230px, flex-shrink: 0 ensures scrolling works cleanly for 16 teams
+                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:230px;flex-shrink:0;z-index:2;box-sizing:border-box;padding:20px 0;";
                 
                 if (r === tournamentRounds.length - 1) {
                     roundCol.innerHTML = `
@@ -1793,7 +1795,7 @@
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
                         const matchWrapper = document.createElement('div');
-                        matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:8px;margin:12px 0;";
+                        matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:8px;margin:10px 0;";
                         
                         const boxA = document.createElement('div');
                         boxA.setAttribute('id', `match-box-${r}-${m}`);
@@ -1868,7 +1870,6 @@
                     const selectEl = document.getElementById('tournament-size-select');
                     if (selectEl) selectEl.value = tournamentSize;
                     
-                    // Only update values locally if they differ to preserve input focus & prevent flashing
                     tournamentRounds.forEach((round, r) => {
                         round.forEach((teamName, idx) => {
                             const input = document.getElementById(`team-input-${r}-${idx}`);
