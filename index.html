@@ -122,6 +122,7 @@
             text-transform: uppercase;
             font-size: 0.78rem;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .workspace-btn.active {
@@ -132,6 +133,19 @@
 
         .workspace-btn:hover:not(.active) {
             color: #ffffff;
+        }
+
+        /* Circle Pointer Indicator Dot */
+        .circle-pointer {
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--accent-green);
+            display: none;
         }
 
         .admin-toggle-btn, .kick-auth-btn {
@@ -726,8 +740,12 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Spinning Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
-        <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">Profile</button>
         
+        <button id="ws-btn-profile" class="workspace-btn" onclick="switchWorkspace('profile')">
+            Profile
+            <span id="profile-dot" class="circle-pointer"></span>
+        </button>
+
         <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Settings
@@ -909,7 +927,7 @@
 
     <!-- WORKSPACE 4: PROFILE VIEW -->
     <div id="profile-view" class="workspace-view">
-        <div class="lotto-card" style="width: 420px; height: 380px; margin: auto; align-items: center; justify-content: center; text-align: center; gap: 18px;">
+        <div class="lotto-card" style="width: 420px; height: 390px; margin: auto; align-items: center; justify-content: center; text-align: center; gap: 18px;">
             <div class="lotto-card-title" style="width: 100%; justify-content: center;">Kick Profile</div>
             <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 20px rgba(83, 252, 24, 0.3);">
                 <img id="profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
@@ -1041,6 +1059,7 @@
             errorEl.style.display = 'none';
             const verifyCode = Math.floor(1000 + Math.random() * 9000);
             const channelSlug = resolved.slug;
+            const channelOriginalName = resolved.originalName;
             const chatroomId = resolved.chatroomId;
             const avatar = resolved.avatar;
 
@@ -1048,7 +1067,7 @@
             modalBox.innerHTML = `
                 <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.6rem;">CHAT VERIFICATION</h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
-                    To confirm ownership of <strong style="color:#fff;">@${channelSlug}</strong>, please send this exact command in your Kick chat:
+                    To confirm ownership of <strong style="color:#fff;">@${channelOriginalName}</strong>, please send this exact command in your Kick chat:
                 </p>
                 <div title="Click to copy!" onclick="copyVerificationCode(this, '${verifyCode}')" style="background:#000000; border:2px dashed var(--accent-green); padding:15px; border-radius:12px; font-size:1.6rem; font-weight:900; color:var(--accent-green); letter-spacing:2px; margin-bottom:15px; cursor:pointer; transition: transform 0.1s;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'">
                     !verify ${verifyCode}
@@ -1079,7 +1098,7 @@
                             const sender = chatEventData.sender.username.toLowerCase();
                             const text = chatEventData.content.trim().toLowerCase();
                             if (sender === channelSlug.toLowerCase() && text === `!verify ${verifyCode}`) {
-                                finalizeLogin(channelSlug, avatar, chatroomId);
+                                finalizeLogin(channelOriginalName, channelSlug, avatar, chatroomId);
                             }
                         }
                     }
@@ -1097,7 +1116,7 @@
                                 const sender = msg.sender.username.toLowerCase();
                                 const text = (msg.content || "").trim().toLowerCase();
                                 if (sender === channelSlug.toLowerCase() && text === `!verify ${verifyCode}`) {
-                                    finalizeLogin(channelSlug, avatar, chatroomId);
+                                    finalizeLogin(channelOriginalName, channelSlug, avatar, chatroomId);
                                     break;
                                 }
                             }
@@ -1120,13 +1139,13 @@
         }
         window.copyVerificationCode = copyVerificationCode;
 
-        function finalizeLogin(channelSlug, avatar, chatroomId) {
+        function finalizeLogin(originalName, channelSlug, avatar, chatroomId) {
             if (verificationWs) { try { verificationWs.close(); } catch(e) {} }
             if (verificationPollInterval) clearInterval(verificationPollInterval);
 
             targetChannelName = channelSlug;
             targetChatroomId = chatroomId;
-            loggedInKickUser = { username: channelSlug, avatar: avatar };
+            loggedInKickUser = { username: originalName, slug: channelSlug, avatar: avatar };
 
             localStorage.setItem('kick_logged_in_user', JSON.stringify(loggedInKickUser));
             localStorage.setItem('kick_target_channel', targetChannelName);
@@ -1142,12 +1161,16 @@
         function updateProfileView() {
             const pfpImg = document.getElementById('profile-pfp');
             const userDisplay = document.getElementById('profile-username-display');
+            const profileDot = document.getElementById('profile-dot');
+            
             if (loggedInKickUser) {
                 if (pfpImg) pfpImg.src = loggedInKickUser.avatar;
                 if (userDisplay) userDisplay.textContent = `@${loggedInKickUser.username}`;
+                if (profileDot) profileDot.style.display = 'block';
             } else {
                 if (pfpImg) pfpImg.src = DEFAULT_AVATAR;
                 if (userDisplay) userDisplay.textContent = `@Not Logged In`;
+                if (profileDot) profileDot.style.display = 'none';
             }
         }
 
@@ -1186,11 +1209,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.chatroom && data.chatroom.id) {
+                        const originalName = (data.user && data.user.username) ? data.user.username : cleanName;
                         const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : DEFAULT_AVATAR;
                         kickAvatarCache.set(data.slug, avatar);
                         return {
                             chatroomId: data.chatroom.id,
                             slug: data.slug,
+                            originalName: originalName,
                             avatar: avatar
                         };
                     }
@@ -1313,7 +1338,7 @@
                 localStorage.setItem('kick_target_channel', targetChannelName);
                 localStorage.setItem('kick_target_chatroom', targetChatroomId);
                 connectToKickChat();
-                alert(`Connected successfully to @${targetChannelName}`);
+                alert(`Connected successfully to @${resolved.originalName}`);
             } else {
                 alert("Could not fetch channel chatroom ID.");
             }
