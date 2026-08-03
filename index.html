@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kick Giveaway Tool</title>
+    <title>Stream Giveaway Tool</title>
     <style>
         :root {
             --bg-black: #09090b;
@@ -1668,7 +1668,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Functions (with Green Connector Lines)
+        // Tournament Bracket Functions (Stable, No Re-render on Typing)
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1685,6 +1685,7 @@
         function changeTournamentSize(sizeVal) {
             initTournamentData(parseInt(sizeVal, 10));
             saveTournamentData();
+            renderTournamentBracket();
         }
         window.changeTournamentSize = changeTournamentSize;
 
@@ -1694,18 +1695,21 @@
             initTournamentData(tournamentSize);
             tournamentRounds[0] = firstRound;
             saveTournamentData();
+            renderTournamentBracket();
         }
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
         function resetTournamentBracket() {
             initTournamentData(tournamentSize);
             saveTournamentData();
+            renderTournamentBracket();
         }
         window.resetTournamentBracket = resetTournamentBracket;
 
         function updateTournamentTeamName(r, idx, val) {
             tournamentRounds[r][idx] = val;
-            saveTournamentData();
+            if (db) set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
+            else localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
         }
         window.updateTournamentTeamName = updateTournamentTeamName;
 
@@ -1715,16 +1719,27 @@
             const a = parseFloat(tournamentScores[r][matchIdx * 2]);
             const b = parseFloat(tournamentScores[r][matchIdx * 2 + 1]);
             if (!isNaN(a) && !isNaN(b) && r + 1 < tournamentRounds.length) {
-                tournamentRounds[r + 1][matchIdx] = a > b ? tournamentRounds[r][matchIdx * 2] : tournamentRounds[r][matchIdx * 2 + 1];
+                const winningTeam = a > b ? tournamentRounds[r][matchIdx * 2] : tournamentRounds[r][matchIdx * 2 + 1];
+                tournamentRounds[r + 1][matchIdx] = winningTeam;
+                const nextInput = document.getElementById(`team-input-${r+1}-${matchIdx}`);
+                if (nextInput) nextInput.value = winningTeam;
             }
-            saveTournamentData();
+            if (db) set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
+            else {
+                localStorage.setItem('kick_tournament_scores', JSON.stringify(tournamentScores));
+                localStorage.setItem('kick_tournament_rounds', JSON.stringify(tournamentRounds));
+            }
+            drawConnectorLines();
         }
         window.updateTournamentScore = updateTournamentScore;
 
         function advanceTeam(r, idx) {
             const team = tournamentRounds[r][idx];
             if (!team || r + 1 >= tournamentRounds.length) return;
-            tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
+            const nextIdx = Math.floor(idx / 2);
+            tournamentRounds[r + 1][nextIdx] = team;
+            const nextInput = document.getElementById(`team-input-${r+1}-${nextIdx}`);
+            if (nextInput) nextInput.value = team;
             saveTournamentData();
         }
         window.advanceTeam = advanceTeam;
@@ -1749,7 +1764,8 @@
 
                 for (let m = 0; m < matchCount; m++) {
                     const srcEl = document.getElementById(`match-box-${r}-${m}`);
-                    const destEl = document.getElementById(`slot-container-${r+1}-${m}`);
+                    const nextMatchIdx = Math.floor(m / 2);
+                    const destEl = document.getElementById(`match-box-${r+1}-${nextMatchIdx}`) || document.getElementById(`slot-container-${r+1}-0`);
 
                     if (srcEl && destEl) {
                         const srcRect = srcEl.getBoundingClientRect();
@@ -1786,7 +1802,7 @@
                 
                 if (r === tournamentRounds.length - 1) {
                     roundCol.innerHTML = `<div id="slot-container-${r}-0" style="display:flex;align-items:center;justify-content:center;height:100%;">
-                        <input type="text" value="${round[0] || ''}" placeholder="Winner" style="background:#121215;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(83,252,24,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
+                        <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="Winner" style="background:#121215;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(83,252,24,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
                     </div>`;
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
@@ -1794,8 +1810,8 @@
                         box.setAttribute('id', `match-box-${r}-${m}`);
                         box.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 15px rgba(0,0,0,0.5);";
                         box.innerHTML = `
-                            <div id="slot-container-${r}-${m*2}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
-                            <div id="slot-container-${r}-${m*2+1}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
+                            <div id="slot-container-${r}-${m*2}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" id="team-input-${r}-${m*2}" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" id="score-input-${r}-${m*2}" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
+                            <div id="slot-container-${r}-${m*2+1}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" id="team-input-${r}-${m*2+1}" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" id="score-input-${r}-${m*2+1}" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
                         `;
                         roundCol.appendChild(box);
                     }
@@ -1807,7 +1823,6 @@
 
         function saveTournamentData() {
             if (db) set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
-            renderTournamentBracket();
         }
 
         // Animation Helper
@@ -1842,6 +1857,17 @@
                 if (snap.val()) Object.entries(snap.val()).forEach(([u, sub]) => wheelEntries.set(u, !!sub));
                 renderWheelEntries();
                 drawWheel();
+            });
+            onValue(ref(db, 'state/tournament'), snap => {
+                const data = snap.val();
+                if (data && data.rounds && currentActiveView === 'tournament') {
+                    tournamentSize = data.size || 8;
+                    tournamentRounds = data.rounds;
+                    tournamentScores = data.scores || [];
+                    const selectEl = document.getElementById('tournament-size-select');
+                    if (selectEl) selectEl.value = tournamentSize;
+                    renderTournamentBracket();
+                }
             });
             onValue(ref(db, 'trigger/lottoSpin'), snap => {
                 const data = snap.val();
