@@ -51,10 +51,6 @@
             position: relative;
         }
 
-        body.obs-transparent {
-            background: transparent !important;
-        }
-
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -300,6 +296,7 @@
         .lotto-control-label {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 0.9rem;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -542,10 +539,6 @@
             padding: 30px;
         }
 
-        body.obs-transparent .epic-overlay {
-            background: transparent !important;
-        }
-
         .epic-overlay.active {
             opacity: 1;
             pointer-events: auto;
@@ -638,35 +631,6 @@
         </div>
     </div>
 
-    <!-- OBS Links Generator Modal -->
-    <div id="obs-links-modal" class="kick-login-modal-overlay" style="display: none;">
-        <div class="kick-login-modal" style="width: 500px; text-align: left;" onclick="event.stopPropagation()">
-            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
-                <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">OBS Browser Source Links</h2>
-                <button onclick="closeObsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
-            </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Copy these links into an OBS Browser Source (transparent background compatible):</p>
-            
-            <div style="margin-bottom: 15px;">
-                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Lotto / Slot Spinner Source</label>
-                <div style="display: flex; gap: 8px; margin-top: 5px;">
-                    <input type="text" id="obs-link-lotto" readonly class="password-input" style="margin:0; font-size:0.85rem; text-align:left; padding:10px 12px;">
-                    <button class="btn" style="width: auto; padding: 10px 16px; background: var(--accent-green); color: #000; font-size: 0.85rem;" onclick="copyObsLink('obs-link-lotto', this)">Copy</button>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Spinning Wheel Source</label>
-                <div style="display: flex; gap: 8px; margin-top: 5px;">
-                    <input type="text" id="obs-link-wheel" readonly class="password-input" style="margin:0; font-size:0.85rem; text-align:left; padding:10px 12px;">
-                    <button class="btn" style="width: auto; padding: 10px 16px; background: var(--accent-green); color: #000; font-size: 0.85rem;" onclick="copyObsLink('obs-link-wheel', this)">Copy</button>
-                </div>
-            </div>
-
-            <button class="btn" style="background: #27272a; color: #fff;" onclick="closeObsModal()">CLOSE</button>
-        </div>
-    </div>
-
     <!-- Custom In-Site Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal" style="width: 380px;" onclick="event.stopPropagation()">
@@ -709,7 +673,7 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div id="profile-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.9); width: 230px; z-index: 9999; overflow: hidden; box-sizing: border-box;">
+            <div id="profile-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.9); width: 220px; z-index: 9999; overflow: hidden; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-gray);">
                     <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
                         <img id="dropdown-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
@@ -724,10 +688,6 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         <span>My Profile & Stats</span>
                     </button>
-                    <button onclick="openObsModal()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; color: #fff; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-                        <span>OBS Links</span>
-                    </button>
                     <button id="dropdown-action-btn" onclick="handleProfileDropdownAction()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
                     </button>
                 </div>
@@ -740,7 +700,7 @@
     <!-- WORKSPACE 1: KEYWORD LOTTO VIEW -->
     <div id="lotto-view" class="workspace-view active">
         <div class="lotto-workspace">
-            <div class="lotto-card obs-hide">
+            <div class="lotto-card">
                 <div class="lotto-card-title">
                     Eligible Users
                     <span id="lotto-eligible-count" class="lotto-pill-count">(0)</span>
@@ -754,11 +714,13 @@
             </div>
 
             <div class="lotto-center-layout">
-                <div class="lotto-config-row obs-hide">
+                <div class="lotto-config-row">
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
-                            <span id="keyword-hide-btn" style="cursor: pointer; color: var(--accent-green);" onclick="toggleKeywordVisibility()">Hide</span>
+                            <span id="keyword-hide-btn" style="cursor: pointer; color: var(--accent-green); display: flex; align-items: center;" onclick="toggleKeywordVisibility()" title="Toggle Visibility">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </span>
                         </div>
                         <div class="lotto-input-wrapper">
                             <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy">
@@ -782,12 +744,12 @@
                     </div>
                 </div>
 
-                <button id="lotto-main-roll-btn" class="lotto-roll-btn obs-hide" onclick="startLottoSpinSequenceRemotely()">
+                <button id="lotto-main-roll-btn" class="lotto-roll-btn" onclick="startLottoSpinSequenceRemotely()">
                     Roll Winner
                 </button>
             </div>
 
-            <div class="lotto-card obs-hide">
+            <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
                     <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
@@ -802,7 +764,7 @@
     <!-- WORKSPACE 2: SPINNING WHEEL VIEW -->
     <div id="wheel-view" class="workspace-view">
         <div class="lotto-workspace">
-            <div class="lotto-card obs-hide">
+            <div class="lotto-card">
                 <div class="lotto-card-title">
                     Eligible Users
                     <span id="wheel-eligible-count" class="lotto-pill-count">(0)</span>
@@ -816,11 +778,13 @@
             </div>
 
             <div class="lotto-center-layout">
-                <div class="lotto-config-row obs-hide">
+                <div class="lotto-config-row">
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
-                            <span id="wheel-keyword-hide-btn" style="cursor: pointer; color: var(--accent-green);" onclick="toggleWheelKeywordVisibility()">Hide</span>
+                            <span id="wheel-keyword-hide-btn" style="cursor: pointer; color: var(--accent-green); display: flex; align-items: center;" onclick="toggleWheelKeywordVisibility()" title="Toggle Visibility">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </span>
                         </div>
                         <div class="lotto-input-wrapper">
                             <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel">
@@ -848,12 +812,12 @@
                     </div>
                 </div>
 
-                <button id="wheel-main-roll-btn" class="lotto-roll-btn obs-hide" onclick="startWheelSpinSequenceRemotely()">
+                <button id="wheel-main-roll-btn" class="lotto-roll-btn" onclick="startWheelSpinSequenceRemotely()">
                     Spin Wheel
                 </button>
             </div>
 
-            <div class="lotto-card obs-hide">
+            <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
                     <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
@@ -946,6 +910,10 @@
         const itemWidth = 205; 
         const itemsCount = 45; 
 
+        // SVG EYE ICONS
+        const eyeOpenSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        const eyeOffSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+
         // --- WEB AUDIO API SYNTHESIZED SOUND EFFECTS ---
         let audioCtx = null;
         function getAudioContext() {
@@ -1012,6 +980,10 @@
             const menu = document.getElementById('theme-dropdown-menu');
             if (menu) menu.style.display = 'none';
             playClickSound();
+
+            if (currentActiveView === 'tournament') {
+                renderTournamentBracket();
+            }
         }
         window.setTheme = setTheme;
 
@@ -1022,64 +994,6 @@
             menu.style.display = isVisible ? 'none' : 'block';
         }
         window.toggleThemeDropdown = toggleThemeDropdown;
-
-        // --- OBS BROWSER SOURCE MODE ---
-        function checkObsMode() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('mode') === 'obs') {
-                document.body.classList.add('obs-transparent');
-                const navbar = document.getElementById('main-navbar');
-                if (navbar) navbar.style.display = 'none';
-                
-                const view = params.get('view') || 'lotto';
-                switchWorkspace(view);
-
-                const channel = params.get('channel');
-                if (channel) {
-                    targetChannelName = channel;
-                    fetchChatroomId(channel).then(res => {
-                        if (res) {
-                            targetChatroomId = res.chatroomId;
-                            connectToKickChat();
-                        }
-                    });
-                }
-
-                // Hide sidebar cards for OBS clean look
-                const hideElements = document.querySelectorAll('.obs-hide');
-                hideElements.forEach(el => el.style.display = 'none');
-            }
-        }
-
-        function openObsModal() {
-            const menu = document.getElementById('profile-dropdown-menu');
-            if (menu) menu.style.display = 'none';
-            const chevron = document.getElementById('profile-chevron');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
-
-            const baseUrl = window.location.origin + window.location.pathname;
-            const channel = targetChannelName || loggedInKickUser?.slug || 'streamername';
-            
-            document.getElementById('obs-link-lotto').value = `${baseUrl}?mode=obs&view=lotto&channel=${channel}`;
-            document.getElementById('obs-link-wheel').value = `${baseUrl}?mode=obs&view=wheel&channel=${channel}`;
-            document.getElementById('obs-links-modal').style.display = 'flex';
-        }
-        window.openObsModal = openObsModal;
-
-        function closeObsModal() {
-            document.getElementById('obs-links-modal').style.display = 'none';
-        }
-        window.closeObsModal = closeObsModal;
-
-        function copyObsLink(inputId, btnEl) {
-            const input = document.getElementById(inputId);
-            input.select();
-            navigator.clipboard.writeText(input.value);
-            const origText = btnEl.textContent;
-            btnEl.textContent = "COPIED!";
-            setTimeout(() => { btnEl.textContent = origText; }, 1200);
-        }
-        window.copyObsLink = copyObsLink;
 
         function checkStartupKickAuth() {
             const savedTheme = localStorage.getItem('kick_tool_theme');
@@ -1110,7 +1024,6 @@
                 } catch(e) {}
             }
             updateProfileView();
-            checkObsMode();
         }
 
         function handleKickLogout() {
@@ -1499,8 +1412,13 @@
             playClickSound();
             const field = document.getElementById('lotto-keyword-input');
             const btn = document.getElementById('keyword-hide-btn');
-            if (field.type === "password") { field.type = "text"; btn.textContent = "Hide"; }
-            else { field.type = "password"; btn.textContent = "Show"; }
+            if (field.type === "password") { 
+                field.type = "text"; 
+                btn.innerHTML = eyeOffSVG; 
+            } else { 
+                field.type = "password"; 
+                btn.innerHTML = eyeOpenSVG; 
+            }
         }
         window.toggleKeywordVisibility = toggleKeywordVisibility;
 
@@ -1508,8 +1426,13 @@
             playClickSound();
             const field = document.getElementById('wheel-keyword-input');
             const btn = document.getElementById('wheel-keyword-hide-btn');
-            if (field.type === "password") { field.type = "text"; btn.textContent = "Hide"; }
-            else { field.type = "password"; btn.textContent = "Show"; }
+            if (field.type === "password") { 
+                field.type = "text"; 
+                btn.innerHTML = eyeOffSVG; 
+            } else { 
+                field.type = "password"; 
+                btn.innerHTML = eyeOpenSVG; 
+            }
         }
         window.toggleWheelKeywordVisibility = toggleWheelKeywordVisibility;
 
@@ -1828,7 +1751,6 @@
             canvas.style.transition = 'transform 8s cubic-bezier(0.1, 0.8, 0.1, 1)';
             canvas.style.transform = `rotate(${targetRotation}deg)`;
 
-            // Simulated ticks during wheel spin
             let tickCount = 0;
             const tickInterval = setInterval(() => {
                 playTickSound();
