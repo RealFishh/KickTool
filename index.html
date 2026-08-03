@@ -1256,7 +1256,7 @@
         }
         animateDust();
 
-        function switchWorkspace(mode, writeToDb = true) {
+        function switchWorkspace(mode) {
             currentActiveView = mode;
             ['lotto', 'wheel', 'tournament', 'profile'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
@@ -1632,7 +1632,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // --- Tournament Logic with clean bold SVG advance arrows ---
+        // --- Tournament Logic (Robust & Bug-Free State Management) ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1647,8 +1647,10 @@
         }
 
         function changeTournamentSize(size) {
-            initTournamentData(parseInt(size, 10));
+            const numSize = parseInt(size, 10);
+            initTournamentData(numSize);
             saveTournamentData();
+            renderTournamentBracket();
         }
         window.changeTournamentSize = changeTournamentSize;
 
@@ -1661,6 +1663,7 @@
             initTournamentData(tournamentSize);
             tournamentRounds[0] = round0;
             saveTournamentData();
+            renderTournamentBracket();
         }
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
@@ -1668,6 +1671,7 @@
             if (confirm("Reset tournament bracket?")) {
                 initTournamentData(tournamentSize);
                 saveTournamentData();
+                renderTournamentBracket();
             }
         }
         window.resetTournamentBracket = resetTournamentBracket;
@@ -1675,6 +1679,7 @@
         function updateTournamentTeamName(r, idx, val) {
             tournamentRounds[r][idx] = val;
             saveTournamentData();
+            setTimeout(drawConnectorLines, 30);
         }
         window.updateTournamentTeamName = updateTournamentTeamName;
 
@@ -1719,7 +1724,7 @@
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
             saveTournamentData();
-            updateBracketDOMValues();
+            renderTournamentBracket();
         }
         window.advanceTeam = advanceTeam;
 
@@ -1803,11 +1808,11 @@
                         matchBox.id = `match-box-${r}-${m}`;
                         matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
-                        // Sleek, thick modern SVG arrow icon button (slightly bigger) with wider score input tabs for decimal values (0.44, 0.12)
+                        // Sleek, thick modern SVG arrow icon button (slightly bigger) with optimized score input width (40px, fits 4 chars like 0.33, 0.21)
                         const slotHTML = (team, score, idx) => `
                             <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
                                 <input type="text" value="${team}" placeholder="" class="admin-field" style="border: none; background: transparent; padding: 2px 4px; font-size: 0.9rem; width: 100%; outline: none;" oninput="updateTournamentTeamName(${r}, ${idx}, this.value)">
-                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 48px; text-align: center; padding: 2px 2px; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
+                                <input type="text" value="${score}" placeholder="" class="admin-field" style="width: 40px; text-align: center; padding: 2px 2px; color: var(--accent-green); font-size: 0.85rem; border-radius: 4px; outline: none;" oninput="updateTournamentScore(${r}, ${idx}, this.value)">
                                 <button onclick="advanceTeam(${r}, ${idx})" style="background: transparent; border: none; color: var(--accent-green); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 2px; transition: transform 0.1s;" title="Advance" onmousedown="this.style.transform='scale(1.2)'" onmouseup="this.style.transform='scale(1)'">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                 </button>
