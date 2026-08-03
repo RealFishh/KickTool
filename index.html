@@ -1218,6 +1218,13 @@
             if (currentActiveView === 'tournament') {
                 renderTournamentBracket();
             }
+
+            // Update all rendered default avatars on screen to match new theme color
+            document.querySelectorAll('img').forEach(img => {
+                if (img.src.startsWith('data:image/svg+xml')) {
+                    img.src = getDefaultAvatar();
+                }
+            });
         }
         window.setTheme = setTheme;
 
@@ -1515,7 +1522,10 @@
         async function fetchKickAvatar(username) {
             if (!username) return getDefaultAvatar();
             const cleanName = username.trim();
-            if (kickAvatarCache.has(cleanName)) return kickAvatarCache.get(cleanName);
+            if (kickAvatarCache.has(cleanName)) {
+                const cached = kickAvatarCache.get(cleanName);
+                return cached === 'DEFAULT' ? getDefaultAvatar() : cached;
+            }
             if (pendingAvatarFetches.has(cleanName)) return getDefaultAvatar();
 
             pendingAvatarFetches.add(cleanName);
@@ -1535,7 +1545,7 @@
             } catch (e) {}
 
             pendingAvatarFetches.delete(cleanName);
-            kickAvatarCache.set(cleanName, getDefaultAvatar());
+            kickAvatarCache.set(cleanName, 'DEFAULT');
             return getDefaultAvatar();
         }
 
