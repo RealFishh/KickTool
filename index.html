@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Giveaway Tool</title>
+    <title>Kick Giveaway Tool</title>
     <style>
         :root {
             --bg-black: #09090b;
@@ -915,13 +915,17 @@
 
     <!-- WORKSPACE 4: PROFILE VIEW -->
     <div id="profile-view" class="workspace-view">
-        <div class="lotto-card" style="width: 420px; height: 390px; margin: auto; align-items: center; justify-content: center; text-align: center; gap: 18px;">
-            <div class="lotto-card-title" style="width: 100%; justify-content: center;">Kick Profile</div>
-            <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 20px rgba(83, 252, 24, 0.3);">
-                <img id="profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+        <div style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px 35px; display: flex; align-items: center; justify-content: space-between; width: 480px; max-width: 90vw; box-shadow: 0 20px 40px rgba(0,0,0,0.8); box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--accent-green); box-shadow: 0 0 15px rgba(83, 252, 24, 0.25); flex-shrink: 0;">
+                    <img id="profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Kick Account</span>
+                    <span id="profile-username-display" style="font-size: 1.3rem; font-weight: 900; color: #fff;">@Not Logged In</span>
+                </div>
             </div>
-            <div id="profile-username-display" style="font-size: 1.6rem; font-weight: 900; color: #fff;">@username</div>
-            <button class="btn" style="background: #f43f5e; color: #fff; width: 220px; margin-top: 10px;" onclick="handleKickLogout()">Log Out</button>
+            <button id="profile-auth-btn" class="btn" style="width: auto; padding: 10px 22px; font-size: 0.95rem; background: var(--accent-green); color: #000;" onclick="handleProfileAuthAction()">Log In</button>
         </div>
     </div>
 
@@ -987,7 +991,6 @@
             if (saved) {
                 try {
                     loggedInKickUser = JSON.parse(saved);
-                    updateProfileView();
                     if (savedChannel) {
                         targetChannelName = savedChannel;
                         document.getElementById('kick-channel-input').value = savedChannel;
@@ -998,11 +1001,9 @@
                             }
                         });
                     }
-                    return;
                 } catch(e) {}
             }
-            document.getElementById('kick-login-modal').style.display = 'flex';
-            document.getElementById('kick-login-username').focus();
+            updateProfileView();
         }
 
         function handleKickLogout() {
@@ -1012,13 +1013,20 @@
                 localStorage.removeItem('kick_target_channel');
                 localStorage.removeItem('kick_target_chatroom');
                 updateProfileView();
-                switchWorkspace('lotto');
+            }
+        }
+        window.handleKickLogout = handleKickLogout;
+
+        function handleProfileAuthAction() {
+            if (loggedInKickUser) {
+                handleKickLogout();
+            } else {
                 document.getElementById('kick-login-modal').style.display = 'flex';
                 document.getElementById('kick-login-username').value = '';
                 document.getElementById('kick-login-username').focus();
             }
         }
-        window.handleKickLogout = handleKickLogout;
+        window.handleProfileAuthAction = handleProfileAuthAction;
 
         let verificationWs = null;
         let verificationPollInterval = null;
@@ -1145,15 +1153,26 @@
         function updateProfileView() {
             const pfpImg = document.getElementById('profile-pfp');
             const userDisplay = document.getElementById('profile-username-display');
+            const authBtn = document.getElementById('profile-auth-btn');
             const profileDot = document.getElementById('profile-dot');
             
             if (loggedInKickUser) {
                 if (pfpImg) pfpImg.src = loggedInKickUser.avatar;
                 if (userDisplay) userDisplay.textContent = `@${loggedInKickUser.username}`;
+                if (authBtn) {
+                    authBtn.textContent = "Log Out";
+                    authBtn.style.background = "#f43f5e";
+                    authBtn.style.color = "#ffffff";
+                }
                 if (profileDot) profileDot.style.display = 'block';
             } else {
                 if (pfpImg) pfpImg.src = DEFAULT_AVATAR;
                 if (userDisplay) userDisplay.textContent = `@Not Logged In`;
+                if (authBtn) {
+                    authBtn.textContent = "Log In";
+                    authBtn.style.background = "var(--accent-green)";
+                    authBtn.style.color = "#000000";
+                }
                 if (profileDot) profileDot.style.display = 'none';
             }
         }
@@ -1724,7 +1743,7 @@
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
             saveTournamentData();
-            updateBracketDOMValues(); // Updates values in-place without destroying DOM elements (fixes flashing!)
+            updateBracketDOMValues();
         }
         window.advanceTeam = advanceTeam;
 
@@ -1738,7 +1757,7 @@
                 container.appendChild(svg);
             }
             svg.style.cssText = `position: absolute; top: 0; left: 0; width: ${container.scrollWidth}px; height: ${container.scrollHeight}px; pointer-events: none; z-index: 1;`;
-            svg.innerHTML = ""; // Clear existing paths without removing the SVG element itself, preventing any flash/flicker
+            svg.innerHTML = "";
 
             const containerRect = container.getBoundingClientRect();
             for (let r = 0; r < tournamentRounds.length - 1; r++) {
