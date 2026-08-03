@@ -1806,10 +1806,6 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            // AUTO-SET WINNER CHAT TARGET
-            document.getElementById('active-winner-chat-target').value = winner;
-            syncChatTarget(winner);
-
             const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_LOTTO',
@@ -1824,10 +1820,6 @@
 
         async function startLottoSpinSequence(winner, pool) {
             if (!pool || pool.length === 0) return;
-
-            // Auto-populate winner chat target if triggered remotely via OBS/sync
-            document.getElementById('active-winner-chat-target').value = winner;
-            updateObsChatTargetDisplay(winner);
 
             const strip = [];
             const targetIdx = itemsCount - 6;
@@ -1867,6 +1859,16 @@
         }
 
         function triggerLottoWinnerReveal(winner) {
+            // CLEAR PREVIOUS WINNER CHAT AND SET NEW WINNER TARGET
+            const lottoChat = document.getElementById('lotto-chat-container');
+            if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
+            
+            const obsChat = document.getElementById('obs-chat-messages-container');
+            if (obsChat) obsChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 40px;">Awaiting Chat Feed...</div>';
+
+            document.getElementById('active-winner-chat-target').value = winner;
+            syncChatTarget(winner);
+
             lottoBlacklist.add(winner);
             lottoEntries.delete(winner);
             renderLottoEntries();
@@ -1988,10 +1990,6 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            // AUTO-SET WINNER CHAT TARGET
-            document.getElementById('active-winner-chat-target').value = winner;
-            syncChatTarget(winner);
-
             const channel = getActiveChannel().toLowerCase();
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_WHEEL',
@@ -2009,10 +2007,6 @@
             const index = entries.indexOf(winner);
             if (index === -1) return;
 
-            // Auto-populate winner chat target if triggered remotely via OBS/sync
-            document.getElementById('active-winner-chat-target').value = winner;
-            updateObsChatTargetDisplay(winner);
-
             const canvas = document.getElementById('wheel-canvas');
             if (!canvas) return;
             const sliceAngle = 360 / entries.length;
@@ -2029,6 +2023,16 @@
         }
 
         function triggerWheelWinnerReveal(winner) {
+            // CLEAR PREVIOUS WINNER CHAT AND SET NEW WINNER TARGET
+            const lottoChat = document.getElementById('lotto-chat-container');
+            if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
+            
+            const obsChat = document.getElementById('obs-chat-messages-container');
+            if (obsChat) obsChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 40px;">Awaiting Chat Feed...</div>';
+
+            document.getElementById('active-winner-chat-target').value = winner;
+            syncChatTarget(winner);
+
             wheelBlacklist.add(winner);
             wheelEntries.delete(winner);
             renderWheelEntries();
