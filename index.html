@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stream Giveaway Tool</title>
+    <title>Kick Giveaway Tool</title>
     <style>
         :root {
             --bg-black: #09090b;
@@ -168,21 +168,6 @@
             color: var(--accent-green);
         }
 
-        .kick-auth-btn.logged-in {
-            border-color: var(--accent-green);
-            color: var(--text-white);
-            background-color: #122010;
-        }
-
-        .kick-user-avatar {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1.5px solid var(--accent-green);
-        }
-
-        /* Slide-out Admin Panel */
         .admin-panel {
             position: fixed;
             top: 0;
@@ -278,7 +263,6 @@
             padding-right: 8px;
         }
 
-        /* Custom Scrollbars */
         .admin-panel-scrollable::-webkit-scrollbar,
         .lotto-scrollable::-webkit-scrollbar {
             width: 8px;
@@ -291,10 +275,6 @@
         .lotto-scrollable::-webkit-scrollbar-thumb {
             background: #27272a;
             border-radius: 4px;
-        }
-        .admin-panel-scrollable::-webkit-scrollbar-thumb:hover,
-        .lotto-scrollable::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-green);
         }
 
         #lotto-users-container, #wheel-users-container {
@@ -607,7 +587,7 @@
             height: 100%;
         }
 
-        /* Circular Giveaway Bot Picker Carousel Item */
+        /* Stylish Circular Giveaway Bot Picker Carousel Item */
         .carousel-item {
             width: 130px;
             height: 130px;
@@ -632,7 +612,7 @@
             border-radius: 50% !important;
             border: 2px solid var(--accent-green) !important;
             object-fit: cover !important;
-            top: 14px !important;
+            top: 12px !important;
             left: 50% !important;
             position: absolute !important;
             transform: translate3d(-50%, 0, 0) !important;
@@ -640,14 +620,14 @@
 
         .lotto-carousel-item .card-text {
             position: absolute;
-            bottom: 12px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
+            width: 82%;
             background: rgba(0, 0, 0, 0.85);
             padding: 2px 4px;
             font-weight: 800;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--accent-green);
             z-index: 2;
             white-space: nowrap;
@@ -923,7 +903,7 @@
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle Teams</button>
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
-            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 10px 15px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%;"></div>
+            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 40px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 10px 25px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%; align-items: center;"></div>
         </div>
     </div>
 
@@ -993,7 +973,7 @@
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
-        const itemWidth = 164; // Adjusted for circular carousel items (140px + 24px margins)
+        const itemWidth = 160; // Adjusted spacing for circular item width (130px + 30px margins)
         const itemsCount = 45; 
 
         // --- MANDATORY KICK CHAT VERIFICATION LOGIN ---
@@ -1065,7 +1045,6 @@
             const chatroomId = resolved.chatroomId;
             const avatar = resolved.avatar;
 
-            // Render Verification Step with Click-to-Copy
             modalBox.innerHTML = `
                 <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.6rem;">CHAT VERIFICATION</h2>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
@@ -1082,7 +1061,6 @@
                 <button class="btn" style="background:#27272a; color:#fff;" onclick="location.reload()">Cancel</button>
             `;
 
-            // Listen via WebSocket & Polling
             const wsUrl = "wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&cluster=us2";
             try {
                 verificationWs = new WebSocket(wsUrl);
@@ -1226,7 +1204,6 @@
             return null;
         }
 
-        // Canvas Background Dust Animation
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let dustParticles = [];
@@ -1325,7 +1302,6 @@
         }
         window.toggleAdminPanel = toggleAdminPanel;
 
-        // Chat & WebSocket Connection
         let chatSocket = null;
 
         async function updateKickChannel() {
@@ -1377,7 +1353,6 @@
             addLottoChatMessage(senderName, content);
             addWheelChatMessage(senderName, content);
 
-            // Lotto keyword check
             const lottoKey = document.getElementById('lotto-keyword-input').value.trim().toLowerCase();
             if (lottoActive && contentClean === lottoKey) {
                 if (!lottoEntries.has(senderName) && !lottoBlacklist.has(senderName)) {
@@ -1387,7 +1362,6 @@
                 }
             }
 
-            // Wheel keyword check
             const wheelKey = document.getElementById('wheel-keyword-input').value.trim().toLowerCase();
             if (wheelActive && contentClean === wheelKey) {
                 if (!wheelEntries.has(senderName) && !wheelBlacklist.has(senderName) && !wheelSpinning) {
@@ -1399,7 +1373,6 @@
             }
         }
 
-        // Lotto Functions
         function clearLottoEntries() {
             lottoEntries.clear();
             lottoBlacklist.clear();
@@ -1513,7 +1486,6 @@
             autoCloseTimeout = setTimeout(closeReveal, 3500);
         }
 
-        // Wheel Functions
         function clearWheelEntries() {
             wheelEntries.clear();
             wheelBlacklist.clear();
@@ -1668,7 +1640,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Functions (Stable, No Re-render on Typing)
+        // Tournament Bracket Logic & Precise SVG Connector Lines Engine
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1763,29 +1735,41 @@
                 const matchCount = roundSlotsCount / 2;
 
                 for (let m = 0; m < matchCount; m++) {
-                    const srcEl = document.getElementById(`match-box-${r}-${m}`);
-                    const nextMatchIdx = Math.floor(m / 2);
-                    const destEl = document.getElementById(`match-box-${r+1}-${nextMatchIdx}`) || document.getElementById(`slot-container-${r+1}-0`);
+                    const matchBoxA = document.getElementById(`match-box-${r}-${m*2}`);
+                    const matchBoxB = document.getElementById(`match-box-${r}-${m*2+1}`);
+                    const nextMatchBox = document.getElementById(`match-box-${r+1}-${m}`) || document.getElementById(`winner-box-${r+1}-0`);
 
-                    if (srcEl && destEl) {
-                        const srcRect = srcEl.getBoundingClientRect();
-                        const destRect = destEl.getBoundingClientRect();
+                    if (matchBoxA && matchBoxB && nextMatchBox) {
+                        const rectA = matchBoxA.getBoundingClientRect();
+                        const rectB = matchBoxB.getBoundingClientRect();
+                        const nextRect = nextMatchBox.getBoundingClientRect();
 
-                        const x1 = srcRect.right - containerRect.left + container.scrollLeft;
-                        const y1 = srcRect.top + srcRect.height / 2 - containerRect.top + container.scrollTop;
-
-                        const x2 = destRect.left - containerRect.left + container.scrollLeft;
-                        const y2 = destRect.top + destRect.height / 2 - containerRect.top + container.scrollTop;
+                        const x1 = rectA.right - containerRect.left + container.scrollLeft;
+                        const yA = rectA.top + rectA.height / 2 - containerRect.top + container.scrollTop;
+                        const yB = rectB.top + rectB.height / 2 - containerRect.top + container.scrollTop;
+                        
+                        const x2 = nextRect.left - containerRect.left + container.scrollLeft;
+                        const yNext = nextRect.top + nextRect.height / 2 - containerRect.top + container.scrollTop;
 
                         const xMid = x1 + (x2 - x1) / 2;
 
-                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        path.setAttribute("d", `M ${x1} ${y1} H ${xMid} V ${y2} H ${x2}`);
-                        path.setAttribute("stroke", "#53fc18");
-                        path.setAttribute("stroke-width", "2.5");
-                        path.setAttribute("fill", "none");
-                        path.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
-                        svg.appendChild(path);
+                        // Draw path from Match A to junction branch
+                        const pathA = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        pathA.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yNext} H ${x2}`);
+                        pathA.setAttribute("stroke", "#53fc18");
+                        pathA.setAttribute("stroke-width", "2.5");
+                        pathA.setAttribute("fill", "none");
+                        pathA.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
+                        svg.appendChild(pathA);
+
+                        // Draw path from Match B to junction branch
+                        const pathB = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        pathB.setAttribute("d", `M ${x1} ${yB} H ${xMid} V ${yNext} H ${x2}`);
+                        pathB.setAttribute("stroke", "#53fc18");
+                        pathB.setAttribute("stroke-width", "2.5");
+                        pathB.setAttribute("fill", "none");
+                        pathB.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
+                        svg.appendChild(pathB);
                     }
                 }
             }
@@ -1798,22 +1782,46 @@
 
             tournamentRounds.forEach((round, r) => {
                 const roundCol = document.createElement('div');
-                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:180px;flex-grow:1;z-index:2;";
+                roundCol.style.cssText = "display:flex;flex-direction:column;justify-content:space-around;height:100%;min-width:210px;flex-grow:1;z-index:2;box-sizing:border-box;padding:20px 0;";
                 
                 if (r === tournamentRounds.length - 1) {
-                    roundCol.innerHTML = `<div id="slot-container-${r}-0" style="display:flex;align-items:center;justify-content:center;height:100%;">
-                        <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="Winner" style="background:#121215;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(83,252,24,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
-                    </div>`;
+                    roundCol.innerHTML = `
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+                            <span style="color:var(--accent-green);font-size:0.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Champion</span>
+                            <div id="winner-box-${r}-0" style="background:#09090b;border:2px solid var(--accent-green);border-radius:12px;padding:12px;width:100%;box-shadow:0 0 20px rgba(83,252,24,0.3);box-sizing:border-box;">
+                                <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="Winner" style="background:#121215;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:8px;width:100%;outline:none;font-size:1.1rem;" onchange="updateTournamentTeamName(${r},0,this.value)">
+                            </div>
+                        </div>`;
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
-                        const box = document.createElement('div');
-                        box.setAttribute('id', `match-box-${r}-${m}`);
-                        box.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 15px rgba(0,0,0,0.5);";
-                        box.innerHTML = `
-                            <div id="slot-container-${r}-${m*2}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" id="team-input-${r}-${m*2}" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" id="score-input-${r}-${m*2}" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
-                            <div id="slot-container-${r}-${m*2+1}" style="display:flex;gap:6px;background:#18181b;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" id="team-input-${r}-${m*2+1}" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" id="score-input-${r}-${m*2+1}" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">&rarr;</button></div>
-                        `;
-                        roundCol.appendChild(box);
+                        const matchWrapper = document.createElement('div');
+                        matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:8px;margin:12px 0;";
+                        
+                        // Match Node Box A
+                        const boxA = document.createElement('div');
+                        boxA.setAttribute('id', `match-box-${r}-${m}`);
+                        boxA.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
+                        boxA.innerHTML = `
+                            <div style="display:flex;gap:8px;align-items:center;width:100%;">
+                                <input type="text" id="team-input-${r}-${m}" value="${round[m]||''}" placeholder="Team Name..." style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m},this.value)">
+                                <input type="text" id="score-input-${r}-${m}" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)">
+                                <button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
+                            </div>`;
+
+                        // Match Node Box B
+                        const boxB = document.createElement('div');
+                        boxB.setAttribute('id', `match-box-${r}-${m+1}`);
+                        boxB.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
+                        boxB.innerHTML = `
+                            <div style="display:flex;gap:8px;align-items:center;width:100%;">
+                                <input type="text" id="team-input-${r}-${m+1}" value="${round[m+1]||''}" placeholder="Team Name..." style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m+1},this.value)">
+                                <input type="text" id="score-input-${r}-${m+1}" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)">
+                                <button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
+                            </div>`;
+
+                        matchWrapper.appendChild(boxA);
+                        matchWrapper.appendChild(boxB);
+                        roundCol.appendChild(matchWrapper);
                     }
                 }
                 container.appendChild(roundCol);
@@ -1825,7 +1833,6 @@
             if (db) set(ref(db, 'state/tournament'), { size: tournamentSize, rounds: tournamentRounds, scores: tournamentScores });
         }
 
-        // Animation Helper
         function animateWheel(carouselEl, targetOffset, containerWidth, duration, onFinish) {
             const startTime = performance.now();
             function frame(now) {
@@ -1839,12 +1846,10 @@
             requestAnimationFrame(frame);
         }
 
-        // Initialization
         checkStartupKickAuth();
         initTournamentData(8);
         renderTournamentBracket();
 
-        // Firebase Sync Listeners
         if (db) {
             onValue(ref(db, 'state/currentView'), snap => { if (snap.val()) switchWorkspace(snap.val(), false); });
             onValue(ref(db, 'lottoEntries'), snap => {
