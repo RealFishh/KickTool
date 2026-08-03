@@ -17,7 +17,7 @@ const REDIRECT_URI = 'https://kicktool.onrender.com/auth/kick/callback';
 
 // 1. Redirect user to Kick OAuth login page
 app.get('/auth/kick', (req, res) => {
-    const kickAuthUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read`;
+    const kickAuthUrl = `https://id.kick.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=user:read&state=security_state_123`;
     res.redirect(kickAuthUrl);
 });
 
