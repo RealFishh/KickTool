@@ -60,12 +60,13 @@
 
         .kick-login-modal {
             background-color: var(--bg-card);
-            padding: 50px 40px;
+            padding: 40px 30px;
             border-radius: 20px;
             border: 1px solid var(--border-gray);
             box-shadow: 0 25px 60px rgba(0,0,0,0.95);
             text-align: center;
-            width: 420px;
+            width: 440px;
+            box-sizing: border-box;
         }
 
         .password-input {
@@ -440,7 +441,7 @@
         }
 
         .carousel-item {
-            width: 160px;
+            width: 190px;
             height: 160px;
             flex-shrink: 0;
             display: flex;
@@ -454,20 +455,20 @@
         }
 
         .lotto-carousel-avatar {
-            width: 95px !important;
-            height: 95px !important;
+            width: 115px !important;
+            height: 115px !important;
             border-radius: 50% !important;
-            border: 3.5px solid var(--accent-green) !important;
+            border: 4px solid var(--accent-green) !important;
             object-fit: cover !important;
             background-color: #000000;
-            box-shadow: 0 0 20px rgba(83, 252, 24, 0.35);
-            margin-bottom: 8px;
+            box-shadow: 0 0 25px rgba(83, 252, 24, 0.45);
+            margin-bottom: 6px;
         }
 
         .lotto-carousel-name {
             width: 100%;
             background: #121215;
-            padding: 6px 10px;
+            padding: 5px 10px;
             font-weight: 900;
             font-size: 0.85rem;
             color: #ffffff;
@@ -568,6 +569,39 @@
         </div>
     </div>
 
+    <!-- Custom Profile & Stats Modal -->
+    <div id="profile-stats-modal" class="kick-login-modal-overlay" style="display: none;">
+        <div class="kick-login-modal" style="width: 480px; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">Streamer Profile & Stats</h2>
+                <button onclick="closeProfileStatsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: #000000; border: 1px solid var(--border-gray); padding: 15px; border-radius: 12px;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
+                    <img id="modal-stat-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
+                </div>
+                <div style="display: flex; flex-direction: column; overflow: hidden;">
+                    <span id="modal-stat-username" style="font-size: 1.2rem; font-weight: 950; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">---</span>
+                    <a id="modal-stat-link" href="#" target="_blank" style="font-size: 0.85rem; color: var(--accent-green); text-decoration: none; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">https://kick.com/...</a>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div style="background: #000000; border: 1px solid var(--border-gray); border-radius: 12px; padding: 14px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">First Joined Site</div>
+                    <div id="modal-stat-joined" style="font-size: 1rem; font-weight: 900; color: #fff;">---</div>
+                </div>
+                <div style="background: #000000; border: 1px solid var(--border-gray); border-radius: 12px; padding: 14px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">Total Rolls Performed</div>
+                    <div id="modal-stat-rolls" style="font-size: 1.1rem; font-weight: 900; color: var(--accent-green);">0</div>
+                </div>
+            </div>
+
+            <button class="btn" style="background: var(--accent-green); color: #000000;" onclick="closeProfileStatsModal()">DONE</button>
+        </div>
+    </div>
+
     <!-- Custom In-Site Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal" style="width: 380px;">
@@ -608,6 +642,10 @@
                     </div>
                 </div>
                 <div style="padding: 6px;">
+                    <button id="dropdown-stats-btn" onclick="openProfileStatsModal()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; color: #fff; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>My Profile & Stats</span>
+                    </button>
                     <button id="dropdown-action-btn" onclick="handleProfileDropdownAction()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
                     </button>
                 </div>
@@ -806,6 +844,7 @@
         let targetChatroomId = ""; 
         let loggedInKickUser = null;
         let currentActiveView = "lotto";
+        let totalRollsCount = 0;
 
         let lottoActive = true; 
         let lottoEntries = new Map();
@@ -823,15 +862,23 @@
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
-        const itemWidth = 190; 
+        const itemWidth = 205; 
         const itemsCount = 45; 
 
         function checkStartupKickAuth() {
             const saved = localStorage.getItem('kick_logged_in_user');
             const savedChannel = localStorage.getItem('kick_target_channel');
+            const savedJoined = localStorage.getItem('kick_user_joined_date');
+            const savedRolls = localStorage.getItem('kick_user_total_rolls');
+
+            if (savedRolls) totalRollsCount = parseInt(savedRolls, 10) || 0;
+
             if (saved) {
                 try {
                     loggedInKickUser = JSON.parse(saved);
+                    if (!localStorage.getItem('kick_user_joined_date')) {
+                        localStorage.setItem('kick_user_joined_date', new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
+                    }
                     if (savedChannel) {
                         targetChannelName = savedChannel;
                         fetchChatroomId(savedChannel).then(res => {
@@ -861,12 +908,47 @@
         function confirmKickLogout() {
             document.getElementById('logout-confirm-modal').style.display = 'none';
             loggedInKickUser = null;
+            totalRollsCount = 0;
             localStorage.removeItem('kick_logged_in_user');
             localStorage.removeItem('kick_target_channel');
             localStorage.removeItem('kick_target_chatroom');
+            localStorage.removeItem('kick_user_joined_date');
+            localStorage.removeItem('kick_user_total_rolls');
             updateProfileView();
         }
         window.confirmKickLogout = confirmKickLogout;
+
+        function openProfileStatsModal() {
+            const menu = document.getElementById('profile-dropdown-menu');
+            if (menu) menu.style.display = 'none';
+            const chevron = document.getElementById('profile-chevron');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+
+            if (!loggedInKickUser) {
+                handleProfileDropdownAction();
+                return;
+            }
+
+            const joinedDate = localStorage.getItem('kick_user_joined_date') || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const channelSlug = loggedInKickUser.slug || loggedInKickUser.username.toLowerCase();
+            const channelUrl = `https://kick.com/${channelSlug}`;
+
+            document.getElementById('modal-stat-pfp').src = loggedInKickUser.avatar || DEFAULT_AVATAR;
+            document.getElementById('modal-stat-username').textContent = `@${loggedInKickUser.username}`;
+            const linkEl = document.getElementById('modal-stat-link');
+            linkEl.href = channelUrl;
+            linkEl.textContent = channelUrl;
+            document.getElementById('modal-stat-joined').textContent = joinedDate;
+            document.getElementById('modal-stat-rolls').textContent = totalRollsCount;
+
+            document.getElementById('profile-stats-modal').style.display = 'flex';
+        }
+        window.openProfileStatsModal = openProfileStatsModal;
+
+        function closeProfileStatsModal() {
+            document.getElementById('profile-stats-modal').style.display = 'none';
+        }
+        window.closeProfileStatsModal = closeProfileStatsModal;
 
         function toggleProfileDropdown(e) {
             e.stopPropagation();
@@ -1015,9 +1097,11 @@
             targetChatroomId = chatroomId;
             loggedInKickUser = { username: originalName, slug: channelSlug, avatar: avatar };
 
+            const joinedDateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             localStorage.setItem('kick_logged_in_user', JSON.stringify(loggedInKickUser));
             localStorage.setItem('kick_target_channel', targetChannelName);
             localStorage.setItem('kick_target_chatroom', targetChatroomId);
+            localStorage.setItem('kick_user_joined_date', joinedDateStr);
 
             document.getElementById('kick-login-modal').style.display = 'none';
 
@@ -1300,6 +1384,10 @@
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) { alert("Entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
+            
+            totalRollsCount++;
+            localStorage.setItem('kick_user_total_rolls', totalRollsCount);
+
             startLottoSpinSequence(winner);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
@@ -1466,6 +1554,10 @@
             const pool = Array.from(wheelEntries.keys());
             if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
+            
+            totalRollsCount++;
+            localStorage.setItem('kick_user_total_rolls', totalRollsCount);
+
             startWheelSpinSequence(winner);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
