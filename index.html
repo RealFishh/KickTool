@@ -6,19 +6,19 @@
     <title>Kick Giveaway Tool</title>
     <style>
         :root {
+            --bg-black: #000000;
+            --bg-card: #0a0a0a;
+            --border-gray: #222222;
             --accent-green: #22c55e;
             --accent-green-hover: #16a34a;
-            --bg-dark: #07120a;
-            --bg-card: #0c1a10;
-            --border-color: #1e3a24;
-            --text-main: #f0fdf4;
-            --text-muted: #86efac;
+            --text-white: #ffffff;
+            --text-muted: #a3a3a3;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
+            background: var(--bg-black);
+            color: var(--text-white);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -43,42 +43,43 @@
             pointer-events: none;
         }
 
-        /* Mandatory Kick Login Modal on Startup */
+        /* Professional Startup Login Modal */
         .kick-login-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(5, 15, 8, 0.92);
+            background: rgba(0, 0, 0, 0.94);
             z-index: 99999;
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
         }
 
         .kick-login-modal {
             background-color: var(--bg-card);
-            padding: 45px;
-            border-radius: 24px;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+            padding: 50px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--border-gray);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.95);
             text-align: center;
-            width: 440px;
+            width: 420px;
         }
 
         .password-input {
             width: calc(100% - 30px);
-            background-color: #040a06;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
+            background-color: #000000;
+            border: 1px solid var(--border-gray);
+            border-radius: 10px;
             color: #ffffff;
             padding: 14px 18px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             outline: none;
             text-align: center;
             margin-bottom: 15px;
+            transition: border-color 0.2s;
         }
 
         .password-input:focus {
@@ -87,8 +88,8 @@
 
         .password-error {
             color: #f43f5e;
-            font-weight: 800;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             margin-bottom: 15px;
             display: none;
         }
@@ -96,7 +97,7 @@
         /* Top Navigation Controls */
         .workspace-navbar {
             position: fixed;
-            top: 10px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 999;
@@ -105,8 +106,8 @@
             background-color: var(--bg-card);
             padding: 6px 14px;
             border-radius: 14px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-gray);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             align-items: center;
         }
 
@@ -126,7 +127,7 @@
         .workspace-btn.active {
             background-color: var(--accent-green);
             border-color: var(--accent-green);
-            color: #040c06;
+            color: #000000;
         }
 
         .workspace-btn:hover:not(.active) {
@@ -134,8 +135,8 @@
         }
 
         .admin-toggle-btn, .kick-auth-btn {
-            background-color: #040c06;
-            border: 1px solid var(--border-color);
+            background-color: #000000;
+            border: 1px solid var(--border-gray);
             color: var(--text-muted);
             padding: 6px 12px;
             border-radius: 10px;
@@ -145,7 +146,7 @@
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .admin-toggle-btn:hover, .kick-auth-btn:hover {
@@ -155,16 +156,16 @@
 
         .kick-auth-btn.logged-in {
             border-color: var(--accent-green);
-            color: var(--accent-green);
-            background-color: rgba(34, 197, 94, 0.12);
+            color: var(--text-white);
+            background-color: #0f1710;
         }
 
         .kick-user-avatar {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             object-fit: cover;
-            border: 1px solid var(--accent-green);
+            border: 1.5px solid var(--accent-green);
         }
 
         /* Slide-out Admin Panel */
@@ -174,10 +175,10 @@
             right: -500px;
             width: 480px;
             height: 100vh;
-            background-color: #060f08;
-            border-left: 1px solid var(--border-color);
+            background-color: #050505;
+            border-left: 1px solid var(--border-gray);
             z-index: 1000;
-            box-shadow: -15px 0 50px rgba(0,0,0,0.9);
+            box-shadow: -15px 0 50px rgba(0,0,0,0.95);
             transition: right 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -193,7 +194,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-gray);
             padding-bottom: 18px;
             margin-bottom: 22px;
         }
@@ -214,7 +215,7 @@
         .admin-section {
             margin-bottom: 30px;
             background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-gray);
             border-radius: 14px;
             padding: 18px;
         }
@@ -244,8 +245,8 @@
         }
 
         .admin-field {
-            background-color: #040a06;
-            border: 1px solid var(--border-color);
+            background-color: #000000;
+            border: 1px solid var(--border-gray);
             border-radius: 8px;
             color: #ffffff;
             padding: 10px 14px;
@@ -270,11 +271,11 @@
         }
         .admin-panel-scrollable::-webkit-scrollbar-track,
         .lotto-scrollable::-webkit-scrollbar-track {
-            background: #040a06;
+            background: #000000;
         }
         .admin-panel-scrollable::-webkit-scrollbar-thumb,
         .lotto-scrollable::-webkit-scrollbar-thumb {
-            background: var(--border-color);
+            background: #262626;
             border-radius: 4px;
         }
         .admin-panel-scrollable::-webkit-scrollbar-thumb:hover,
@@ -306,13 +307,13 @@
         }
 
         .btn {
-            background: #0c1a10;
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
+            background: #111111;
+            color: var(--text-white);
+            border: 1px solid var(--border-gray);
             padding: 12px 24px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 900;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
@@ -321,14 +322,14 @@
         }
 
         .btn:hover:not(:disabled) {
-            background: #122b17;
-            color: var(--accent-green);
+            background: #1a1a1a;
             border-color: var(--accent-green);
+            color: var(--accent-green);
         }
 
         .btn-clear-board {
             background: transparent;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-gray);
             color: var(--text-muted);
             padding: 8px;
             font-size: 0.9rem;
@@ -360,8 +361,8 @@
 
         .lotto-card {
             background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
+            border: 1px solid var(--border-gray);
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;
@@ -369,7 +370,7 @@
             position: relative;
             height: 100%;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
         }
 
         .lotto-card-title {
@@ -378,7 +379,7 @@
             color: var(--text-muted);
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-gray);
             padding-bottom: 12px;
             margin: 0 0 15px 0;
             display: flex;
@@ -389,7 +390,7 @@
         }
 
         .lotto-pill-count {
-            background-color: rgba(34, 197, 94, 0.2);
+            background-color: rgba(34, 197, 94, 0.15);
             color: var(--accent-green);
             padding: 2px 10px;
             border-radius: 20px;
@@ -420,9 +421,9 @@
         }
 
         .lotto-control-box {
-            background-color: #040a06;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
+            background-color: #050505;
+            border: 1px solid var(--border-gray);
+            border-radius: 12px;
             padding: 14px 18px;
             box-sizing: border-box;
         }
@@ -439,8 +440,8 @@
 
         .lotto-keyword-field {
             width: 100%;
-            background-color: #020503;
-            border: 1px solid var(--border-color);
+            background-color: #000000;
+            border: 1px solid var(--border-gray);
             border-radius: 10px;
             color: #fff;
             padding: 10px 14px;
@@ -465,7 +466,7 @@
         .lotto-slider {
             -webkit-appearance: none;
             width: 100%;
-            background: #193820;
+            background: #222222;
             height: 6px;
             border-radius: 3px;
             outline: none;
@@ -483,11 +484,11 @@
 
         .lotto-roll-btn {
             background: var(--accent-green);
-            color: #040c06;
+            color: #000000;
             border: none;
             width: 100%;
             padding: 16px;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 1.4rem;
             font-weight: 950;
             letter-spacing: 2px;
@@ -499,7 +500,7 @@
             gap: 12px;
             transition: all 0.2s ease;
             flex-shrink: 0;
-            box-shadow: 0 5px 20px rgba(34, 197, 94, 0.3);
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.25);
         }
 
         .lotto-roll-btn:hover {
@@ -512,8 +513,8 @@
             align-items: center;
             gap: 12px;
             padding: 8px 12px;
-            background-color: #040a06;
-            border: 1px solid var(--border-color);
+            background-color: #050505;
+            border: 1px solid var(--border-gray);
             border-radius: 10px;
             margin-bottom: 8px;
             font-size: 1rem;
@@ -522,18 +523,18 @@
         }
 
         .eligible-user-row img {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            border: 1.5px solid var(--accent-green);
+            border: 2px solid var(--accent-green);
             object-fit: cover;
             flex-shrink: 0;
-            background-color: #060f08;
+            background-color: #000000;
         }
 
         .lotto-chat-row {
             padding: 8px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-gray);
             font-size: 0.95rem;
             line-height: 1.3;
         }
@@ -547,9 +548,9 @@
         .lotto-spinner-outer {
             width: 100%;
             height: 260px; 
-            background-color: #040a06;
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
+            background-color: #050505;
+            border: 1px solid var(--border-gray);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -562,9 +563,9 @@
             position: absolute;
             width: 100%;
             height: 180px;
-            background-color: #020503;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
+            background-color: #000000;
+            border: 1px solid var(--border-gray);
+            border-radius: 14px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -600,11 +601,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 14px;
+            border-radius: 12px;
             margin: 0 12px;
             text-align: center;
-            background-color: #08120b;
-            border: 1px solid var(--border-color);
+            background-color: #0d0d0d;
+            border: 1px solid var(--border-gray);
             position: relative;
             overflow: hidden;
         }
@@ -627,7 +628,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 85%;
-            background: #040a06;
+            background: #000000;
             padding: 3px;
             font-weight: 800;
             font-size: 0.8rem;
@@ -637,7 +638,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             border-radius: 6px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-gray);
         }
 
         #wheel-view .lotto-workspace {
@@ -665,7 +666,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(5, 15, 8, 0.92);
+            background: rgba(0, 0, 0, 0.92);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -685,14 +686,14 @@
 
         .revealed-card {
             border: 2px solid var(--accent-green);
-            border-radius: 18px;
+            border-radius: 16px;
             background-color: var(--bg-card);
             padding: 30px 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             min-width: 380px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
 
         .revealed-winner-text {
@@ -707,16 +708,16 @@
 </head>
 <body>
 
-    <!-- Mandatory Kick Login Modal on Startup -->
+    <!-- Professional Startup Kick Login Modal -->
     <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal">
-            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem;">CONNECT KICK ACCOUNT</h2>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">Enter your Kick channel name to login and link your live chat stream.</p>
+            <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px;">KICK LOGIN</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">Enter your Kick channel name to connect your live chat and giveaway tools.</p>
             
-            <input type="text" id="kick-login-username" class="password-input" placeholder="Kick Channel Name..." autocomplete="off">
+            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamername" autocomplete="off">
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
-            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #040c06;" onclick="verifyAndLoginKick()">CONNECT & LOGIN</button>
+            <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="verifyAndLoginKick()">CONNECT CHANNEL</button>
         </div>
     </div>
 
@@ -740,7 +741,7 @@
     <!-- Side Admin Panel -->
     <div id="admin-panel" class="admin-panel">
         <div class="admin-panel-header">
-            <h2 style="color: var(--accent-green); margin: 0; font-size: 1.4rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">Control Console</h2>
+            <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">Control Console</h2>
             <button class="admin-panel-close" onclick="toggleAdminPanel()">&times;</button>
         </div>
 
@@ -811,7 +812,7 @@
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #020503; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
                 </div>
                 <div id="lotto-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -865,7 +866,7 @@
                 <div class="lotto-spinner-outer" style="overflow: visible; display: flex; align-items: center; justify-content: center;">
                     <div id="wheel-spinner-container" style="position: relative; width: 560px; height: 560px; display: flex; align-items: center; justify-content: center;">
                         <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid var(--accent-green); z-index: 100;"></div>
-                        <canvas id="wheel-canvas" width="560" height="560" style="border-radius: 50%; border: 2px solid var(--border-color); transform: rotate(0deg);"></canvas>
+                        <canvas id="wheel-canvas" width="560" height="560" style="border-radius: 50%; border: 2px solid var(--border-gray); transform: rotate(0deg);"></canvas>
                     </div>
                 </div>
 
@@ -877,7 +878,7 @@
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #020503; border: 1px solid var(--border-color); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
                 </div>
                 <div id="wheel-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -889,7 +890,7 @@
     <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW -->
     <div id="tournament-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1400px; height: calc(100vh - 100px); box-sizing: border-box; gap: 10px; z-index: 10;">
-            <div style="display: flex; gap: 15px; background-color: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 24px; border-radius: 14px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <div style="display: flex; gap: 15px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 24px; border-radius: 14px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 1rem;">Tournament Bracket</span>
                 
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -902,11 +903,11 @@
                     </select>
                 </div>
 
-                <div style="width: 1px; height: 20px; background-color: var(--border-color); margin: 0 5px;"></div>
+                <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 5px;"></div>
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px;" onclick="shuffleTournamentTeams()">Shuffle Teams</button>
                 <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetTournamentBracket()">Reset Bracket</button>
             </div>
-            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 10px 15px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%;"></div>
+            <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 10px 15px; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; height: 100%;"></div>
         </div>
     </div>
 
@@ -962,6 +963,8 @@
         let tournamentScores = [];
         let autoCloseTimeout = null;
 
+        const kickAvatarCache = new Map();
+        const pendingAvatarFetches = new Set();
         const itemWidth = 140; 
         const itemsCount = 45; 
 
@@ -986,7 +989,6 @@
                     return;
                 } catch(e) {}
             }
-            // If not logged in, prompt modal
             document.getElementById('kick-login-modal').style.display = 'flex';
             document.getElementById('kick-login-username').focus();
         }
@@ -1063,6 +1065,33 @@
             }
         }
 
+        async function fetchKickAvatar(username) {
+            if (!username) return DEFAULT_AVATAR;
+            const cleanName = username.trim();
+            if (kickAvatarCache.has(cleanName)) return kickAvatarCache.get(cleanName);
+            if (pendingAvatarFetches.has(cleanName)) return DEFAULT_AVATAR;
+
+            pendingAvatarFetches.add(cleanName);
+            try {
+                const response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.user && data.user.profile_pic) {
+                        const picUrl = data.user.profile_pic;
+                        if (picUrl && !picUrl.includes("user_default")) {
+                            kickAvatarCache.set(cleanName, picUrl);
+                            pendingAvatarFetches.delete(cleanName);
+                            return picUrl;
+                        }
+                    }
+                }
+            } catch (e) {}
+
+            pendingAvatarFetches.delete(cleanName);
+            kickAvatarCache.set(cleanName, DEFAULT_AVATAR);
+            return DEFAULT_AVATAR;
+        }
+
         async function fetchChatroomId(channelName) {
             const cleanName = channelName.trim().toLowerCase();
             if (!cleanName) return null;
@@ -1071,10 +1100,12 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.chatroom && data.chatroom.id) {
+                        const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : DEFAULT_AVATAR;
+                        kickAvatarCache.set(data.slug, avatar);
                         return {
                             chatroomId: data.chatroom.id,
                             slug: data.slug,
-                            avatar: (data.user && data.user.profile_pic) ? data.user.profile_pic : DEFAULT_AVATAR
+                            avatar: avatar
                         };
                     }
                 }
@@ -1271,10 +1302,12 @@
                 return;
             }
 
-            listArr.forEach(user => {
+            listArr.forEach(async (user) => {
                 const el = document.createElement('div');
                 el.className = 'eligible-user-row';
-                el.innerHTML = `<img src="${DEFAULT_AVATAR}"><span>${user}</span>`;
+                
+                const avatarUrl = await fetchKickAvatar(user);
+                el.innerHTML = `<img src="${avatarUrl}" onerror="this.src='${DEFAULT_AVATAR}'"><span>${user}</span>`;
                 container.appendChild(el);
             });
             if (countLabel) countLabel.textContent = `(${listArr.length})`;
@@ -1302,7 +1335,7 @@
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
 
-        function startLottoSpinSequence(winner) {
+        async function startLottoSpinSequence(winner) {
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) return;
 
@@ -1313,12 +1346,14 @@
 
             const carousel = document.getElementById('lotto-carousel');
             carousel.innerHTML = "";
-            strip.forEach(u => {
+
+            for (const u of strip) {
+                const avatar = await fetchKickAvatar(u);
                 const node = document.createElement('div');
                 node.className = 'carousel-item lotto-carousel-item';
-                node.innerHTML = `<img src="${DEFAULT_AVATAR}"><span class="card-text">${u}</span>`;
+                node.innerHTML = `<img src="${avatar}" onerror="this.src='${DEFAULT_AVATAR}'"><span class="card-text">${u}</span>`;
                 carousel.appendChild(node);
-            });
+            }
 
             const containerWidth = document.getElementById('lotto-spinner-inner').offsetWidth;
             const targetOffset = (targetIdx * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
@@ -1364,10 +1399,11 @@
                 return;
             }
 
-            listArr.forEach(user => {
+            listArr.forEach(async (user) => {
                 const el = document.createElement('div');
                 el.className = 'eligible-user-row';
-                el.innerHTML = `<img src="${DEFAULT_AVATAR}"><span>${user}</span>`;
+                const avatarUrl = await fetchKickAvatar(user);
+                el.innerHTML = `<img src="${avatarUrl}" onerror="this.src='${DEFAULT_AVATAR}'"><span>${user}</span>`;
                 container.appendChild(el);
             });
             if (countLabel) countLabel.textContent = `(${listArr.length})`;
@@ -1400,10 +1436,10 @@
             if (entries.length === 0) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#060a06';
+                ctx.fillStyle = '#0a0a0a';
                 ctx.fill();
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#1e3a24';
+                ctx.strokeStyle = '#222222';
                 ctx.stroke();
                 ctx.fillStyle = 'var(--text-muted)';
                 ctx.font = 'bold 16px Segoe UI';
@@ -1414,7 +1450,7 @@
             }
 
             const angleStep = (Math.PI * 2) / entries.length;
-            const colors = ['#0c1a10', '#102416', '#152f1c'];
+            const colors = ['#0a0a0a', '#121212', '#1a1a1a'];
 
             entries.forEach((user, index) => {
                 const startAng = index * angleStep;
@@ -1425,7 +1461,7 @@
                 ctx.fillStyle = colors[index % colors.length];
                 ctx.fill();
                 ctx.lineWidth = 1;
-                ctx.strokeStyle = '#1e3a24';
+                ctx.strokeStyle = '#222222';
                 ctx.stroke();
 
                 ctx.save();
@@ -1486,7 +1522,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Functions (Fully Restored)
+        // Tournament Bracket Functions
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1570,15 +1606,15 @@
                 
                 if (r === tournamentRounds.length - 1) {
                     roundCol.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;">
-                        <input type="text" value="${round[0] || ''}" placeholder="Winner" style="background:#0c1a10;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(34,197,94,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
+                        <input type="text" value="${round[0] || ''}" placeholder="Winner" style="background:#0a0a0a;border:1.5px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:10px;width:100%;outline:none;box-shadow:0 0 10px rgba(34,197,94,0.2);" onchange="updateTournamentTeamName(${r},0,this.value)">
                     </div>`;
                 } else {
                     for (let m = 0; m < round.length; m += 2) {
                         const box = document.createElement('div');
-                        box.style.cssText = "background:#040a06;border:1px solid var(--border-color);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 15px rgba(0,0,0,0.4);";
+                        box.style.cssText = "background:#050505;border:1px solid var(--border-gray);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 15px rgba(0,0,0,0.5);";
                         box.innerHTML = `
-                            <div style="display:flex;gap:6px;background:#08140b;padding:4px 8px;border-radius:6px;border:1px solid #142818;"><input type="text" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#040a06;border:1px solid var(--border-color);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
-                            <div style="display:flex;gap:6px;background:#08140b;padding:4px 8px;border-radius:6px;border:1px solid #142818;"><input type="text" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#040a06;border:1px solid var(--border-color);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
+                            <div style="display:flex;gap:6px;background:#0d0d0d;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" value="${round[m]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m},this.value)"><input type="text" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)"><button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
+                            <div style="display:flex;gap:6px;background:#0d0d0d;padding:4px 8px;border-radius:6px;border:1px solid var(--border-gray);"><input type="text" value="${round[m+1]||''}" placeholder="---" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;" onchange="updateTournamentTeamName(${r},${m+1},this.value)"><input type="text" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:35px;text-align:center;border-radius:4px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)"><button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;">➔</button></div>
                         `;
                         roundCol.appendChild(box);
                     }
