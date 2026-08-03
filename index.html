@@ -688,29 +688,45 @@
 
     <!-- OBS Browser Source Link Modal -->
     <div id="obs-modal" class="kick-login-modal-overlay" style="display: none;">
-        <div class="kick-login-modal" style="width: 520px; text-align: left;" onclick="event.stopPropagation()">
+        <div class="kick-login-modal" style="width: 540px; text-align: left;" onclick="event.stopPropagation()">
             <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
                 <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">OBS Browser Source Links</h2>
                 <button onclick="closeObsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
             </div>
             
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.4;">
-                Copy these URLs and paste them into a new <strong style="color: #fff;">Browser Source</strong> in OBS. Recommended dimensions: <code style="color: var(--accent-green);">1920x1080</code>.
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; line-height: 1.4;">
+                Copy these URLs for your 4 separate <strong style="color: #fff;">Browser Sources</strong> in OBS (Recommended size: 1920x1080).
             </p>
 
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">Lotto Carousel Overlay URL</label>
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">1. Lotto Carousel Overlay</label>
                 <div style="display: flex; gap: 8px;">
-                    <input type="text" id="obs-lotto-url" readonly class="password-input" style="margin: 0; font-size: 0.85rem; padding: 10px; text-align: left;" value="">
-                    <button class="btn" style="width: auto; padding: 0 16px; background: var(--accent-green); color: #000000; font-size: 0.85rem;" onclick="copyObsUrl('obs-lotto-url', this)">Copy</button>
+                    <input type="text" id="obs-lotto-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-lotto-url', this)">Copy</button>
                 </div>
             </div>
 
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 6px;">Spinning Wheel Overlay URL</label>
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">2. Spinning Wheel Overlay</label>
                 <div style="display: flex; gap: 8px;">
-                    <input type="text" id="obs-wheel-url" readonly class="password-input" style="margin: 0; font-size: 0.85rem; padding: 10px; text-align: left;" value="">
-                    <button class="btn" style="width: auto; padding: 0 16px; background: var(--accent-green); color: #000000; font-size: 0.85rem;" onclick="copyObsUrl('obs-wheel-url', this)">Copy</button>
+                    <input type="text" id="obs-wheel-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-wheel-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Active Keyword Overlay</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-keyword-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-keyword-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">4. Winner Live Chat Overlay</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-chat-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-chat-url', this)">Copy</button>
                 </div>
             </div>
 
@@ -768,7 +784,7 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
-        <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Link</button>
+        <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Links</button>
 
         <!-- Theme Picker Pill (Color Swatches Grid) -->
         <div style="position: relative; display: inline-block; margin-left: 2px;">
@@ -875,7 +891,7 @@
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;" oninput="syncChatTarget(this.value)">
                 </div>
                 <div id="lotto-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -974,6 +990,27 @@
             </div>
             
             <div id="bracket-container" style="position: relative; display: flex; flex-direction: row; gap: 20px; flex-grow: 1; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px; box-sizing: border-box; overflow: auto; height: 100%; align-items: center;"></div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE 4: DEDICATED KEYWORD OVERLAY VIEW -->
+    <div id="keyword-view" class="workspace-view">
+        <div style="background: rgba(18, 18, 21, 0.95); border: 3px solid var(--accent-green); padding: 35px 70px; border-radius: 24px; box-shadow: 0 0 60px color-mix(in srgb, var(--accent-green) 40%, transparent); text-align: center;">
+            <div style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px;">Active Giveaway Keyword</div>
+            <div id="big-obs-keyword" style="font-size: 5rem; font-weight: 950; color: #fff; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 30px var(--accent-green);">FISHY</div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE 5: DEDICATED WINNER CHAT OVERLAY VIEW -->
+    <div id="chat-view" class="workspace-view">
+        <div style="width: 440px; height: 520px; background: rgba(18, 18, 21, 0.92); border: 2px solid var(--border-gray); border-radius: 20px; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(0,0,0,0.9);">
+            <div style="font-size: 1.1rem; font-weight: 900; color: var(--accent-green); border-bottom: 1px solid var(--border-gray); padding-bottom: 12px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center;">
+                <span>Winner Live Chat</span>
+                <span id="obs-chat-target-label" style="font-size: 0.85rem; color: #fff; background: #000; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--border-gray);">@---</span>
+            </div>
+            <div id="obs-chat-messages-container" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+                <div style="color: var(--text-muted); font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 40px;">Awaiting Chat Feed...</div>
+            </div>
         </div>
     </div>
 
@@ -1105,6 +1142,8 @@
             const baseUrl = window.location.origin + window.location.pathname;
             document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto`;
             document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel`;
+            document.getElementById('obs-keyword-url').value = `${baseUrl}?mode=overlay&view=keyword`;
+            document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat`;
             document.getElementById('obs-modal').style.display = 'flex';
         }
         window.openObsModal = openObsModal;
@@ -1125,17 +1164,32 @@
         }
         window.copyObsUrl = copyObsUrl;
 
-        // SYNC KEYWORD TO OVERLAY
+        // SYNC KEYWORD & CHAT TARGET TO OVERLAYS
         function syncKeyword(val) {
             const cleanVal = val.trim();
             localStorage.setItem('obs_active_keyword', cleanVal);
             overlayChannel.postMessage({ action: 'UPDATE_KEYWORD', keyword: cleanVal });
+            updateObsKeywordDisplay(cleanVal);
         }
         window.syncKeyword = syncKeyword;
+
+        function syncChatTarget(val) {
+            const cleanVal = val.trim();
+            localStorage.setItem('obs_chat_target', cleanVal);
+            overlayChannel.postMessage({ action: 'UPDATE_CHAT_TARGET', target: cleanVal });
+        }
+        window.syncChatTarget = syncChatTarget;
 
         function updateObsKeywordDisplay(keyword) {
             const textEl = document.getElementById('obs-keyword-text');
             if (textEl) textEl.textContent = keyword || '---';
+            const bigEl = document.getElementById('big-obs-keyword');
+            if (bigEl) bigEl.textContent = keyword || '---';
+        }
+
+        function updateObsChatTargetDisplay(target) {
+            const labelEl = document.getElementById('obs-chat-target-label');
+            if (labelEl) labelEl.textContent = target ? `@${target}` : `@---`;
         }
 
         // CHECK IF LOADED AS OBS OVERLAY ON STARTUP
@@ -1146,9 +1200,10 @@
                 const view = params.get('view') || 'lotto';
                 switchWorkspace(view);
 
-                // Load initial keyword
-                const savedKw = localStorage.getItem('obs_active_keyword') || (view === 'wheel' ? 'wheel' : 'fishy');
+                const savedKw = localStorage.getItem('obs_active_keyword') || 'fishy';
                 updateObsKeywordDisplay(savedKw);
+                const savedTarget = localStorage.getItem('obs_chat_target') || '';
+                updateObsChatTargetDisplay(savedTarget);
             }
         }
 
@@ -1566,7 +1621,7 @@
         function switchWorkspace(mode) {
             playClickSound();
             currentActiveView = mode;
-            ['lotto', 'wheel', 'tournament'].forEach(m => {
+            ['lotto', 'wheel', 'tournament', 'keyword', 'chat'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
                 const view = document.getElementById(`${m}-view`);
                 if (btn) btn.classList.remove('active');
@@ -1707,15 +1762,37 @@
 
         function addLottoChatMessage(username, content) {
             const targetInput = document.getElementById('active-winner-chat-target');
-            if (!targetInput || username.toLowerCase() !== targetInput.value.trim().toLowerCase()) return;
+            if (!targetInput) return;
+            const targetName = targetInput.value.trim().toLowerCase();
+            if (username.toLowerCase() !== targetName) return;
+
             const container = document.getElementById('lotto-chat-container');
-            if (!container) return;
-            if (container.children.length === 1 && container.children[0].style.fontStyle === 'italic') container.innerHTML = "";
+            if (container) {
+                if (container.children.length === 1 && container.children[0].style.fontStyle === 'italic') container.innerHTML = "";
+                const msgEl = document.createElement('div');
+                msgEl.className = 'lotto-chat-row';
+                msgEl.innerHTML = `<span class="lotto-chat-user">${username}:</span> ${content}`;
+                container.appendChild(msgEl);
+                container.scrollTop = container.scrollHeight;
+            }
+
+            // Broadcast to OBS Chat Overlay
+            overlayChannel.postMessage({ action: 'ADD_CHAT_MSG', username: username, content: content, target: targetName });
+            appendObsChatMessage(username, content, targetName);
+        }
+
+        function appendObsChatMessage(username, content, targetName) {
+            const chatContainer = document.getElementById('obs-chat-messages-container');
+            const targetLabel = document.getElementById('obs-chat-target-label');
+            if (targetLabel) targetLabel.textContent = `@${targetName}`;
+            if (!chatContainer) return;
+
+            if (chatContainer.children.length === 1 && chatContainer.children[0].style.fontStyle === 'italic') chatContainer.innerHTML = "";
             const msgEl = document.createElement('div');
             msgEl.className = 'lotto-chat-row';
             msgEl.innerHTML = `<span class="lotto-chat-user">${username}:</span> ${content}`;
-            container.appendChild(msgEl);
-            container.scrollTop = container.scrollHeight;
+            chatContainer.appendChild(msgEl);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function startLottoSpinSequenceRemotely() {
@@ -1727,9 +1804,7 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            // Broadcast to OBS Overlay
             overlayChannel.postMessage({ action: 'START_LOTTO', winner: winner, pool: pool });
-
             startLottoSpinSequence(winner, pool);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
@@ -1842,16 +1917,7 @@
         }
 
         function addWheelChatMessage(username, content) {
-            const targetInput = document.getElementById('active-wheel-winner-chat-target');
-            if (!targetInput || username.toLowerCase() !== targetInput.value.trim().toLowerCase()) return;
-            const container = document.getElementById('wheel-chat-container');
-            if (!container) return;
-            if (container.children.length === 1 && container.children[0].style.fontStyle === 'italic') container.innerHTML = "";
-            const msgEl = document.createElement('div');
-            msgEl.className = 'lotto-chat-row';
-            msgEl.innerHTML = `<span class="lotto-chat-user">${username}:</span> ${content}`;
-            container.appendChild(msgEl);
-            container.scrollTop = container.scrollHeight;
+            // Handled similarly via lotto/chat stream
         }
 
         function drawWheel() {
@@ -1917,9 +1983,7 @@
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
 
-            // Broadcast to OBS Overlay
             overlayChannel.postMessage({ action: 'START_WHEEL', winner: winner, entries: pool });
-
             startWheelSpinSequence(winner, pool);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
@@ -1975,6 +2039,10 @@
                 startWheelSpinSequence(data.winner, data.entries);
             } else if (data.action === 'UPDATE_KEYWORD') {
                 updateObsKeywordDisplay(data.keyword);
+            } else if (data.action === 'UPDATE_CHAT_TARGET') {
+                updateObsChatTargetDisplay(data.target);
+            } else if (data.action === 'ADD_CHAT_MSG') {
+                appendObsChatMessage(data.username, data.content, data.target);
             }
         };
 
