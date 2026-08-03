@@ -1178,7 +1178,6 @@
             const cleanVal = val.trim();
             localStorage.setItem('obs_active_keyword', cleanVal);
             
-            // Sync input fields across tabs/views if open
             const lottoIn = document.getElementById('lotto-keyword-input');
             const wheelIn = document.getElementById('wheel-keyword-input');
             if (lottoIn && lottoIn.value !== cleanVal) lottoIn.value = cleanVal;
@@ -1804,7 +1803,6 @@
                 container.scrollTop = container.scrollHeight;
             }
 
-            // Broadcast to OBS Chat Overlay
             overlayChannel.postMessage({ action: 'ADD_CHAT_MSG', username: username, content: content, target: targetName });
             appendObsChatMessage(username, content, targetName);
         }
@@ -1944,9 +1942,7 @@
             if (countLabel) countLabel.textContent = `(${listArr.length})`;
         }
 
-        function addWheelChatMessage(username, content) {
-            // Handled similarly via lotto/chat stream
-        }
+        function addWheelChatMessage(username, content) {}
 
         function drawWheel() {
             const canvas = document.getElementById('wheel-canvas');
