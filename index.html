@@ -135,7 +135,6 @@
             color: #ffffff;
         }
 
-        /* Circle Pointer Indicator Dot */
         .circle-pointer {
             position: absolute;
             top: 3px;
@@ -973,10 +972,9 @@
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
-        const itemWidth = 160; // Adjusted spacing for circular item width (130px + 30px margins)
+        const itemWidth = 160; 
         const itemsCount = 45; 
 
-        // --- MANDATORY KICK CHAT VERIFICATION LOGIN ---
         function checkStartupKickAuth() {
             const saved = localStorage.getItem('kick_logged_in_user');
             const savedChannel = localStorage.getItem('kick_target_channel');
@@ -1640,7 +1638,7 @@
         }
         window.closeReveal = closeReveal;
 
-        // Tournament Bracket Logic & Precise SVG Connector Lines Engine
+        // Tournament Bracket Logic & Precise SVG Connector Lines Engine (Flashing Prevented)
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1720,12 +1718,14 @@
             const container = document.getElementById('bracket-container');
             if (!container) return;
             let svg = document.getElementById('bracket-svg-lines');
-            if (svg) svg.remove();
-
-            svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute('id', 'bracket-svg-lines');
-            svg.style.cssText = `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`;
-            container.appendChild(svg);
+            if (!svg) {
+                svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute('id', 'bracket-svg-lines');
+                svg.style.cssText = `position:absolute;top:0;left:0;width:${container.scrollWidth}px;height:${container.scrollHeight}px;pointer-events:none;z-index:1;`;
+                container.appendChild(svg);
+            } else {
+                svg.innerHTML = "";
+            }
 
             const containerRect = container.getBoundingClientRect();
             const totalRounds = tournamentRounds.length;
@@ -1753,7 +1753,6 @@
 
                         const xMid = x1 + (x2 - x1) / 2;
 
-                        // Draw path from Match A to junction branch
                         const pathA = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         pathA.setAttribute("d", `M ${x1} ${yA} H ${xMid} V ${yNext} H ${x2}`);
                         pathA.setAttribute("stroke", "#53fc18");
@@ -1762,7 +1761,6 @@
                         pathA.setAttribute("style", "filter: drop-shadow(0 0 6px rgba(83, 252, 24, 0.7)); opacity: 0.85;");
                         svg.appendChild(pathA);
 
-                        // Draw path from Match B to junction branch
                         const pathB = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         pathB.setAttribute("d", `M ${x1} ${yB} H ${xMid} V ${yNext} H ${x2}`);
                         pathB.setAttribute("stroke", "#53fc18");
@@ -1789,7 +1787,7 @@
                         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
                             <span style="color:var(--accent-green);font-size:0.8rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Champion</span>
                             <div id="winner-box-${r}-0" style="background:#09090b;border:2px solid var(--accent-green);border-radius:12px;padding:12px;width:100%;box-shadow:0 0 20px rgba(83,252,24,0.3);box-sizing:border-box;">
-                                <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="Winner" style="background:#121215;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:8px;width:100%;outline:none;font-size:1.1rem;" onchange="updateTournamentTeamName(${r},0,this.value)">
+                                <input type="text" id="team-input-${r}-0" value="${round[0] || ''}" placeholder="" style="background:#121215;border:1px solid var(--accent-green);color:var(--accent-green);font-weight:900;text-align:center;padding:10px;border-radius:8px;width:100%;outline:none;font-size:1.1rem;" onchange="updateTournamentTeamName(${r},0,this.value)">
                             </div>
                         </div>`;
                 } else {
@@ -1797,25 +1795,23 @@
                         const matchWrapper = document.createElement('div');
                         matchWrapper.style.cssText = "display:flex;flex-direction:column;gap:8px;margin:12px 0;";
                         
-                        // Match Node Box A
                         const boxA = document.createElement('div');
                         boxA.setAttribute('id', `match-box-${r}-${m}`);
                         boxA.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
                         boxA.innerHTML = `
                             <div style="display:flex;gap:8px;align-items:center;width:100%;">
-                                <input type="text" id="team-input-${r}-${m}" value="${round[m]||''}" placeholder="Team Name..." style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m},this.value)">
-                                <input type="text" id="score-input-${r}-${m}" value="${tournamentScores[r][m]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)">
+                                <input type="text" id="team-input-${r}-${m}" value="${round[m]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m},this.value)">
+                                <input type="text" id="score-input-${r}-${m}" value="${tournamentScores[r][m]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m},this.value)">
                                 <button onclick="advanceTeam(${r},${m})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
                             </div>`;
 
-                        // Match Node Box B
                         const boxB = document.createElement('div');
                         boxB.setAttribute('id', `match-box-${r}-${m+1}`);
                         boxB.style.cssText = "background:#09090b;border:1px solid var(--border-gray);border-radius:10px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 15px rgba(0,0,0,0.5);";
                         boxB.innerHTML = `
                             <div style="display:flex;gap:8px;align-items:center;width:100%;">
-                                <input type="text" id="team-input-${r}-${m+1}" value="${round[m+1]||''}" placeholder="Team Name..." style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m+1},this.value)">
-                                <input type="text" id="score-input-${r}-${m+1}" value="${tournamentScores[r][m+1]||''}" placeholder="0" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)">
+                                <input type="text" id="team-input-${r}-${m+1}" value="${round[m+1]||''}" placeholder="" style="background:transparent;border:none;color:#fff;font-weight:800;width:100%;outline:none;font-size:0.95rem;" onchange="updateTournamentTeamName(${r},${m+1},this.value)">
+                                <input type="text" id="score-input-${r}-${m+1}" value="${tournamentScores[r][m+1]||''}" placeholder="" style="background:#000;border:1px solid var(--border-gray);color:var(--accent-green);font-weight:900;width:32px;text-align:center;border-radius:6px;outline:none;" oninput="updateTournamentScore(${r},${m+1},this.value)">
                                 <button onclick="advanceTeam(${r},${m+1})" style="background:none;border:none;color:var(--accent-green);cursor:pointer;font-weight:bold;font-size:1rem;" title="Advance">&rarr;</button>
                             </div>`;
 
@@ -1871,7 +1867,25 @@
                     tournamentScores = data.scores || [];
                     const selectEl = document.getElementById('tournament-size-select');
                     if (selectEl) selectEl.value = tournamentSize;
-                    renderTournamentBracket();
+                    
+                    // Only update values locally if they differ to preserve input focus & prevent flashing
+                    tournamentRounds.forEach((round, r) => {
+                        round.forEach((teamName, idx) => {
+                            const input = document.getElementById(`team-input-${r}-${idx}`);
+                            if (input && input.value !== teamName && document.activeElement !== input) {
+                                input.value = teamName;
+                            }
+                        });
+                    });
+                    tournamentScores.forEach((scoresList, r) => {
+                        scoresList.forEach((scoreVal, idx) => {
+                            const input = document.getElementById(`score-input-${r}-${idx}`);
+                            if (input && input.value !== scoreVal && document.activeElement !== input) {
+                                input.value = scoreVal;
+                            }
+                        });
+                    });
+                    drawConnectorLines();
                 }
             });
             onValue(ref(db, 'trigger/lottoSpin'), snap => {
