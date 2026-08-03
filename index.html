@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="green">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,24 @@
             --accent-green-hover: #45d812;
             --text-white: #ffffff;
             --text-muted: #a1a1aa;
+        }
+
+        /* THEME PALETTES */
+        [data-theme="green"] {
+            --accent-green: #53fc18;
+            --accent-green-hover: #45d812;
+        }
+        [data-theme="purple"] {
+            --accent-green: #a855f7;
+            --accent-green-hover: #9333ea;
+        }
+        [data-theme="cyan"] {
+            --accent-green: #06b6d4;
+            --accent-green-hover: #0891b2;
+        }
+        [data-theme="crimson"] {
+            --accent-green: #f43f5e;
+            --accent-green-hover: #e11d48;
         }
 
         body {
@@ -31,6 +49,10 @@
             overflow: hidden;
             perspective: 1000px;
             position: relative;
+        }
+
+        body.obs-transparent {
+            background: transparent !important;
         }
 
         #bg-canvas {
@@ -237,7 +259,7 @@
         }
 
         .lotto-pill-count {
-            background-color: rgba(83, 252, 24, 0.15);
+            background-color: color-mix(in srgb, var(--accent-green) 15%, transparent);
             color: var(--accent-green);
             padding: 2px 10px;
             border-radius: 20px;
@@ -347,7 +369,7 @@
             gap: 12px;
             transition: all 0.2s ease;
             flex-shrink: 0;
-            box-shadow: 0 4px 20px rgba(83, 252, 24, 0.25);
+            box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-green) 25%, transparent);
         }
 
         .lotto-roll-btn:hover {
@@ -461,7 +483,7 @@
             border: 4px solid var(--accent-green) !important;
             object-fit: cover !important;
             background-color: #000000;
-            box-shadow: 0 0 25px rgba(83, 252, 24, 0.45);
+            box-shadow: 0 0 25px color-mix(in srgb, var(--accent-green) 45%, transparent);
             margin-bottom: 6px;
         }
 
@@ -499,7 +521,7 @@
             height: 560px !important;
         }
 
-        /* EPIC WINNER OVERLAY (Solid Pitch Black Background & Glowing Neon Neon Card) */
+        /* EPIC WINNER OVERLAY */
         .epic-overlay {
             position: fixed;
             top: 0;
@@ -520,6 +542,10 @@
             padding: 30px;
         }
 
+        body.obs-transparent .epic-overlay {
+            background: transparent !important;
+        }
+
         .epic-overlay.active {
             opacity: 1;
             pointer-events: auto;
@@ -534,7 +560,7 @@
             align-items: center;
             justify-content: center;
             min-width: 440px;
-            box-shadow: 0 0 70px rgba(83, 252, 24, 0.4), inset 0 0 30px rgba(83, 252, 24, 0.15);
+            box-shadow: 0 0 70px color-mix(in srgb, var(--accent-green) 40%, transparent), inset 0 0 30px color-mix(in srgb, var(--accent-green) 15%, transparent);
             transform: scale(0.85);
             opacity: 0;
             transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
@@ -552,7 +578,7 @@
             letter-spacing: 3px;
             text-align: center;
             margin: 0;
-            text-shadow: 0 0 25px rgba(83, 252, 24, 0.6);
+            text-shadow: 0 0 25px color-mix(in srgb, var(--accent-green) 60%, transparent);
         }
 
         #bracket-container::-webkit-scrollbar {
@@ -612,6 +638,35 @@
         </div>
     </div>
 
+    <!-- OBS Links Generator Modal -->
+    <div id="obs-links-modal" class="kick-login-modal-overlay" style="display: none;">
+        <div class="kick-login-modal" style="width: 500px; text-align: left;" onclick="event.stopPropagation()">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase;">OBS Browser Source Links</h2>
+                <button onclick="closeObsModal()" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; font-weight: bold;">&times;</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Copy these links into an OBS Browser Source (transparent background compatible):</p>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Lotto / Slot Spinner Source</label>
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <input type="text" id="obs-link-lotto" readonly class="password-input" style="margin:0; font-size:0.85rem; text-align:left; padding:10px 12px;">
+                    <button class="btn" style="width: auto; padding: 10px 16px; background: var(--accent-green); color: #000; font-size: 0.85rem;" onclick="copyObsLink('obs-link-lotto', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Spinning Wheel Source</label>
+                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                    <input type="text" id="obs-link-wheel" readonly class="password-input" style="margin:0; font-size:0.85rem; text-align:left; padding:10px 12px;">
+                    <button class="btn" style="width: auto; padding: 10px 16px; background: var(--accent-green); color: #000; font-size: 0.85rem;" onclick="copyObsLink('obs-link-wheel', this)">Copy</button>
+                </div>
+            </div>
+
+            <button class="btn" style="background: #27272a; color: #fff;" onclick="closeObsModal()">CLOSE</button>
+        </div>
+    </div>
+
     <!-- Custom In-Site Logout Confirmation Modal -->
     <div id="logout-confirm-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal" style="width: 380px;" onclick="event.stopPropagation()">
@@ -625,10 +680,23 @@
     </div>
 
     <!-- Top Navigation Controls -->
-    <div class="workspace-navbar">
+    <div class="workspace-navbar" id="main-navbar">
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
+
+        <!-- Theme Picker Pill -->
+        <div style="position: relative; display: inline-block; margin-left: 2px;">
+            <button onclick="toggleThemeDropdown(event)" title="Change Theme" style="background: transparent; border: 1px solid var(--border-gray); padding: 5px 8px; border-radius: 8px; cursor: pointer; color: var(--accent-green); display: flex; align-items: center; justify-content: center; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border-gray)'">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </button>
+            <div id="theme-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.9); width: 150px; z-index: 9999; padding: 6px; box-sizing: border-box;">
+                <button onclick="setTheme('green')" style="width:100%; background:transparent; border:none; padding:8px 10px; border-radius:6px; color:#fff; font-size:0.85rem; font-weight:800; text-align:left; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'"><span style="width:10px; height:10px; background:#53fc18; border-radius:50%;"></span> Kick Green</button>
+                <button onclick="setTheme('purple')" style="width:100%; background:transparent; border:none; padding:8px 10px; border-radius:6px; color:#fff; font-size:0.85rem; font-weight:800; text-align:left; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'"><span style="width:10px; height:10px; background:#a855f7; border-radius:50%;"></span> Cyber Purple</button>
+                <button onclick="setTheme('cyan')" style="width:100%; background:transparent; border:none; padding:8px 10px; border-radius:6px; color:#fff; font-size:0.85rem; font-weight:800; text-align:left; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'"><span style="width:10px; height:10px; background:#06b6d4; border-radius:50%;"></span> Matrix Cyan</button>
+                <button onclick="setTheme('crimson')" style="width:100%; background:transparent; border:none; padding:8px 10px; border-radius:6px; color:#fff; font-size:0.85rem; font-weight:800; text-align:left; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'"><span style="width:10px; height:10px; background:#f43f5e; border-radius:50%;"></span> Sunset Crimson</button>
+            </div>
+        </div>
 
         <!-- Kick-Style Profile Pill & Dropdown Menu -->
         <div id="profile-pill-container" style="position: relative; display: inline-block; margin-left: 4px;">
@@ -641,7 +709,7 @@
             </button>
 
             <!-- Dropdown Menu -->
-            <div id="profile-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.9); width: 220px; z-index: 9999; overflow: hidden; box-sizing: border-box;">
+            <div id="profile-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 10px); right: 0; background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,0.9); width: 230px; z-index: 9999; overflow: hidden; box-sizing: border-box;">
                 <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-gray);">
                     <div style="width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0;">
                         <img id="dropdown-profile-pfp" src="" style="width:100%; height:100%; object-fit:cover;" onerror="this.src=DEFAULT_AVATAR">
@@ -656,6 +724,10 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         <span>My Profile & Stats</span>
                     </button>
+                    <button onclick="openObsModal()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; color: #fff; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+                        <span>OBS Links</span>
+                    </button>
                     <button id="dropdown-action-btn" onclick="handleProfileDropdownAction()" style="width: 100%; background: transparent; border: none; padding: 10px 14px; border-radius: 8px; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left; transition: background 0.15s;" onmouseover="this.style.background='#1f1f23'" onmouseout="this.style.background='transparent'">
                     </button>
                 </div>
@@ -668,7 +740,7 @@
     <!-- WORKSPACE 1: KEYWORD LOTTO VIEW -->
     <div id="lotto-view" class="workspace-view active">
         <div class="lotto-workspace">
-            <div class="lotto-card">
+            <div class="lotto-card obs-hide">
                 <div class="lotto-card-title">
                     Eligible Users
                     <span id="lotto-eligible-count" class="lotto-pill-count">(0)</span>
@@ -682,7 +754,7 @@
             </div>
 
             <div class="lotto-center-layout">
-                <div class="lotto-config-row">
+                <div class="lotto-config-row obs-hide">
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
@@ -710,12 +782,12 @@
                     </div>
                 </div>
 
-                <button id="lotto-main-roll-btn" class="lotto-roll-btn" onclick="startLottoSpinSequenceRemotely()">
+                <button id="lotto-main-roll-btn" class="lotto-roll-btn obs-hide" onclick="startLottoSpinSequenceRemotely()">
                     Roll Winner
                 </button>
             </div>
 
-            <div class="lotto-card">
+            <div class="lotto-card obs-hide">
                 <div class="lotto-card-title">
                     Winner Chat
                     <input type="text" id="active-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
@@ -730,7 +802,7 @@
     <!-- WORKSPACE 2: SPINNING WHEEL VIEW -->
     <div id="wheel-view" class="workspace-view">
         <div class="lotto-workspace">
-            <div class="lotto-card">
+            <div class="lotto-card obs-hide">
                 <div class="lotto-card-title">
                     Eligible Users
                     <span id="wheel-eligible-count" class="lotto-pill-count">(0)</span>
@@ -744,7 +816,7 @@
             </div>
 
             <div class="lotto-center-layout">
-                <div class="lotto-config-row">
+                <div class="lotto-config-row obs-hide">
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
@@ -776,12 +848,12 @@
                     </div>
                 </div>
 
-                <button id="wheel-main-roll-btn" class="lotto-roll-btn" onclick="startWheelSpinSequenceRemotely()">
+                <button id="wheel-main-roll-btn" class="lotto-roll-btn obs-hide" onclick="startWheelSpinSequenceRemotely()">
                     Spin Wheel
                 </button>
             </div>
 
-            <div class="lotto-card">
+            <div class="lotto-card obs-hide">
                 <div class="lotto-card-title">
                     Winner Chat
                     <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
@@ -874,7 +946,145 @@
         const itemWidth = 205; 
         const itemsCount = 45; 
 
+        // --- WEB AUDIO API SYNTHESIZED SOUND EFFECTS ---
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function playClickSound() {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.04);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.04);
+            } catch(e) {}
+        }
+
+        function playTickSound() {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                gain.gain.setValueAtTime(0.04, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.02);
+            } catch(e) {}
+        }
+
+        function playWinFanfare() {
+            try {
+                const ctx = getAudioContext();
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.4);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.12);
+                    osc.stop(ctx.currentTime + idx * 0.12 + 0.4);
+                });
+            } catch(e) {}
+        }
+
+        // --- THEME MANAGER ---
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('kick_tool_theme', themeName);
+            const menu = document.getElementById('theme-dropdown-menu');
+            if (menu) menu.style.display = 'none';
+            playClickSound();
+        }
+        window.setTheme = setTheme;
+
+        function toggleThemeDropdown(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('theme-dropdown-menu');
+            const isVisible = menu.style.display === 'block';
+            menu.style.display = isVisible ? 'none' : 'block';
+        }
+        window.toggleThemeDropdown = toggleThemeDropdown;
+
+        // --- OBS BROWSER SOURCE MODE ---
+        function checkObsMode() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'obs') {
+                document.body.classList.add('obs-transparent');
+                const navbar = document.getElementById('main-navbar');
+                if (navbar) navbar.style.display = 'none';
+                
+                const view = params.get('view') || 'lotto';
+                switchWorkspace(view);
+
+                const channel = params.get('channel');
+                if (channel) {
+                    targetChannelName = channel;
+                    fetchChatroomId(channel).then(res => {
+                        if (res) {
+                            targetChatroomId = res.chatroomId;
+                            connectToKickChat();
+                        }
+                    });
+                }
+
+                // Hide sidebar cards for OBS clean look
+                const hideElements = document.querySelectorAll('.obs-hide');
+                hideElements.forEach(el => el.style.display = 'none');
+            }
+        }
+
+        function openObsModal() {
+            const menu = document.getElementById('profile-dropdown-menu');
+            if (menu) menu.style.display = 'none';
+            const chevron = document.getElementById('profile-chevron');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const channel = targetChannelName || loggedInKickUser?.slug || 'streamername';
+            
+            document.getElementById('obs-link-lotto').value = `${baseUrl}?mode=obs&view=lotto&channel=${channel}`;
+            document.getElementById('obs-link-wheel').value = `${baseUrl}?mode=obs&view=wheel&channel=${channel}`;
+            document.getElementById('obs-links-modal').style.display = 'flex';
+        }
+        window.openObsModal = openObsModal;
+
+        function closeObsModal() {
+            document.getElementById('obs-links-modal').style.display = 'none';
+        }
+        window.closeObsModal = closeObsModal;
+
+        function copyObsLink(inputId, btnEl) {
+            const input = document.getElementById(inputId);
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            const origText = btnEl.textContent;
+            btnEl.textContent = "COPIED!";
+            setTimeout(() => { btnEl.textContent = origText; }, 1200);
+        }
+        window.copyObsLink = copyObsLink;
+
         function checkStartupKickAuth() {
+            const savedTheme = localStorage.getItem('kick_tool_theme');
+            if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
             const saved = localStorage.getItem('kick_logged_in_user');
             const savedChannel = localStorage.getItem('kick_target_channel');
             const savedJoined = localStorage.getItem('kick_user_joined_date');
@@ -900,9 +1110,11 @@
                 } catch(e) {}
             }
             updateProfileView();
+            checkObsMode();
         }
 
         function handleKickLogout() {
+            playClickSound();
             const username = loggedInKickUser ? loggedInKickUser.username : '';
             document.getElementById('logout-modal-text').innerHTML = `Are you sure you want to log out from <strong style="color: #fff;">@${username}</strong>?`;
             document.getElementById('logout-confirm-modal').style.display = 'flex';
@@ -910,11 +1122,13 @@
         window.handleKickLogout = handleKickLogout;
 
         function closeLogoutModal() {
+            playClickSound();
             document.getElementById('logout-confirm-modal').style.display = 'none';
         }
         window.closeLogoutModal = closeLogoutModal;
 
         function confirmKickLogout() {
+            playClickSound();
             document.getElementById('logout-confirm-modal').style.display = 'none';
             loggedInKickUser = null;
             totalRollsCount = 0;
@@ -928,6 +1142,7 @@
         window.confirmKickLogout = confirmKickLogout;
 
         function openProfileStatsModal() {
+            playClickSound();
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) menu.style.display = 'none';
             const chevron = document.getElementById('profile-chevron');
@@ -955,11 +1170,13 @@
         window.openProfileStatsModal = openProfileStatsModal;
 
         function closeProfileStatsModal() {
+            playClickSound();
             document.getElementById('profile-stats-modal').style.display = 'none';
         }
         window.closeProfileStatsModal = closeProfileStatsModal;
 
         function toggleProfileDropdown(e) {
+            playClickSound();
             e.stopPropagation();
             const menu = document.getElementById('profile-dropdown-menu');
             const chevron = document.getElementById('profile-chevron');
@@ -977,9 +1194,14 @@
                 if (menu) menu.style.display = 'none';
                 if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
+            const themeMenu = document.getElementById('theme-dropdown-menu');
+            if (themeMenu && !e.target.closest('button[onclick*="toggleThemeDropdown"]')) {
+                themeMenu.style.display = 'none';
+            }
         });
 
         function handleProfileDropdownAction() {
+            playClickSound();
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) menu.style.display = 'none';
             const chevron = document.getElementById('profile-chevron');
@@ -999,6 +1221,7 @@
         let verificationPollInterval = null;
 
         async function startKickVerificationFlow() {
+            playClickSound();
             const inputVal = document.getElementById('kick-login-username').value.trim();
             const errorEl = document.getElementById('kick-login-error');
             const modalBox = document.getElementById('kick-login-modal-box');
@@ -1231,7 +1454,7 @@
             draw() {
                 ctx.save();
                 ctx.globalAlpha = this.alpha;
-                ctx.fillStyle = '#53fc18';
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#53fc18';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fill();
@@ -1249,6 +1472,7 @@
         animateDust();
 
         function switchWorkspace(mode) {
+            playClickSound();
             currentActiveView = mode;
             ['lotto', 'wheel', 'tournament'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
@@ -1272,6 +1496,7 @@
         window.switchWorkspace = switchWorkspace;
 
         function toggleKeywordVisibility() {
+            playClickSound();
             const field = document.getElementById('lotto-keyword-input');
             const btn = document.getElementById('keyword-hide-btn');
             if (field.type === "password") { field.type = "text"; btn.textContent = "Hide"; }
@@ -1280,6 +1505,7 @@
         window.toggleKeywordVisibility = toggleKeywordVisibility;
 
         function toggleWheelKeywordVisibility() {
+            playClickSound();
             const field = document.getElementById('wheel-keyword-input');
             const btn = document.getElementById('wheel-keyword-hide-btn');
             if (field.type === "password") { field.type = "text"; btn.textContent = "Hide"; }
@@ -1338,6 +1564,7 @@
         }
 
         function clearLottoEntries() {
+            playClickSound();
             lottoEntries.clear();
             lottoBlacklist.clear();
             renderLottoEntries();
@@ -1390,6 +1617,7 @@
         }
 
         function startLottoSpinSequenceRemotely() {
+            playClickSound();
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) { alert("Entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
@@ -1435,12 +1663,19 @@
             const containerWidth = document.getElementById('lotto-spinner-inner').offsetWidth;
             const targetOffset = (targetIdx * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
 
-            animateWheel(carousel, targetOffset, containerWidth, 8000, () => {
+            let lastTickOffset = 0;
+            animateWheel(carousel, targetOffset, containerWidth, 8000, (currentOffset) => {
+                if (Math.abs(currentOffset - lastTickOffset) > 40) {
+                    playTickSound();
+                    lastTickOffset = currentOffset;
+                }
+            }, () => {
                 triggerLottoWinnerReveal(winner);
             });
         }
 
         function triggerLottoWinnerReveal(winner) {
+            playWinFanfare();
             lottoBlacklist.add(winner);
             lottoEntries.delete(winner);
             renderLottoEntries();
@@ -1453,12 +1688,14 @@
         }
 
         function closeReveal() {
+            playClickSound();
             document.getElementById('epic-overlay').classList.remove('active');
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
         }
         window.closeReveal = closeReveal;
 
         function clearWheelEntries() {
+            playClickSound();
             wheelEntries.clear();
             wheelBlacklist.clear();
             renderWheelEntries();
@@ -1566,6 +1803,7 @@
         }
 
         function startWheelSpinSequenceRemotely() {
+            playClickSound();
             const pool = Array.from(wheelEntries.keys());
             if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
@@ -1590,13 +1828,23 @@
             canvas.style.transition = 'transform 8s cubic-bezier(0.1, 0.8, 0.1, 1)';
             canvas.style.transform = `rotate(${targetRotation}deg)`;
 
+            // Simulated ticks during wheel spin
+            let tickCount = 0;
+            const tickInterval = setInterval(() => {
+                playTickSound();
+                tickCount++;
+                if (tickCount > 35) clearInterval(tickInterval);
+            }, 200);
+
             setTimeout(() => {
+                clearInterval(tickInterval);
                 wheelSpinning = false;
                 triggerWheelWinnerReveal(winner);
             }, 8000);
         }
 
         function triggerWheelWinnerReveal(winner) {
+            playWinFanfare();
             wheelBlacklist.add(winner);
             wheelEntries.delete(winner);
             renderWheelEntries();
@@ -1609,7 +1857,7 @@
             autoCloseTimeout = setTimeout(closeReveal, 4000);
         }
 
-        // --- Tournament Logic (Stable & Flicker-Free) ---
+        // --- Tournament Logic ---
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
@@ -1624,6 +1872,7 @@
         }
 
         function changeTournamentSize(size) {
+            playClickSound();
             const numSize = parseInt(size, 10);
             initTournamentData(numSize);
             saveTournamentData();
@@ -1632,6 +1881,7 @@
         window.changeTournamentSize = changeTournamentSize;
 
         function shuffleTournamentTeams() {
+            playClickSound();
             let round0 = [...tournamentRounds[0]];
             for (let i = round0.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -1645,6 +1895,7 @@
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
         function resetTournamentBracket() {
+            playClickSound();
             if (confirm("Reset tournament bracket?")) {
                 initTournamentData(tournamentSize);
                 saveTournamentData();
@@ -1697,6 +1948,7 @@
         window.updateTournamentScore = updateTournamentScore;
 
         function advanceTeam(r, idx) {
+            playClickSound();
             const team = tournamentRounds[r][idx];
             if (!team || r + 1 >= tournamentRounds.length) return;
             tournamentRounds[r + 1][Math.floor(idx / 2)] = team;
@@ -1717,6 +1969,8 @@
             svg.style.cssText = `position: absolute; top: 0; left: 0; width: ${container.scrollWidth}px; height: ${container.scrollHeight}px; pointer-events: none; z-index: 1;`;
             svg.innerHTML = "";
 
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#53fc18';
+
             const containerRect = container.getBoundingClientRect();
             for (let r = 0; r < tournamentRounds.length - 1; r++) {
                 for (let m = 0; m < tournamentRounds[r].length / 2; m++) {
@@ -1733,7 +1987,8 @@
 
                         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         path.setAttribute("d", `M ${x1} ${y1} H ${xMid} V ${y2} H ${x2}`);
-                        path.setAttribute("stroke", "rgba(83, 252, 24, 0.45)");
+                        path.setAttribute("stroke", accentColor);
+                        path.setAttribute("stroke-opacity", "0.45");
                         path.setAttribute("stroke-width", "2");
                         path.setAttribute("fill", "none");
                         svg.appendChild(path);
@@ -1773,7 +2028,7 @@
 
                 if (r === tournamentRounds.length - 1) {
                     col.innerHTML = `
-                        <div id="slot-container-${r}-0" style="background: rgba(83,252,24,0.04); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 10px; text-align: center;">
+                        <div id="slot-container-${r}-0" style="background: color-mix(in srgb, var(--accent-green) 4%, transparent); border: 1px solid color-mix(in srgb, var(--accent-green) 25%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent-green) 10%, transparent); border-radius: 10px; padding: 10px; text-align: center;">
                             <input type="text" value="${round[0] || ''}" placeholder="" class="admin-field" style="text-align: center; font-weight: 800; border: none; background: transparent; padding: 6px;" oninput="updateTournamentTeamName(${r}, 0, this.value)">
                         </div>
                     `;
@@ -1784,7 +2039,7 @@
                         const idxA = m * 2, idxB = m * 2 + 1;
                         const matchBox = document.createElement('div');
                         matchBox.id = `match-box-${r}-${m}`;
-                        matchBox.style.cssText = "background: var(--bg-black); border: 1px solid rgba(83,252,24,0.25); box-shadow: 0 0 10px rgba(83,252,24,0.1); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
+                        matchBox.style.cssText = "background: var(--bg-black); border: 1px solid color-mix(in srgb, var(--accent-green) 25%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--accent-green) 10%, transparent); border-radius: 10px; padding: 5px; display: flex; flex-direction: column; gap: 4px;";
                         
                         const slotHTML = (team, score, idx) => `
                             <div id="slot-container-${r}-${idx}" style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 6px; padding: 3px 6px;">
@@ -1826,13 +2081,22 @@
             }
         }
 
-        function animateWheel(carouselEl, targetOffset, containerWidth, duration, onFinish) {
+        function animateWheel(carouselEl, targetOffset, containerWidth, duration, onTick, onFinish) {
             const startTime = performance.now();
+            let lastReportedOffset = 0;
             function frame(now) {
                 const elapsed = now - startTime;
                 const progress = Math.min(1, elapsed / duration);
                 const eased = 1 - Math.pow(1 - progress, 5);
-                carouselEl.style.transform = `translate3d(-${targetOffset * eased}px, 0, 0)`;
+                const currentOffset = targetOffset * eased;
+                
+                carouselEl.style.transform = `translate3d(-${currentOffset}px, 0, 0)`;
+                
+                if (onTick && Math.abs(currentOffset - lastReportedOffset) > 45) {
+                    onTick(currentOffset);
+                    lastReportedOffset = currentOffset;
+                }
+
                 if (progress < 1) requestAnimationFrame(frame);
                 else onFinish();
             }
