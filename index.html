@@ -1105,7 +1105,7 @@
 
                 <!-- Right: Grid Area -->
                 <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;">
-                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center;"></div>
+                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center; filter: blur(10px); transition: filter 0.4s ease, opacity 0.4s ease; opacity: 0.5; pointer-events: none;"></div>
                 </div>
             </div>
         </div>
@@ -1249,6 +1249,7 @@
         let minesSize = 4;
         let minesEntries = new Map(); // username -> timestamp
         let minesBoardData = [];
+        let minesGameOpen = false;
 
         let tournamentSize = 8;
         let tournamentRounds = [];
@@ -1833,7 +1834,7 @@
                 renderTournamentBracket();
                 setTimeout(drawConnectorLines, 100);
             } else if (mode === 'mines') {
-                if (minesBoardData.length === 0) renderMinesGridPlaceholder();
+                if (!minesGameOpen) renderMinesGridPlaceholder();
                 else renderMinesBoard();
                 renderMinesEntries();
             }
@@ -1913,9 +1914,9 @@
                 }
             }
 
-            // MINES ENTRY LOGIC
+            // MINES ENTRY LOGIC (Only before game starts)
             const minesKeyField = document.getElementById('mines-keyword-input');
-            if (minesKeyField) {
+            if (minesKeyField && !minesGameOpen) {
                 const minesKey = minesKeyField.value.trim().toLowerCase();
                 if (contentClean === minesKey) {
                     if (!minesEntries.has(senderName)) {
@@ -1934,6 +1935,7 @@
         window.clearLottoEntries = clearLottoEntries;
 
         function clearMinesEntries() {
+            if (minesGameOpen) return;
             minesEntries.clear();
             renderMinesEntries();
         }
@@ -2197,6 +2199,10 @@
 
         // --- MINES GAME LOGIC ---
         function setMinesSize(size) {
+            if (minesGameOpen) {
+                showToast("Reset board before changing size!", "error");
+                return;
+            }
             minesSize = size;
             [2, 3, 4, 5, 6, 7, 8].forEach(s => {
                 const btn = document.querySelector(`button.mines-size-btn:nth-child(${s-1})`) || document.getElementById(`m-btn-${s}`);
@@ -2215,12 +2221,14 @@
             const totalTiles = minesSize * minesSize;
             grid.style.gridTemplateColumns = `repeat(${minesSize}, 1fr)`;
             grid.style.gridTemplateRows = `repeat(${minesSize}, 1fr)`;
+            grid.style.filter = "blur(10px)";
+            grid.style.opacity = "0.4";
             grid.innerHTML = "";
 
             for (let i = 0; i < totalTiles; i++) {
                 const el = document.createElement('div');
                 el.className = 'mine-tile';
-                el.innerHTML = `<span style="font-size: 1.6rem; font-weight: 900; color: var(--text-muted);">?</span>`;
+                el.innerHTML = `<span style="font-size: 1.8rem; font-weight: 900; color: var(--text-muted);">?</span>`;
                 grid.appendChild(el);
             }
         }
@@ -2234,6 +2242,7 @@
 
             const totalTiles = minesSize * minesSize;
             minesBoardData = [];
+            minesGameOpen = true;
 
             const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
 
@@ -2260,13 +2269,21 @@
             }
 
             minesBoardData.sort(() => Math.random() - 0.5);
+            
+            const grid = document.getElementById('mines-grid');
+            if (grid) {
+                grid.style.filter = "blur(0px)";
+                grid.style.opacity = "1";
+            }
+
             renderMinesBoard();
-            showToast(`Mines game started with ${Math.min(players.length, totalTiles)} players!`);
+            showToast(`Mines game started! ${Math.min(players.length, totalTiles)} entries hidden.`);
         }
         window.startMinesGame = startMinesGame;
 
         function resetMinesBoard() {
             minesBoardData = [];
+            minesGameOpen = false;
             renderMinesGridPlaceholder();
             showToast("Mines board reset.");
         }
@@ -2278,6 +2295,8 @@
             
             grid.style.gridTemplateColumns = `repeat(${minesSize}, 1fr)`;
             grid.style.gridTemplateRows = `repeat(${minesSize}, 1fr)`;
+            grid.style.filter = "blur(0px)";
+            grid.style.opacity = "1";
             grid.innerHTML = "";
 
             minesBoardData.forEach((tile, idx) => {
@@ -2291,7 +2310,7 @@
                     if (tile.type === 'player') {
                         const avatarSrc = tile.avatar || getDefaultAvatar();
                         el.innerHTML = `
-                            <img src="${avatarSrc}" style="width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;" onerror="this.src='${getDefaultAvatar()}';">
+                            <img src="${avatarSrc}" style="width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;" onerror="this.src=getDefaultAvatar()">
                             <span style="font-size: 0.95rem; font-weight: 950; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: 0 4px;">${tile.username}</span>
                         `;
                     } else {
@@ -2303,6 +2322,7 @@
         }
 
         function revealMineTile(idx) {
+            if (!minesGameOpen) return;
             const tile = minesBoardData[idx];
             if (!tile || tile.revealed) return;
             tile.revealed = true;
