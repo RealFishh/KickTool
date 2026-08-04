@@ -51,10 +51,10 @@
             position: relative;
         }
 
-        /* COOL NEON LOADING SCREEN ANIMATION */
+        /* EPIC LOADING SCREEN ANIMATIONS */
         @keyframes neonPulse {
-            0%, 100% { filter: drop-shadow(0 0 15px var(--accent-green)) drop-shadow(0 0 35px var(--accent-green)); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 25px var(--accent-green)) drop-shadow(0 0 55px var(--accent-green)); transform: scale(1.05); }
+            0%, 100% { filter: drop-shadow(0 0 20px var(--accent-green)) drop-shadow(0 0 40px var(--accent-green)); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 35px var(--accent-green)) drop-shadow(0 0 70px var(--accent-green)); transform: scale(1.06); }
         }
         .neon-logo-load {
             animation: neonPulse 2s ease-in-out infinite;
@@ -62,8 +62,45 @@
 
         @keyframes loadingProgress {
             0% { width: 0%; }
-            60% { width: 80%; }
+            60% { width: 85%; }
             100% { width: 100%; }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+
+        /* CUSTOM IN-SITE TOAST NOTIFICATIONS */
+        #toast-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .site-toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gray);
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: toastIn 0.3s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+            max-width: 380px;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* OBS TRANSPARENT OVERLAY MODE */
@@ -215,22 +252,6 @@
             font-size: 0.9rem;
             margin-bottom: 15px;
             display: none;
-        }
-
-        /* Top Left Brand Logo */
-        .top-left-brand {
-            position: fixed;
-            top: 15px;
-            left: 20px;
-            z-index: 999;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background-color: var(--bg-card);
-            padding: 6px 16px 6px 6px;
-            border-radius: 16px;
-            border: 1px solid var(--border-gray);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
         }
 
         /* Top Navigation Controls - Perfectly Centered & Balanced */
@@ -648,6 +669,29 @@
             height: 560px !important;
         }
 
+        /* TOURNAMENT SIZE PILL BUTTONS */
+        .tournament-size-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tournament-size-btn.active {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #000000;
+            box-shadow: 0 0 12px color-mix(in srgb, var(--accent-green) 30%, transparent);
+        }
+        .tournament-size-btn:hover:not(.active) {
+            color: #ffffff;
+            border-color: var(--border-gray);
+        }
+
         /* EPIC WINNER OVERLAY */
         .epic-overlay {
             position: fixed;
@@ -724,13 +768,19 @@
 </head>
 <body>
 
-    <!-- Professional Splash Loading Screen with Only Logo & Green Progress Bar -->
-    <div id="site-loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-black); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease;">
-        <div style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;" class="neon-logo-load">
+    <!-- CUSTOM IN-SITE TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- IMMERSIVE FUTURISTIC STARTUP LOADING SCREEN -->
+    <div id="site-loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-black); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; transition: opacity 0.6s ease, visibility 0.6s ease; overflow: hidden;">
+        <div style="position: absolute; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-green), transparent); animation: scanline 2.5s linear infinite; opacity: 0.4; pointer-events: none;"></div>
+        <div style="width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; position: relative;" class="neon-logo-load">
+            <div style="position: absolute; inset: -15px; border: 2px dashed color-mix(in srgb, var(--accent-green) 40%, transparent); border-radius: 50%; animation: spin 10s linear infinite;"></div>
             <img src="mylogo.png" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src=getDefaultAvatar()">
         </div>
-        <div style="width: 200px; height: 6px; background: #18181b; border-radius: 3px; border: 1px solid var(--border-gray); overflow: hidden; position: relative;">
-            <div style="position: absolute; top: 0; left: 0; height: 100%; background: var(--accent-green); box-shadow: 0 0 12px var(--accent-green); animation: loadingProgress 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;"></div>
+        <div style="font-size: 0.85rem; font-weight: 900; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase;">INITIALIZING KICK TOOL SUITE</div>
+        <div style="width: 240px; height: 6px; background: #18181b; border-radius: 3px; border: 1px solid var(--border-gray); overflow: hidden; position: relative; box-shadow: 0 0 15px rgba(0,0,0,0.8);">
+            <div style="position: absolute; top: 0; left: 0; height: 100%; background: var(--accent-green); box-shadow: 0 0 15px var(--accent-green); animation: loadingProgress 1.4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;"></div>
         </div>
     </div>
 
@@ -1081,14 +1131,12 @@
             <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                 <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; margin-right: 8px;">Tournament Bracket</span>
                 
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="color: var(--text-muted); font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">Size:</span>
-                    <select id="tournament-size-select" style="background: #000000; border: 1px solid var(--border-gray); border-radius: 8px; color: #ffffff; padding: 6px 14px; font-size: 1rem; outline: none; width: auto; font-weight: 900; color: var(--accent-green); cursor: pointer;" onchange="changeTournamentSize(this.value)">
-                        <option value="2">2 Teams</option>
-                        <option value="4">4 Teams</option>
-                        <option value="8" selected>8 Teams</option>
-                        <option value="16">16 Teams</option>
-                    </select>
+                <!-- Enhanced Tournament Size Switcher Buttons -->
+                <div style="display: flex; align-items: center; gap: 4px; background: #000000; padding: 3px; border-radius: 10px; border: 1px solid var(--border-gray);">
+                    <button id="t-btn-2" class="tournament-size-btn" onclick="changeTournamentSize(2)">2</button>
+                    <button id="t-btn-4" class="tournament-size-btn" onclick="changeTournamentSize(4)">4</button>
+                    <button id="t-btn-8" class="tournament-size-btn active" onclick="changeTournamentSize(8)">8</button>
+                    <button id="t-btn-16" class="tournament-size-btn" onclick="changeTournamentSize(16)">16</button>
                 </div>
 
                 <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 4px;"></div>
@@ -1150,6 +1198,28 @@
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
 
+        // CUSTOM TOAST NOTIFICATION SYSTEM
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'site-toast';
+            if (type === 'error') {
+                toast.style.borderColor = '#f43f5e';
+            } else {
+                toast.style.borderColor = 'var(--accent-green)';
+            }
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+        window.showToast = showToast;
+
         // HIDE LOADING SCREEN ON STARTUP
         window.addEventListener('load', () => {
             setTimeout(() => {
@@ -1157,9 +1227,9 @@
                 if (loader) {
                     loader.style.opacity = '0';
                     loader.style.visibility = 'hidden';
-                    setTimeout(() => loader.remove(), 500);
+                    setTimeout(() => loader.remove(), 600);
                 }
-            }, 600);
+            }, 800);
         });
 
         // SLIDER FILL HANDLER
@@ -1453,6 +1523,7 @@
             localStorage.removeItem('kick_user_joined_date');
             localStorage.removeItem('kick_user_total_rolls');
             updateProfileView();
+            showToast("Successfully logged out.", "success");
         }
         window.confirmKickLogout = confirmKickLogout;
 
@@ -1662,6 +1733,7 @@
 
             updateProfileView();
             connectToKickChat();
+            showToast(`Connected to @${originalName} successfully!`);
         }
 
         function updateProfileView() {
@@ -1898,16 +1970,37 @@
             addLottoChatMessage(senderName, content);
             addWheelChatMessage(senderName, content);
 
+            // LOTTO ENTRY & ACTIVE TIME LOGIC
+            const lottoActiveTimeVal = parseInt(document.getElementById('active-time-slider').value, 10);
             const lottoKey = document.getElementById('lotto-keyword-input').value.trim().toLowerCase();
-            if (lottoActive && contentClean === lottoKey) {
+            
+            let shouldEnterLotto = false;
+            if (lottoActiveTimeVal > 0) {
+                // When Active in time is turned on (> 0), any chat message enters them regardless of keyword!
+                shouldEnterLotto = true;
+            } else {
+                shouldEnterLotto = (contentClean === lottoKey);
+            }
+
+            if (lottoActive && shouldEnterLotto) {
                 if (!lottoBlacklist.has(senderName)) {
                     lottoEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderLottoEntries();
                 }
             }
 
+            // WHEEL ENTRY & ACTIVE TIME LOGIC
+            const wheelActiveTimeVal = parseInt(document.getElementById('wheel-active-time-slider').value, 10);
             const wheelKey = document.getElementById('wheel-keyword-input').value.trim().toLowerCase();
-            if (wheelActive && contentClean === wheelKey) {
+
+            let shouldEnterWheel = false;
+            if (wheelActiveTimeVal > 0) {
+                shouldEnterWheel = true;
+            } else {
+                shouldEnterWheel = (contentClean === wheelKey);
+            }
+
+            if (wheelActive && shouldEnterWheel) {
                 if (!wheelBlacklist.has(senderName) && !wheelSpinning) {
                     wheelEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderWheelEntries();
@@ -1930,6 +2023,7 @@
             const valid = new Map();
 
             for (const [user, data] of entriesMap.entries()) {
+                // If activeMinutes > 0, check if they haven't chatted within the selected timeframe (kick them out if inactive)
                 if (activeMinutes === 0 || (now - data.timestamp) <= (activeMinutes * 60 * 1000)) {
                     valid.set(user, data);
                 }
@@ -1946,7 +2040,7 @@
             const listArr = Array.from(validMap.keys());
 
             if (listArr.length === 0) {
-                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>';
+                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Chat Activity...</div>';
                 if (countLabel) countLabel.textContent = "(0)";
                 return;
             }
@@ -2019,7 +2113,10 @@
 
             const validMap = getValidEntries(lottoEntries, 'active-time-slider');
             const pool = Array.from(validMap.keys());
-            if (pool.length === 0) { alert("No eligible entries within active time window."); return; }
+            if (pool.length === 0) { 
+                showToast("No eligible entries within active time window.", "error"); 
+                return; 
+            }
             const winner = pool[Math.floor(Math.random() * pool.length)];
             
             totalRollsCount++;
@@ -2131,7 +2228,7 @@
             const listArr = Array.from(validMap.keys());
 
             if (listArr.length === 0) {
-                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>';
+                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Chat Activity...</div>';
                 if (countLabel) countLabel.textContent = "(0)";
                 return;
             }
@@ -2220,7 +2317,10 @@
 
             const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
             const pool = Array.from(validMap.keys());
-            if (pool.length === 0) { alert("No eligible entries within active time window."); return; }
+            if (pool.length === 0) { 
+                showToast("No eligible entries within active time window.", "error"); 
+                return; 
+            }
             const winner = pool[Math.floor(Math.random() * pool.length)];
             
             totalRollsCount++;
@@ -2309,6 +2409,15 @@
             initTournamentData(numSize);
             saveTournamentData();
             renderTournamentBracket();
+
+            // Update active state on tournament size buttons
+            [2, 4, 8, 16].forEach(s => {
+                const btn = document.getElementById(`t-btn-${s}`);
+                if (btn) {
+                    if (s === numSize) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
         }
         window.changeTournamentSize = changeTournamentSize;
 
@@ -2359,13 +2468,6 @@
                     tournamentRounds[r + 1][matchIdx] = "";
                 }
             }
-        }
-
-        function updateTournamentSize(size) {
-            const numSize = parseInt(size, 10);
-            initTournamentData(numSize);
-            saveTournamentData();
-            renderTournamentBracket();
         }
 
         function updateTournamentScore(r, idx, val) {
@@ -2510,8 +2612,15 @@
                 tournamentSize = parseInt(savedSize, 10);
                 tournamentRounds = JSON.parse(savedRounds);
                 tournamentScores = savedScores ? JSON.parse(savedScores) : [];
-                const selectEl = document.getElementById('tournament-size-select');
-                if (selectEl) selectEl.value = tournamentSize;
+                
+                // Update active button state
+                [2, 4, 8, 16].forEach(s => {
+                    const btn = document.getElementById(`t-btn-${s}`);
+                    if (btn) {
+                        if (s === tournamentSize) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    }
+                });
             } else {
                 initTournamentData(8);
             }
