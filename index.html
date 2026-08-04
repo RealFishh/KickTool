@@ -621,6 +621,59 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
 
+        /* MINES GAME STYLES */
+        .mines-size-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mines-size-btn.active {
+            background: var(--accent-green);
+            color: #000000;
+        }
+        .mines-size-btn:hover:not(.active) {
+            color: #ffffff;
+        }
+
+        .mine-tile {
+            background-color: #09090b;
+            border: 2px solid var(--border-gray);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            user-select: none;
+            overflow: hidden;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+        .mine-tile:hover:not(.revealed) {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px color-mix(in srgb, var(--accent-green) 30%, transparent);
+        }
+        .mine-tile.revealed {
+            border-color: var(--accent-green);
+            background: #000000;
+            cursor: default;
+        }
+        .mine-tile.blank-revealed {
+            border-color: #f43f5e;
+            background: #150508;
+            opacity: 0.7;
+        }
+
         /* TOURNAMENT SIZE PILL BUTTONS */
         .tournament-size-btn {
             background: transparent;
@@ -847,6 +900,7 @@
     <div class="workspace-navbar" id="main-navbar">
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
+        <button id="ws-btn-mines" class="workspace-btn" onclick="switchWorkspace('mines')">Mines</button>
         <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Links</button>
 
         <!-- Theme Picker Pill (Color Swatches Grid) -->
@@ -1006,7 +1060,51 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 3: DEDICATED KEYWORD OVERLAY VIEW -->
+    <!-- WORKSPACE 3: MINES GAME VIEW -->
+    <div id="mines-view" class="workspace-view">
+        <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1500px; height: calc(100vh - 100px); box-sizing: border-box; gap: 14px; z-index: 10;">
+            <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; margin-right: 8px;">Mines Grid Game</span>
+                
+                <!-- Mines Grid Size Switcher Buttons -->
+                <div style="display: flex; align-items: center; gap: 3px; background: #000000; padding: 3px; border-radius: 10px; border: 1px solid var(--border-gray);">
+                    <button class="mines-size-btn" onclick="setMinesSize(2)">2x2</button>
+                    <button class="mines-size-btn" onclick="setMinesSize(3)">3x3</button>
+                    <button id="m-btn-4" class="mines-size-btn active" onclick="setMinesSize(4)">4x4</button>
+                    <button class="mines-size-btn" onclick="setMinesSize(5)">5x5</button>
+                    <button class="mines-size-btn" onclick="setMinesSize(6)">6x6</button>
+                    <button class="mines-size-btn" onclick="setMinesSize(7)">7x7</button>
+                    <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
+                </div>
+
+                <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 4px;"></div>
+                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; background: var(--accent-green); color: #000; border-color: var(--accent-green);" onclick="generateMinesBoard()">Shuffle & Build Board</button>
+                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetMinesBoard()">Reset Board</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px; flex-grow: 1; height: 100%; overflow: hidden;">
+                <!-- Grid Area -->
+                <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;">
+                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center;"></div>
+                </div>
+
+                <!-- Sidebar Status -->
+                <div class="lotto-card" style="height: 100%;">
+                    <div class="lotto-card-title">
+                        Game Status
+                        <span id="mines-status-pill" class="lotto-pill-count">Ready</span>
+                    </div>
+                    <div id="mines-sidebar-content" class="lotto-scrollable" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-top: 30px; line-height: 1.5;">
+                            Click <strong style="color: var(--accent-green);">Shuffle & Build Board</strong> to load eligible keyword entries onto the grid tiles. Uncover tiles one by one. The last remaining player tile wins!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKSPACE 4: DEDICATED KEYWORD OVERLAY VIEW -->
     <div id="keyword-view" class="workspace-view">
         <div style="background: rgba(18, 18, 21, 0.95); border: 3px solid var(--accent-green); padding: 35px 70px; border-radius: 24px; box-shadow: 0 0 60px color-mix(in srgb, var(--accent-green) 40%, transparent); text-align: center;">
             <div style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px;">Active Giveaway Keyword</div>
@@ -1014,7 +1112,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 4: DEDICATED WINNER CHAT OVERLAY VIEW -->
+    <!-- WORKSPACE 5: DEDICATED WINNER CHAT OVERLAY VIEW -->
     <div id="chat-view" class="workspace-view">
         <div style="width: 440px; height: 520px; background: rgba(18, 18, 21, 0.92); border: 2px solid var(--border-gray); border-radius: 20px; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(0,0,0,0.9);">
             <div style="font-size: 1.1rem; font-weight: 900; color: var(--accent-green); border-bottom: 1px solid var(--border-gray); padding-bottom: 12px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center;">
@@ -1144,6 +1242,10 @@
         let tournamentRounds = [];
         let tournamentScores = [];
         let autoCloseTimeout = null;
+
+        // MINES GAME STATE
+        let minesSize = 4;
+        let minesBoardData = [];
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
@@ -1707,7 +1809,7 @@
 
         function switchWorkspace(mode) {
             currentActiveView = mode;
-            ['lotto', 'tournament', 'keyword', 'chat'].forEach(m => {
+            ['lotto', 'tournament', 'mines', 'keyword', 'chat'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
                 const view = document.getElementById(`${m}-view`);
                 if (btn) btn.classList.remove('active');
@@ -1722,6 +1824,9 @@
             if (mode === 'tournament') {
                 renderTournamentBracket();
                 setTimeout(drawConnectorLines, 100);
+            } else if (mode === 'mines') {
+                if (minesBoardData.length === 0) generateMinesBoard();
+                else renderMinesBoard();
             }
             setTimeout(initSliders, 50);
         }
@@ -2031,6 +2136,137 @@
         }
         window.closeReveal = closeReveal;
 
+        // --- MINES GAME LOGIC ---
+        function setMinesSize(size) {
+            minesSize = size;
+            [2, 3, 4, 5, 6, 7, 8].forEach(s => {
+                const btn = document.querySelector(`button.mines-size-btn:nth-child(${s-1})`) || document.getElementById(`m-btn-${s}`);
+                if (btn) {
+                    if (s === size) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                }
+            });
+            generateMinesBoard();
+        }
+        window.setMinesSize = setMinesSize;
+
+        async function generateMinesBoard() {
+            const validMap = getValidEntries(lottoEntries, 'active-time-slider');
+            const players = Array.from(validMap.keys());
+            
+            const totalTiles = minesSize * minesSize;
+            minesBoardData = [];
+
+            // Shuffle players
+            const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < totalTiles; i++) {
+                if (i < shuffledPlayers.length) {
+                    const username = shuffledPlayers[i];
+                    const avatar = await fetchKickAvatar(username);
+                    minesBoardData.push({
+                        id: i,
+                        type: 'player',
+                        username: username,
+                        avatar: avatar,
+                        revealed: false
+                    });
+                } else {
+                    minesBoardData.push({
+                        id: i,
+                        type: 'blank',
+                        username: 'Blank Spot',
+                        avatar: null,
+                        revealed: false
+                    });
+                }
+            }
+
+            // Shuffle board tiles
+            minesBoardData.sort(() => Math.random() - 0.5);
+            renderMinesBoard();
+            
+            const statusPill = document.getElementById('mines-status-pill');
+            if (statusPill) statusPill.textContent = `${shuffledPlayers.length} Players Loaded`;
+            
+            const sidebar = document.getElementById('mines-sidebar-content');
+            if (sidebar) {
+                sidebar.innerHTML = `
+                    <div style="color: var(--accent-green); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; margin-bottom: 5px;">Board Ready (${minesSize}x${minesSize})</div>
+                    <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4;">
+                        Total Tiles: <strong style="color: #fff;">${totalTiles}</strong><br>
+                        Players on Board: <strong style="color: #fff;">${Math.min(players.length, totalTiles)}</strong><br>
+                        Blank Spots: <strong style="color: #fff;">${Math.max(0, totalTiles - players.length)}</strong>
+                    </div>
+                `;
+            }
+        }
+        window.generateMinesBoard = generateMinesBoard;
+
+        function resetMinesBoard() {
+            minesBoardData.forEach(tile => tile.revealed = false);
+            renderMinesBoard();
+            const statusPill = document.getElementById('mines-status-pill');
+            if (statusPill) statusPill.textContent = `Reset`;
+        }
+        window.resetMinesBoard = resetMinesBoard;
+
+        function renderMinesBoard() {
+            const grid = document.getElementById('mines-grid');
+            if (!grid) return;
+            
+            grid.style.gridTemplateColumns = `repeat(${minesSize}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${minesSize}, 1fr)`;
+            grid.innerHTML = "";
+
+            minesBoardData.forEach((tile, idx) => {
+                const el = document.createElement('div');
+                el.className = `mine-tile ${tile.revealed ? (tile.type === 'player' ? 'revealed' : 'blank-revealed') : ''}`;
+                
+                if (!tile.revealed) {
+                    el.innerHTML = `<span style="font-size: 1.6rem; font-weight: 900; color: var(--text-muted);">?</span>`;
+                    el.onclick = () => revealMineTile(idx);
+                } else {
+                    if (tile.type === 'player') {
+                        el.innerHTML = `
+                            <img src="${tile.avatar}" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent-green); object-fit: cover; margin-bottom: 4px;" onerror="this.src=getDefaultAvatar()">
+                            <span style="font-size: 0.75rem; font-weight: 900; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${tile.username}</span>
+                        `;
+                    } else {
+                        el.innerHTML = `
+                            <span style="font-size: 1.2rem;">❌</span>
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #f43f5e; text-transform: uppercase;">Empty</span>
+                        `;
+                    }
+                }
+                grid.appendChild(el);
+            });
+        }
+
+        function revealMineTile(idx) {
+            const tile = minesBoardData[idx];
+            if (!tile || tile.revealed) return;
+            tile.revealed = true;
+            renderMinesBoard();
+
+            // Check remaining unrevealed player tiles
+            const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
+            
+            if (tile.type === 'player' && unrevealedPlayers.length === 0) {
+                // Last player tile remaining!
+                triggerMinesWinner(tile.username);
+            }
+        }
+
+        function triggerMinesWinner(winnerName) {
+            document.getElementById('epic-overlay').classList.add('active');
+            document.getElementById('lotto-winner-reveal-name').textContent = winnerName;
+            showToast(`Mines Winner: @${winnerName}!`, "success");
+            
+            if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
+            autoCloseTimeout = setTimeout(closeReveal, 4000);
+        }
+
         // --- Tournament Logic ---
         function initTournamentData(size) {
             tournamentSize = size;
@@ -2051,7 +2287,6 @@
             saveTournamentData();
             renderTournamentBracket();
 
-            // Update active state on tournament size buttons
             [2, 4, 8, 16].forEach(s => {
                 const btn = document.getElementById(`t-btn-${s}`);
                 if (btn) {
@@ -2075,7 +2310,6 @@
         }
         window.shuffleTournamentTeams = shuffleTournamentTeams;
 
-        // Custom in-site modal for tournament reset confirmation
         function resetTournamentBracket() {
             document.getElementById('tournament-reset-modal').style.display = 'flex';
         }
@@ -2265,7 +2499,6 @@
                 tournamentRounds = JSON.parse(savedRounds);
                 tournamentScores = savedScores ? JSON.parse(savedScores) : [];
                 
-                // Update active button state
                 [2, 4, 8, 16].forEach(s => {
                     const btn = document.getElementById(`t-btn-${s}`);
                     if (btn) {
