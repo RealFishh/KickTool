@@ -139,6 +139,18 @@
             box-shadow: none !important;
         }
 
+        /* 3. AFK OVERLAY MODE */
+        body.obs-overlay-mode #afk-view.active {
+            background: rgba(0, 0, 0, 0.85) !important;
+            backdrop-filter: blur(20px);
+        }
+        body.obs-overlay-mode #afk-view.active #afk-dashboard-container {
+            display: none !important;
+        }
+        body.obs-overlay-mode #afk-view.active #afk-obs-overlay {
+            display: flex !important;
+        }
+
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -201,7 +213,7 @@
             display: none;
         }
 
-        /* Top Navigation Controls - Perfectly Centered & Balanced */
+        /* Top Navigation Controls */
         .workspace-navbar {
             position: fixed;
             top: 15px;
@@ -749,11 +761,19 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 20px;">
+            <div style="margin-bottom: 10px;">
                 <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">5. Winner Live Chat Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-chat-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-chat-url', this)">Copy</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">6. AFK & Sponsor Rotator Overlay</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="obs-afk-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
+                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-afk-url', this)">Copy</button>
                 </div>
             </div>
 
@@ -811,9 +831,10 @@
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
+        <button id="ws-btn-afk" class="workspace-btn" onclick="switchWorkspace('afk')">AFK Screen</button>
         <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Links</button>
 
-        <!-- Theme Picker Pill (Color Swatches Grid) -->
+        <!-- Theme Picker Pill -->
         <div style="position: relative; display: inline-block; margin-left: 2px;">
             <button onclick="toggleThemeDropdown(event)" title="Change Theme" style="background: transparent; border: 1px solid var(--border-gray); padding: 5px 8px; border-radius: 8px; cursor: pointer; color: var(--accent-green); display: flex; align-items: center; justify-content: center; transition: border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent-green)'" onmouseout="this.style.borderColor='var(--border-gray)'">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
@@ -1079,6 +1100,52 @@
         </div>
     </div>
 
+    <!-- WORKSPACE 6: AFK & SPONSOR ROTATOR VIEW -->
+    <div id="afk-view" class="workspace-view">
+        <div id="afk-dashboard-container" style="display: flex; flex-direction: column; width: 95vw; max-width: 900px; background: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 20px; padding: 30px; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.8); gap: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-gray); padding-bottom: 15px;">
+                <h2 style="color: var(--accent-green); margin: 0; font-size: 1.3rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">AFK & Sponsor Rotator Control</h2>
+                <button id="afk-toggle-main-btn" class="btn" style="width: auto; padding: 10px 24px; background: #27272a; color: #fff; font-size: 0.9rem;" onclick="toggleAfkMode()">Start AFK Screen</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #000000; border: 1px solid var(--border-gray); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Bio-Break Duration</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" style="padding: 8px; font-size: 0.9rem;" onclick="setAfkTimer(5)">5m</button>
+                        <button class="btn" style="padding: 8px; font-size: 0.9rem;" onclick="setAfkTimer(10)">10m</button>
+                        <button class="btn" style="padding: 8px; font-size: 0.9rem;" onclick="setAfkTimer(15)">15m</button>
+                    </div>
+                    <input type="text" id="afk-custom-status" class="password-input" style="margin: 0; font-size: 0.9rem; text-align: left;" placeholder="Status (e.g., Grabbing a coffee)" value="Stream is taking a short break" oninput="syncAfkStatus(this.value)">
+                </div>
+
+                <div style="background: #000000; border: 1px solid var(--border-gray); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <label style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Rotator Cards (JSON format)</label>
+                    <textarea id="afk-cards-input" class="password-input" style="margin: 0; font-size: 0.85rem; height: 80px; text-align: left; resize: none; font-family: monospace;" oninput="syncAfkCards(this.value)">[{"title": "Twitter / X", "handle": "@YourName"},{"title": "Discord", "handle": "discord.gg/yourserver"},{"title": "Sponsor", "handle": "Use code KICK for 20% off"}]</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- OBS RENDERER CONTAINER -->
+        <div id="afk-obs-overlay" style="display: none; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; position: relative; box-sizing: border-box; padding: 40px;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 50px;">
+                <div style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent-green) 40%, transparent); color: var(--accent-green); padding: 8px 24px; border-radius: 30px; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 3px; box-shadow: 0 0 30px color-mix(in srgb, var(--accent-green) 20%, transparent);">
+                    Stream Paused
+                </div>
+                <h1 id="obs-afk-status-text" style="font-size: 2.8rem; font-weight: 950; color: #fff; margin: 0; letter-spacing: 1px; text-align: center;">Stream is taking a short break</h1>
+                <div id="obs-afk-countdown" style="font-size: 5rem; font-weight: 950; color: var(--accent-green); font-family: monospace; text-shadow: 0 0 30px var(--accent-green); margin-top: 10px;">10:00</div>
+            </div>
+
+            <!-- Rotating Card Carousel at Bottom -->
+            <div style="position: absolute; bottom: 60px; width: 420px; height: 90px; background: rgba(18, 18, 21, 0.92); border: 1px solid var(--border-gray); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 15px 35px rgba(0,0,0,0.9); overflow: hidden;">
+                <div id="obs-rotator-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; opacity: 1;">
+                    <span id="obs-rotator-title" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 2px; margin-bottom: 3px;">Twitter / X</span>
+                    <span id="obs-rotator-handle" style="font-size: 1.3rem; font-weight: 950; color: #fff; letter-spacing: 1px;">@YourName</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- OVERLAYS -->
     <div id="epic-overlay" class="epic-overlay" onclick="closeReveal()">
         <div id="lotto-reveal-card" class="revealed-card">
@@ -1108,7 +1175,6 @@
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
 
-        // SLIDER FILL HANDLER
         function updateSliderFill(slider) {
             const min = parseFloat(slider.min) || 0;
             const max = parseFloat(slider.max) || 100;
@@ -1154,7 +1220,6 @@
         }
         window.updateWheelActiveTimeDisplay = updateWheelActiveTimeDisplay;
 
-        // DYNAMIC DEFAULT AVATAR MATCHING CURRENT THEME COLOR
         function getDefaultAvatar() {
             const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#53fc18';
             const encodedColor = encodeURIComponent(accent);
@@ -1187,7 +1252,6 @@
         const itemWidth = 220; 
         const itemsCount = 45; 
 
-        // SVG EYE ICONS
         const eyeOpenSVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
         const eyeOffSVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
 
@@ -1195,7 +1259,7 @@
             return targetChannelName || loggedInKickUser?.slug || localStorage.getItem('kick_target_channel') || 'default_streamer';
         }
 
-        // --- OBS OVERLAY MODAL ---
+        // OBS OVERLAY MODAL
         function openObsModal() {
             const channel = getActiveChannel().toLowerCase();
             const baseUrl = window.location.origin + window.location.pathname;
@@ -1204,6 +1268,7 @@
             document.getElementById('obs-lotto-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=lotto&channel=${channel}`;
             document.getElementById('obs-wheel-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=wheel&channel=${channel}`;
             document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat&channel=${channel}`;
+            document.getElementById('obs-afk-url').value = `${baseUrl}?mode=overlay&view=afk&channel=${channel}`;
             document.getElementById('obs-modal').style.display = 'flex';
         }
         window.openObsModal = openObsModal;
@@ -1222,7 +1287,6 @@
         }
         window.copyObsUrl = copyObsUrl;
 
-        // INDEPENDENT KEYWORD & CHAT SYNC TO FIREBASE
         function syncLottoKeyword(val) {
             const cleanVal = val.trim();
             const channel = getActiveChannel().toLowerCase();
@@ -1255,7 +1319,100 @@
             if (labelEl) labelEl.textContent = target ? `@${target}` : `@---`;
         }
 
-        // CHECK IF LOADED AS OBS OVERLAY ON STARTUP
+        // AFK & SPONSOR ROTATOR LOGIC
+        let afkActive = false;
+        let afkTimerInterval = null;
+        let afkSecondsRemaining = 600;
+        let rotatorIndex = 0;
+        let rotatorInterval = null;
+        let afkCardsList = [
+            { title: "Twitter / X", handle: "@YourName" },
+            { title: "Discord", handle: "discord.gg/yourserver" },
+            { title: "Sponsor", handle: "Use code KICK for 20% off" }
+        ];
+
+        function setAfkTimer(minutes) {
+            afkSecondsRemaining = minutes * 60;
+            updateAfkCountdownDisplay();
+            syncAfkState();
+        }
+        window.setAfkTimer = setAfkTimer;
+
+        function syncAfkStatus(val) {
+            const channel = getActiveChannel().toLowerCase();
+            set(ref(db, `channels/${channel}/afk/statusText`), val);
+        }
+        window.syncAfkStatus = syncAfkStatus;
+
+        function syncAfkCards(val) {
+            try {
+                const parsed = JSON.parse(val);
+                if (Array.isArray(parsed)) {
+                    afkCardsList = parsed;
+                    const channel = getActiveChannel().toLowerCase();
+                    set(ref(db, `channels/${channel}/afk/cards`), parsed);
+                }
+            } catch(e) {}
+        }
+        window.syncAfkCards = syncAfkCards;
+
+        function toggleAfkMode() {
+            afkActive = !afkActive;
+            const channel = getActiveChannel().toLowerCase();
+            set(ref(db, `channels/${channel}/afk/active`), afkActive);
+            set(ref(db, `channels/${channel}/afk/startTime`), Date.now());
+            updateDashboardAfkButton();
+        }
+        window.toggleAfkMode = toggleAfkMode;
+
+        function updateDashboardAfkButton() {
+            const btn = document.getElementById('afk-toggle-main-btn');
+            if (!btn) return;
+            if (afkActive) {
+                btn.textContent = "Stop AFK Screen";
+                btn.style.background = "#f43f5e";
+                btn.style.color = "#fff";
+            } else {
+                btn.textContent = "Start AFK Screen";
+                btn.style.background = "#27272a";
+                btn.style.color = "#fff";
+            }
+        }
+
+        function updateAfkCountdownDisplay() {
+            const mins = Math.floor(afkSecondsRemaining / 60);
+            const secs = afkSecondsRemaining % 60;
+            const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            const el = document.getElementById('obs-afk-countdown');
+            if (el) el.textContent = formatted;
+        }
+
+        function syncAfkState() {
+            const channel = getActiveChannel().toLowerCase();
+            set(ref(db, `channels/${channel}/afk/seconds`), afkSecondsRemaining);
+        }
+
+        function startObsRotator() {
+            if (rotatorInterval) clearInterval(rotatorInterval);
+            if (!afkCardsList || afkCardsList.length === 0) return;
+
+            rotatorInterval = setInterval(() => {
+                const titleEl = document.getElementById('obs-rotator-title');
+                const handleEl = document.getElementById('obs-rotator-handle');
+                const cardEl = document.getElementById('obs-rotator-card');
+                if (!titleEl || !handleEl || !cardEl) return;
+
+                cardEl.style.opacity = 0;
+                setTimeout(() => {
+                    rotatorIndex = (rotatorIndex + 1) % afkCardsList.length;
+                    const current = afkCardsList[rotatorIndex];
+                    titleEl.textContent = current.title;
+                    handleEl.textContent = current.handle;
+                    cardEl.style.opacity = 1;
+                }, 500);
+            }, 4500);
+        }
+
         function checkOverlayMode() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('mode') === 'overlay') {
@@ -1271,6 +1428,28 @@
                         const kw = snapshot.val() || (type === 'wheel' ? 'wheel' : 'gw');
                         updateObsKeywordDisplay(kw);
                     });
+                } else if (view === 'afk') {
+                    document.getElementById('afk-dashboard-container').style.display = 'none';
+                    document.getElementById('afk-obs-overlay').style.display = 'flex';
+                    
+                    onValue(ref(db, `channels/${channel}/afk`), (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const overlayContainer = document.getElementById('afk-obs-overlay');
+                            if (data.active) {
+                                overlayContainer.style.display = 'flex';
+                                if (data.statusText) document.getElementById('obs-afk-status-text').textContent = data.statusText;
+                                if (data.cards) afkCardsList = data.cards;
+                                if (data.seconds) {
+                                    afkSecondsRemaining = data.seconds;
+                                    updateAfkCountdownDisplay();
+                                }
+                            } else {
+                                overlayContainer.style.display = 'none';
+                            }
+                        }
+                    });
+                    startObsRotator();
                 }
 
                 onValue(ref(db, `channels/${channel}/chatTarget`), (snapshot) => {
@@ -1315,7 +1494,6 @@
             }
         }
 
-        // --- THEME MANAGER ---
         function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem('kick_tool_theme', themeName);
@@ -1756,7 +1934,7 @@
 
         function switchWorkspace(mode) {
             currentActiveView = mode;
-            ['lotto', 'wheel', 'tournament', 'keyword', 'chat'].forEach(m => {
+            ['lotto', 'wheel', 'tournament', 'keyword', 'chat', 'afk'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
                 const view = document.getElementById(`${m}-view`);
                 if (btn) btn.classList.remove('active');
@@ -2199,7 +2377,7 @@
             autoCloseTimeout = setTimeout(closeReveal, 4000);
         }
 
-        // --- Tournament Logic ---
+        // Tournament Logic
         function initTournamentData(size) {
             tournamentSize = size;
             tournamentRounds = [];
