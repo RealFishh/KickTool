@@ -731,7 +731,7 @@
 </head>
 <body>
 
-    <!-- Professional Splash Loading Screen with Failsafe Timeout -->
+    <!-- Professional Splash Loading Screen with Only Logo & Green Progress Bar -->
     <div id="site-loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-black); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; transition: opacity 0.5s ease, visibility 0.5s ease;">
         <div style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;" class="neon-logo-load">
             <img src="mylogo.png" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src=getDefaultAvatar()">
@@ -740,20 +740,6 @@
             <div style="position: absolute; top: 0; left: 0; height: 100%; background: var(--accent-green); box-shadow: 0 0 12px var(--accent-green); animation: loadingProgress 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;"></div>
         </div>
     </div>
-
-    <!-- SAFE LOADER DISMISSAL SCRIPT (Guaranteed execution even if modules fail on file://) -->
-    <script>
-        function hideLoadingScreen() {
-            const loader = document.getElementById('site-loading-screen');
-            if (loader) {
-                loader.style.opacity = '0';
-                loader.style.visibility = 'hidden';
-                setTimeout(() => loader.remove(), 500);
-            }
-        }
-        window.addEventListener('load', hideLoadingScreen);
-        setTimeout(hideLoadingScreen, 1200);
-    </script>
 
     <!-- Custom In-Site Notification Toasts Container -->
     <div id="custom-toast-container" style="position: fixed; bottom: 25px; right: 25px; z-index: 999999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
@@ -1170,6 +1156,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
+
+        // HIDE LOADING SCREEN ON STARTUP
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('site-loading-screen');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    setTimeout(() => loader.remove(), 500);
+                }
+            }, 600);
+        });
 
         // CUSTOM ON-SITE NOTIFICATION TOAST SYSTEM
         function showNotification(message, type = 'info') {
@@ -1944,16 +1942,18 @@
             addLottoChatMessage(senderName, content);
             addWheelChatMessage(senderName, content);
 
-            // LOTTO ENTRY CHECK (Active in time > 0 means ANY message enters them)
+            // LOTTO ENTRY CHECK
             const lottoActiveTimeSlider = document.getElementById('active-time-slider');
             const lottoActiveMinutes = lottoActiveTimeSlider ? parseInt(lottoActiveTimeSlider.value, 10) : 0;
             const lottoKey = document.getElementById('lotto-keyword-input').value.trim().toLowerCase();
 
             if (lottoActive && !lottoBlacklist.has(senderName)) {
                 if (lottoActiveMinutes > 0) {
+                    // Active time ON: Typing ANY message enters/refreshes them
                     lottoEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderLottoEntries();
                 } else {
+                    // Active time OFF: Must match exact keyword
                     if (contentClean === lottoKey) {
                         lottoEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                         renderLottoEntries();
@@ -1961,17 +1961,19 @@
                 }
             }
 
-            // WHEEL ENTRY CHECK (Active in time > 0 means ANY message enters them)
+            // WHEEL ENTRY CHECK
             const wheelActiveTimeSlider = document.getElementById('wheel-active-time-slider');
             const wheelActiveMinutes = wheelActiveTimeSlider ? parseInt(wheelActiveTimeSlider.value, 10) : 0;
             const wheelKey = document.getElementById('wheel-keyword-input').value.trim().toLowerCase();
 
             if (wheelActive && !wheelSpinning && !wheelBlacklist.has(senderName)) {
                 if (wheelActiveMinutes > 0) {
+                    // Active time ON: Typing ANY message enters/refreshes them
                     wheelEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderWheelEntries();
                     drawWheel();
                 } else {
+                    // Active time OFF: Must match exact keyword
                     if (contentClean === wheelKey) {
                         wheelEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                         renderWheelEntries();
