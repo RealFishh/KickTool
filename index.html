@@ -584,6 +584,7 @@
             z-index: 3;
         }
 
+        /* POINTER ANIMATED APPEAR / DISAPPEAR */
         .pointer {
             position: absolute;
             top: 0;
@@ -591,9 +592,15 @@
             transform: translateX(-50%);
             width: 3px;
             height: 100%;
-            background-color: #ffffff;
+            background-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
             z-index: 100;
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pointer.active {
+            opacity: 1;
         }
 
         .carousel {
@@ -2179,6 +2186,10 @@
                 rollBtn.textContent = "ROLLING...";
             }
 
+            // SHOW POINTER WHEN ROLLING STARTS
+            const pointer = document.querySelector('#lotto-view .pointer');
+            if (pointer) pointer.classList.add('active');
+
             const strip = [];
             const targetIdx = itemsCount - 6;
             for (let i = 0; i < itemsCount; i++) strip.push(pool[Math.floor(Math.random() * pool.length)]);
@@ -2216,6 +2227,10 @@
                     rollBtn.disabled = false;
                     rollBtn.textContent = "Roll Winner";
                 }
+
+                // HIDE POINTER WHEN ROLLING FINISHES
+                if (pointer) pointer.classList.remove('active');
+
                 triggerLottoWinnerReveal(winner);
             });
         }
