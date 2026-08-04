@@ -1264,6 +1264,7 @@
         let minesEntries = new Map(); // username -> timestamp
         let minesBoardData = [];
         let minesGameOpen = false;
+        let currentMinesWinner = null;
 
         let tournamentSize = 8;
         let tournamentRounds = [];
@@ -1874,7 +1875,7 @@
             const btn = document.getElementById('mines-keyword-hide-btn');
             if (field.type === "password") { 
                 field.type = "text"; 
-                btn.innerHTML = eyeOffSVG; 
+                btn.innerHTML = eyeOpenSVG; 
             } else { 
                 field.type = "password"; 
                 btn.innerHTML = eyeOpenSVG; 
@@ -2309,31 +2310,32 @@
 
             updateMinesActionBar();
 
-            // Shuffle unique players to ensure NO duplicates on the board
+            // 1. Shuffle unique players
             let shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
 
-            // Allocate unique players and blank spaces
-            let numBlanks = Math.max(1, Math.floor(totalTiles / 2));
-            let numPlayers = totalTiles - numBlanks;
+            // 2. Select the guaranteed winner for the last tile and store it (completely disjoint from rest of board)
+            currentMinesWinner = shuffledPlayers[0];
 
-            let selectedPlayers = shuffledPlayers.slice(0, numPlayers);
+            // 3. The rest of the unique players available for the board (excluding currentMinesWinner to prevent duplicates)
+            let availablePlayers = shuffledPlayers.slice(1);
+
+            // 4. Allocate blank spaces and player slots
+            let numBlanks = Math.max(1, Math.floor(totalTiles / 2));
+            let numOtherPlayers = (totalTiles - 1) - numBlanks;
+
+            let selectedOtherPlayers = availablePlayers.slice(0, numOtherPlayers);
+            let actualBlanks = (totalTiles - 1) - selectedOtherPlayers.length;
 
             let tileContents = [];
-            selectedPlayers.forEach(p => tileContents.push({ type: 'player', username: p }));
-            for (let i = 0; i < numBlanks; i++) {
+            selectedOtherPlayers.forEach(p => tileContents.push({ type: 'player', username: p }));
+            for (let i = 0; i < actualBlanks; i++) {
                 tileContents.push({ type: 'blank', username: 'Blank' });
-            }
-
-            while (tileContents.length < totalTiles) {
-                tileContents.push({ type: 'blank', username: 'Blank' });
-            }
-            if (tileContents.length > totalTiles) {
-                tileContents = tileContents.slice(0, totalTiles);
             }
 
             tileContents.sort(() => Math.random() - 0.5);
 
-            for (let i = 0; i < totalTiles; i++) {
+            // Build board data for totalTiles - 1 slots
+            for (let i = 0; i < totalTiles - 1; i++) {
                 const item = tileContents[i];
                 if (item.type === 'player') {
                     const avatar = await fetchKickAvatar(item.username);
@@ -2355,6 +2357,20 @@
                 }
             }
 
+            // Add the guaranteed unique winner as the final slot tile
+            const winnerAvatar = await fetchKickAvatar(currentMinesWinner);
+            minesBoardData.push({
+                id: totalTiles - 1,
+                type: 'winner',
+                username: currentMinesWinner,
+                avatar: winnerAvatar,
+                revealed: false
+            });
+
+            // Shuffle board data so the winner's position is randomized
+            minesBoardData.sort(() => Math.random() - 0.5);
+            minesBoardData.forEach((tile, idx) => { tile.id = idx; });
+
             const grid = document.getElementById('mines-grid');
             if (grid) {
                 grid.style.filter = "blur(0px)";
@@ -2369,6 +2385,7 @@
         function resetMinesBoard() {
             minesBoardData = [];
             minesGameOpen = false;
+            currentMinesWinner = null;
             
             updateMinesActionBar();
             renderMinesGridPlaceholder();
@@ -2397,7 +2414,7 @@
                 if (!tile.revealed) {
                     el.addEventListener('click', () => revealMineTile(idx));
                 } else {
-                    if (tile.type === 'player') {
+                    if (tile.type === 'player' || tile.type === 'winner') {
                         const avatarSrc = (tile.avatar && !tile.avatar.includes('default')) ? tile.avatar : getDefaultAvatar();
                         
                         const img = document.createElement('img');
@@ -2419,18 +2436,27 @@
         async function revealMineTile(idx) {
             if (!minesGameOpen) return;
             
-            // GUARANTEED LAST TILE WINNER: When only 1 unrevealed tile remains, it is forced to be a real human player!
             const unrevealedBefore = minesBoardData.filter(t => !t.revealed);
-            if (unrevealedBefore.length === 1) {
-                const players = Array.from(minesEntries.keys());
-                let shuffled = [...players].sort(() => Math.random() - 0.5);
-                let finalWinner = shuffled[0];
-                
-                minesBoardData[idx].type = 'player';
-                minesBoardData[idx].username = finalWinner;
-                const avatar = await fetchKickAvatar(finalWinner);
-                minesBoardData[idx].avatar = avatar;
-                renderMinesBoard();
+
+            // If user clicks the winner tile while there are still other unrevealed tiles left,
+            // swap it with another unrevealed tile so the winner is ALWAYS preserved for the very last tile!
+            if (minesBoardData[idx].type === 'winner' && unrevealedBefore.length > 1) {
+                const otherUnrevealed = unrevealedBefore.filter(t => t.id !== idx);
+                if (otherUnrevealed.length > 0) {
+                    const targetTile = otherUnrevealed[Math.floor(Math.random() * otherUnrevealed.length)];
+                    
+                    let tempType = minesBoardData[idx].type;
+                    let tempUser = minesBoardData[idx].username;
+                    let tempAvatar = minesBoardData[idx].avatar;
+
+                    minesBoardData[idx].type = targetTile.type;
+                    minesBoardData[idx].username = targetTile.username;
+                    minesBoardData[idx].avatar = targetTile.avatar;
+
+                    targetTile.type = tempType;
+                    targetTile.username = tempUser;
+                    targetTile.avatar = tempAvatar;
+                }
             }
 
             const tile = minesBoardData[idx];
@@ -2442,7 +2468,7 @@
             // Check if all tiles are revealed (Winner is the last tile revealed)
             const unrevealedAfter = minesBoardData.filter(t => !t.revealed);
             if (unrevealedAfter.length === 0) {
-                const winnerName = tile.type === 'player' ? tile.username : (Array.from(minesEntries.keys())[0] || 'Winner');
+                const winnerName = tile.username || currentMinesWinner || 'Winner';
                 triggerMinesWinner(winnerName);
             }
         }
