@@ -367,8 +367,8 @@
 
         .lotto-config-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1.1fr 1fr 1fr;
+            gap: 12px;
             width: 100%;
             flex-shrink: 0;
         }
@@ -377,15 +377,18 @@
             background-color: #09090b;
             border: 1px solid var(--border-gray);
             border-radius: 12px;
-            padding: 14px 18px;
+            padding: 12px 14px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .lotto-control-label {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: bold;
@@ -398,8 +401,8 @@
             border: 1px solid var(--border-gray);
             border-radius: 10px;
             color: #fff;
-            padding: 10px 14px;
-            font-size: 1.2rem;
+            padding: 8px 12px;
+            font-size: 1.1rem;
             font-weight: 800;
             box-sizing: border-box;
             outline: none;
@@ -434,6 +437,7 @@
             border-radius: 50%;
             background: var(--accent-green);
             cursor: pointer;
+            box-shadow: 0 0 8px color-mix(in srgb, var(--accent-green) 50%, transparent);
         }
 
         .lotto-roll-btn {
@@ -871,6 +875,7 @@
 
             <div class="lotto-center-layout">
                 <div class="lotto-config-row">
+                    <!-- 1. Entry Keyword -->
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
@@ -882,13 +887,32 @@
                             <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="gw" oninput="syncLottoKeyword(this.value)">
                         </div>
                     </div>
-                    <div class="lotto-control-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+
+                    <!-- 2. Sub Luck -->
+                    <div class="lotto-control-box">
                         <div class="lotto-control-label">
-                            Sub Luck
-                            <span id="sub-luck-val" style="color: var(--accent-green); font-weight: bold;">1</span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green);"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-2-4.5-2-7 0 0 7 2.5 7 9a4.5 4.5 0 0 1-9 0c0-.85.22-1.65.6-2.35"></path></svg>
+                                Sub luck
+                            </span>
+                            <span id="sub-luck-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">1x</span>
                         </div>
                         <div class="lotto-slider-track">
-                            <input type="range" id="sub-luck-slider" class="lotto-slider" min="1" max="10" value="1" oninput="document.getElementById('sub-luck-val').textContent = this.value">
+                            <input type="range" id="sub-luck-slider" class="lotto-slider" min="1" max="10" value="1" oninput="updateSubLuckDisplay(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- 3. Active in time -->
+                    <div class="lotto-control-box">
+                        <div class="lotto-control-label">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Active in time
+                            </span>
+                            <span id="active-time-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">off</span>
+                        </div>
+                        <div class="lotto-slider-track">
+                            <input type="range" id="active-time-slider" class="lotto-slider" min="0" max="60" value="0" oninput="updateActiveTimeDisplay(this.value)">
                         </div>
                     </div>
                 </div>
@@ -935,6 +959,7 @@
 
             <div class="lotto-center-layout">
                 <div class="lotto-config-row">
+                    <!-- 1. Entry Keyword -->
                     <div class="lotto-control-box">
                         <div class="lotto-control-label">
                             Entry Keyword
@@ -946,17 +971,34 @@
                             <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel" oninput="syncWheelKeyword(this.value)">
                         </div>
                     </div>
-                    <div class="lotto-config-row" style="display: none;">
-                        <input type="hidden" id="wheel-sub-luck-slider" value="1">
-                        <span id="wheel-sub-luck-val">1</span>
-                    </div>
-                    <div class="lotto-control-box" style="display: flex; flex-direction: column; justify-content: center;">
+
+                    <input type="hidden" id="wheel-sub-luck-slider" value="1">
+
+                    <!-- 2. Sub Luck -->
+                    <div class="lotto-control-box">
                         <div class="lotto-control-label">
-                            Sub Luck
-                            <span id="wheel-sub-luck-visible-val" style="color: var(--accent-green); font-weight: bold;">1</span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green);"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-2-4.5-2-7 0 0 7 2.5 7 9a4.5 4.5 0 0 1-9 0c0-.85.22-1.65.6-2.35"></path></svg>
+                                Sub luck
+                            </span>
+                            <span id="wheel-sub-luck-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">1x</span>
                         </div>
                         <div class="lotto-slider-track">
-                            <input type="range" id="wheel-sub-luck-visible-slider" class="lotto-slider" min="1" max="10" value="1" oninput="document.getElementById('wheel-sub-luck-visible-val').textContent = this.value; document.getElementById('wheel-sub-luck-slider').value = this.value; drawWheel();">
+                            <input type="range" id="wheel-sub-luck-visible-slider" class="lotto-slider" min="1" max="10" value="1" oninput="document.getElementById('wheel-sub-luck-slider').value = this.value; updateWheelSubLuckDisplay(this.value); drawWheel();">
+                        </div>
+                    </div>
+
+                    <!-- 3. Active in time -->
+                    <div class="lotto-control-box">
+                        <div class="lotto-control-label">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Active in time
+                            </span>
+                            <span id="wheel-active-time-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">off</span>
+                        </div>
+                        <div class="lotto-slider-track">
+                            <input type="range" id="wheel-active-time-slider" class="lotto-slider" min="0" max="60" value="0" oninput="updateWheelActiveTimeDisplay(this.value)">
                         </div>
                     </div>
                 </div>
@@ -1059,6 +1101,52 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
+
+        // SLIDER FILL HANDLER
+        function updateSliderFill(slider) {
+            const min = parseFloat(slider.min) || 0;
+            const max = parseFloat(slider.max) || 100;
+            const val = parseFloat(slider.value);
+            const percentage = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, var(--accent-green) 0%, var(--accent-green) ${percentage}%, #27272a ${percentage}%, #27272a 100%)`;
+        }
+
+        function initSliders() {
+            document.querySelectorAll('.lotto-slider').forEach(slider => {
+                updateSliderFill(slider);
+                slider.addEventListener('input', () => updateSliderFill(slider));
+            });
+        }
+
+        function updateSubLuckDisplay(val) {
+            document.getElementById('sub-luck-pill').textContent = `${val}x`;
+        }
+        window.updateSubLuckDisplay = updateSubLuckDisplay;
+
+        function updateActiveTimeDisplay(val) {
+            const pill = document.getElementById('active-time-pill');
+            if (parseInt(val) === 0) {
+                pill.textContent = "off";
+            } else {
+                pill.textContent = `${val}m`;
+            }
+        }
+        window.updateActiveTimeDisplay = updateActiveTimeDisplay;
+
+        function updateWheelSubLuckDisplay(val) {
+            document.getElementById('wheel-sub-luck-pill').textContent = `${val}x`;
+        }
+        window.updateWheelSubLuckDisplay = updateWheelSubLuckDisplay;
+
+        function updateWheelActiveTimeDisplay(val) {
+            const pill = document.getElementById('wheel-active-time-pill');
+            if (parseInt(val) === 0) {
+                pill.textContent = "off";
+            } else {
+                pill.textContent = `${val}m`;
+            }
+        }
+        window.updateWheelActiveTimeDisplay = updateWheelActiveTimeDisplay;
 
         // DYNAMIC DEFAULT AVATAR MATCHING CURRENT THEME COLOR
         function getDefaultAvatar() {
@@ -1237,6 +1325,7 @@
                     img.src = getDefaultAvatar();
                 }
             });
+            setTimeout(initSliders, 50);
         }
         window.setTheme = setTheme;
 
@@ -1652,6 +1741,7 @@
             } else if (mode === 'wheel') {
                 drawWheel();
             }
+            setTimeout(initSliders, 50);
         }
         window.switchWorkspace = switchWorkspace;
 
@@ -1871,7 +1961,6 @@
         }
 
         function triggerLottoWinnerReveal(winner) {
-            // CLEAR PREVIOUS CHAT & ASSIGN WINNER NOW (NO SPOILERS)
             const lottoChat = document.getElementById('lotto-chat-container');
             if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
             
@@ -2035,7 +2124,6 @@
         }
 
         function triggerWheelWinnerReveal(winner) {
-            // CLEAR PREVIOUS CHAT & ASSIGN WINNER NOW (NO SPOILERS)
             const lottoChat = document.getElementById('lotto-chat-container');
             if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
             
@@ -2297,6 +2385,7 @@
         checkStartupKickAuth();
         loadTournamentData();
         renderTournamentBracket();
+        initSliders();
     </script>
 </body>
 </html>
