@@ -1950,7 +1950,15 @@
                     if (payload.event === "App\\Events\\ChatMessageEvent") {
                         let chatEventData = JSON.parse(payload.data);
                         if (chatEventData && chatEventData.content && chatEventData.sender) {
-                            processIncomingChatMessage(chatEventData.sender.username, chatEventData.content.trim(), false);
+                            let isSub = false;
+                            if (chatEventData.sender.is_subscriber === true) {
+                                isSub = true;
+                            } else if (chatEventData.sender.identity && Array.isArray(chatEventData.sender.identity.badges)) {
+                                isSub = chatEventData.sender.identity.badges.some(b => 
+                                    b.type === 'subscriber' || b.type === 'sub' || (b.text && b.text.toLowerCase().includes('sub'))
+                                );
+                            }
+                            processIncomingChatMessage(chatEventData.sender.username, chatEventData.content.trim(), isSub);
                         }
                     }
                 };
@@ -1968,7 +1976,6 @@
             
             let shouldEnterLotto = false;
             if (lottoActiveTimeVal > 0) {
-                // When Active in time is turned on (> 0), any chat message enters them regardless of keyword!
                 shouldEnterLotto = true;
             } else {
                 shouldEnterLotto = (contentClean === lottoKey);
@@ -1976,7 +1983,10 @@
 
             if (lottoActive && shouldEnterLotto) {
                 if (!lottoBlacklist.has(senderName)) {
-                    lottoEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
+                    // Update entry and preserve or update subscriber status
+                    const existing = lottoEntries.get(senderName);
+                    const subStatus = existing ? (existing.isSubscriber || isSubscriber) : isSubscriber;
+                    lottoEntries.set(senderName, { isSubscriber: subStatus, timestamp: Date.now() });
                     renderLottoEntries();
                 }
             }
@@ -1994,7 +2004,9 @@
 
             if (wheelActive && shouldEnterWheel) {
                 if (!wheelBlacklist.has(senderName) && !wheelSpinning) {
-                    wheelEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
+                    const existing = wheelEntries.get(senderName);
+                    const subStatus = existing ? (existing.isSubscriber || isSubscriber) : isSubscriber;
+                    wheelEntries.set(senderName, { isSubscriber: subStatus, timestamp: Date.now() });
                     renderWheelEntries();
                     drawWheel();
                 }
@@ -2015,12 +2027,25 @@
             const valid = new Map();
 
             for (const [user, data] of entriesMap.entries()) {
-                // If activeMinutes > 0, check if they haven't chatted within the selected timeframe (kick them out if inactive)
                 if (activeMinutes === 0 || (now - data.timestamp) <= (activeMinutes * 60 * 1000)) {
                     valid.set(user, data);
                 }
             }
             return valid;
+        }
+
+        // WEIGHTED POOL GENERATOR FOR SUB LUCK
+        function getWeightedPool(validMap, sliderId) {
+            const slider = document.getElementById(sliderId);
+            const subLuckVal = slider ? parseInt(slider.value, 10) : 1;
+            const pool = [];
+            for (const [user, data] of validMap.entries()) {
+                const weight = data.isSubscriber ? subLuckVal : 1;
+                for (let i = 0; i < weight; i++) {
+                    pool.push(user);
+                }
+            }
+            return pool;
         }
 
         async function renderLottoEntries() {
@@ -2038,6 +2063,7 @@
             }
 
             for (const user of listArr) {
+                const userData = validMap.get(user);
                 const avatarUrl = await fetchKickAvatar(user);
                 const el = document.createElement('div');
                 el.className = 'eligible-user-row';
@@ -2050,6 +2076,13 @@
                 const span = document.createElement('span');
                 span.textContent = user;
                 el.appendChild(span);
+
+                if (userData && userData.isSubscriber) {
+                    const subBadge = document.createElement('span');
+                    subBadge.style.cssText = "background: var(--accent-green); color: #000000; font-size: 0.65rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; margin-left: auto; text-transform: uppercase;";
+                    subBadge.textContent = "SUB";
+                    el.appendChild(subBadge);
+                }
 
                 container.appendChild(el);
             }
@@ -2104,12 +2137,12 @@
             }
 
             const validMap = getValidEntries(lottoEntries, 'active-time-slider');
-            const pool = Array.from(validMap.keys());
-            if (pool.length === 0) { 
+            const weightedPool = getWeightedPool(validMap, 'sub-luck-slider');
+            if (weightedPool.length === 0) { 
                 showToast("No eligible entries within active time window.", "error"); 
                 return; 
             }
-            const winner = pool[Math.floor(Math.random() * pool.length)];
+            const winner = weightedPool[Math.floor(Math.random() * weightedPool.length)];
             
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
@@ -2118,11 +2151,11 @@
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_LOTTO',
                 winner: winner,
-                pool: pool,
+                pool: weightedPool,
                 timestamp: Date.now()
             });
 
-            startLottoSpinSequence(winner, pool);
+            startLottoSpinSequence(winner, weightedPool);
         }
         window.startLottoSpinSequenceRemotely = startLottoSpinSequenceRemotely;
 
@@ -2226,6 +2259,7 @@
             }
 
             for (const user of listArr) {
+                const userData = validMap.get(user);
                 const avatarUrl = await fetchKickAvatar(user);
                 const el = document.createElement('div');
                 el.className = 'eligible-user-row';
@@ -2238,6 +2272,13 @@
                 const span = document.createElement('span');
                 span.textContent = user;
                 el.appendChild(span);
+
+                if (userData && userData.isSubscriber) {
+                    const subBadge = document.createElement('span');
+                    subBadge.style.cssText = "background: var(--accent-green); color: #000000; font-size: 0.65rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; margin-left: auto; text-transform: uppercase;";
+                    subBadge.textContent = "SUB";
+                    el.appendChild(subBadge);
+                }
 
                 container.appendChild(el);
             }
@@ -2256,9 +2297,9 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
-            const entries = Array.from(validMap.keys());
+            const weightedPool = getWeightedPool(validMap, 'wheel-sub-luck-slider');
 
-            if (entries.length === 0) {
+            if (weightedPool.length === 0) {
                 ctx.beginPath();
                 ctx.arc(cx, cy, radius, 0, Math.PI * 2);
                 ctx.fillStyle = '#0a0a0a';
@@ -2274,10 +2315,10 @@
                 return;
             }
 
-            const angleStep = (Math.PI * 2) / entries.length;
+            const angleStep = (Math.PI * 2) / weightedPool.length;
             const colors = ['#121215', '#18181b', '#1e1e24'];
 
-            entries.forEach((user, index) => {
+            weightedPool.forEach((user, index) => {
                 const startAng = index * angleStep;
                 const endAng = startAng + angleStep;
                 ctx.beginPath();
@@ -2308,12 +2349,12 @@
             }
 
             const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
-            const pool = Array.from(validMap.keys());
-            if (pool.length === 0) { 
+            const weightedPool = getWeightedPool(validMap, 'wheel-sub-luck-slider');
+            if (weightedPool.length === 0) { 
                 showToast("No eligible entries within active time window.", "error"); 
                 return; 
             }
-            const winner = pool[Math.floor(Math.random() * pool.length)];
+            const winner = weightedPool[Math.floor(Math.random() * weightedPool.length)];
             
             totalRollsCount++;
             localStorage.setItem('kick_user_total_rolls', totalRollsCount);
@@ -2322,11 +2363,11 @@
             set(ref(db, `channels/${channel}/action`), {
                 type: 'START_WHEEL',
                 winner: winner,
-                entries: pool,
+                entries: weightedPool,
                 timestamp: Date.now()
             });
 
-            startWheelSpinSequence(winner, pool);
+            startWheelSpinSequence(winner, weightedPool);
         }
         window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
 
