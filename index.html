@@ -1489,8 +1489,8 @@
 
             errorEl.style.display = 'none';
             const verifyCode = Math.floor(1000 + Math.random() * 9000);
-            const channelSlug = resolved.slug;
             const channelOriginalName = resolved.originalName;
+            const channelSlug = resolved.slug;
             const chatroomId = resolved.chatroomId;
             const avatar = resolved.avatar;
 
@@ -1524,9 +1524,14 @@
                     if (payload.event === "App\\Events\\ChatMessageEvent") {
                         let chatEventData = JSON.parse(payload.data);
                         if (chatEventData && chatEventData.content && chatEventData.sender) {
-                            const sender = chatEventData.sender.username.toLowerCase();
+                            const sender = (chatEventData.sender.username || "").toLowerCase().trim();
                             const text = chatEventData.content.trim().toLowerCase();
-                            if (sender === channelSlug.toLowerCase() && text === `!verify ${verifyCode}`) {
+                            
+                            // Relaxed verification match
+                            if (
+                                (sender === channelOriginalName.toLowerCase() || sender === channelSlug.toLowerCase() || sender === inputVal.toLowerCase()) && 
+                                text === `!verify ${verifyCode}`
+                            ) {
                                 finalizeLogin(channelOriginalName, channelSlug, avatar, chatroomId);
                             }
                         }
@@ -1542,9 +1547,13 @@
                         const messages = Array.isArray(json) ? json : (json.messages || []);
                         for (const msg of messages) {
                             if (msg && msg.sender && msg.sender.username) {
-                                const sender = msg.sender.username.toLowerCase();
+                                const sender = (msg.sender.username || "").toLowerCase().trim();
                                 const text = (msg.content || "").trim().toLowerCase();
-                                if (sender === channelSlug.toLowerCase() && text === `!verify ${verifyCode}`) {
+                                
+                                if (
+                                    (sender === channelOriginalName.toLowerCase() || sender === channelSlug.toLowerCase() || sender === inputVal.toLowerCase()) && 
+                                    text === `!verify ${verifyCode}`
+                                ) {
                                     finalizeLogin(channelOriginalName, channelSlug, avatar, chatroomId);
                                     break;
                                 }
@@ -1663,7 +1672,6 @@
             const cleanName = channelName.trim();
             if (!cleanName) return null;
 
-            // Generate variants to bypass underscore and casing issues
             const variants = [
                 cleanName,
                 cleanName.toLowerCase(),
