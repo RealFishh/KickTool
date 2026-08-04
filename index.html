@@ -1943,12 +1943,13 @@
                 }
             }
 
-            // MINES ENTRY LOGIC (Only before game starts)
+            // MINES ENTRY LOGIC (Only before game starts and board is not full)
             const minesKeyField = document.getElementById('mines-keyword-input');
             if (minesKeyField && !minesGameOpen) {
                 const minesKey = minesKeyField.value.trim().toLowerCase();
                 if (contentClean === minesKey) {
-                    if (!minesEntries.has(senderName)) {
+                    const totalTiles = minesSize * minesSize;
+                    if (!minesEntries.has(senderName) && minesEntries.size < totalTiles) {
                         minesEntries.set(senderName, { timestamp: Date.now() });
                         renderMinesEntries();
                     }
@@ -2319,9 +2320,9 @@
             // 3. The rest of the unique players available for the board (excluding currentMinesWinner to prevent duplicates)
             let availablePlayers = shuffledPlayers.slice(1);
 
-            // 4. Allocate blank spaces and player slots
+            // 4. Allocate blank spaces and player slots up to totalTiles
             let numBlanks = Math.max(1, Math.floor(totalTiles / 2));
-            let numOtherPlayers = (totalTiles - 1) - numBlanks;
+            let numOtherPlayers = Math.min(availablePlayers.length, (totalTiles - 1) - numBlanks);
 
             let selectedOtherPlayers = availablePlayers.slice(0, numOtherPlayers);
             let actualBlanks = (totalTiles - 1) - selectedOtherPlayers.length;
