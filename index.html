@@ -688,7 +688,7 @@
             <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px;">KICK LOGIN</h2>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">Enter your Kick channel name to verify ownership via chat.</p>
             
-            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamername" autocomplete="off">
+            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., streamer_name" autocomplete="off">
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
             <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONNECT CHANNEL</button>
@@ -708,7 +708,7 @@
             </p>
 
             <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">1. Lotto Carousel Overlay</label>
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">1. Keyword Carousel Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-lotto-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-lotto-url', this)">Copy</button>
@@ -724,7 +724,7 @@
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Lotto Keyword Overlay</label>
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Keyword Giveaway Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-lotto-kw-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-lotto-kw-url', this)">Copy</button>
@@ -798,7 +798,7 @@
 
     <!-- Top Navigation Controls -->
     <div class="workspace-navbar" id="main-navbar">
-        <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Lotto</button>
+        <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
         <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Links</button>
@@ -879,7 +879,7 @@
                             </span>
                         </div>
                         <div class="lotto-input-wrapper">
-                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="fishy" oninput="syncLottoKeyword(this.value)">
+                            <input type="text" id="lotto-keyword-input" class="lotto-keyword-field" value="gw" oninput="syncLottoKeyword(this.value)">
                         </div>
                     </div>
                     <div class="lotto-control-box" style="display: flex; flex-direction: column; justify-content: space-between;">
