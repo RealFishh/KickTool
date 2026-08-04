@@ -655,7 +655,7 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.6);
             user-select: none;
             overflow: hidden;
-            padding: 6px;
+            padding: 8px;
             box-sizing: border-box;
         }
         .mine-tile:hover:not(.revealed) {
@@ -1077,10 +1077,10 @@
                     <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
                 </div>
 
-                <!-- Mines Keyword Input -->
-                <div style="display: flex; align-items: center; gap: 8px; background: #000; padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border-gray);">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Keyword:</span>
-                    <input type="text" id="mines-keyword-input" value="mines" style="background: transparent; border: none; color: var(--accent-green); font-size: 1rem; font-weight: 900; width: 90px; outline: none; text-align: center;">
+                <!-- Entry Keyword Box matching Lotto style -->
+                <div class="lotto-control-box" style="flex-direction: row; align-items: center; gap: 10px; padding: 5px 14px; margin: 0;">
+                    <div class="lotto-control-label" style="margin: 0; font-size: 0.75rem;">Entry Keyword</div>
+                    <input type="text" id="mines-keyword-input" class="lotto-keyword-field" value="mines" style="width: 100px; font-size: 0.95rem; padding: 4px 8px;">
                 </div>
 
                 <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 4px;"></div>
@@ -1835,6 +1835,7 @@
             } else if (mode === 'mines') {
                 if (minesBoardData.length === 0) renderMinesGridPlaceholder();
                 else renderMinesBoard();
+                renderMinesEntries();
             }
             setTimeout(initSliders, 50);
         }
@@ -2260,7 +2261,7 @@
 
             minesBoardData.sort(() => Math.random() - 0.5);
             renderMinesBoard();
-            showToast(`Mines board built with ${Math.min(players.length, totalTiles)} players!`);
+            showToast(`Mines game started with ${Math.min(players.length, totalTiles)} players!`);
         }
         window.startMinesGame = startMinesGame;
 
@@ -2284,13 +2285,14 @@
                 el.className = `mine-tile ${tile.revealed ? (tile.type === 'player' ? 'revealed' : 'blank-revealed') : ''}`;
                 
                 if (!tile.revealed) {
-                    el.innerHTML = `<span style="font-size: 1.6rem; font-weight: 900; color: var(--text-muted);">?</span>`;
+                    el.innerHTML = `<span style="font-size: 1.8rem; font-weight: 900; color: var(--text-muted);">?</span>`;
                     el.onclick = () => revealMineTile(idx);
                 } else {
                     if (tile.type === 'player') {
+                        const avatarSrc = tile.avatar || getDefaultAvatar();
                         el.innerHTML = `
-                            <img src="${tile.avatar}" style="width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--accent-green); object-fit: cover; margin-bottom: 4px;" onerror="this.src=getDefaultAvatar()">
-                            <span style="font-size: 0.75rem; font-weight: 900; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${tile.username}</span>
+                            <img src="${avatarSrc}" style="width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;" onerror="this.src='${getDefaultAvatar()}';">
+                            <span style="font-size: 0.95rem; font-weight: 950; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: 0 4px;">${tile.username}</span>
                         `;
                     } else {
                         el.innerHTML = ``;
@@ -2306,10 +2308,11 @@
             tile.revealed = true;
             renderMinesBoard();
 
+            // Check if only 1 player tile is left unrevealed on the board
             const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
             
-            if (tile.type === 'player' && unrevealedPlayers.length === 0) {
-                triggerMinesWinner(tile.username);
+            if (unrevealedPlayers.length === 1 && tile.type === 'player') {
+                triggerMinesWinner(unrevealedPlayers[0].username);
             }
         }
 
