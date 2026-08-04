@@ -669,9 +669,9 @@
             cursor: default;
         }
         .mine-tile.blank-revealed {
-            border-color: #f43f5e;
-            background: #150508;
-            opacity: 0.7;
+            border-color: #ef4444;
+            background: #991b1b;
+            cursor: default;
         }
 
         /* TOURNAMENT SIZE PILL BUTTONS */
@@ -1063,8 +1063,8 @@
     <!-- WORKSPACE 3: MINES GAME VIEW -->
     <div id="mines-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1500px; height: calc(100vh - 100px); box-sizing: border-box; gap: 14px; z-index: 10;">
-            <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; margin-right: 8px;">Mines Grid Game</span>
+            <div style="display: flex; gap: 14px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <span style="color: var(--text-muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem;">Mines Game</span>
                 
                 <!-- Mines Grid Size Switcher Buttons -->
                 <div style="display: flex; align-items: center; gap: 3px; background: #000000; padding: 3px; border-radius: 10px; border: 1px solid var(--border-gray);">
@@ -1077,28 +1077,35 @@
                     <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
                 </div>
 
-                <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 4px;"></div>
-                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; background: var(--accent-green); color: #000; border-color: var(--accent-green);" onclick="generateMinesBoard()">Shuffle & Build Board</button>
-                <button class="btn-clear-board" style="margin: 0; padding: 6px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetMinesBoard()">Reset Board</button>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 340px; gap: 20px; flex-grow: 1; height: 100%; overflow: hidden;">
-                <!-- Grid Area -->
-                <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;">
-                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center;"></div>
+                <!-- Mines Keyword Input -->
+                <div style="display: flex; align-items: center; gap: 8px; background: #000; padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border-gray);">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Keyword:</span>
+                    <input type="text" id="mines-keyword-input" value="mines" style="background: transparent; border: none; color: var(--accent-green); font-size: 1rem; font-weight: 900; width: 90px; outline: none; text-align: center;">
                 </div>
 
-                <!-- Sidebar Status -->
+                <div style="width: 1px; height: 20px; background-color: var(--border-gray); margin: 0 4px;"></div>
+                <button class="btn-clear-board" style="margin: 0; padding: 8px 20px; background: var(--accent-green); color: #000; border-color: var(--accent-green); font-weight: 900;" onclick="startMinesGame()">START GAME</button>
+                <button class="btn-clear-board" style="margin: 0; padding: 8px 14px; border-color: #f43f5e; color: #f43f5e;" onclick="resetMinesBoard()">Reset Board</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 320px 1fr; gap: 20px; flex-grow: 1; height: 100%; overflow: hidden;">
+                <!-- Left: Eligible Users -->
                 <div class="lotto-card" style="height: 100%;">
                     <div class="lotto-card-title">
-                        Game Status
-                        <span id="mines-status-pill" class="lotto-pill-count">Ready</span>
+                        Eligible Users
+                        <span id="mines-eligible-count" class="lotto-pill-count">(0)</span>
                     </div>
-                    <div id="mines-sidebar-content" class="lotto-scrollable" style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-top: 30px; line-height: 1.5;">
-                            Click <strong style="color: var(--accent-green);">Shuffle & Build Board</strong> to load eligible keyword entries onto the grid tiles. Uncover tiles one by one. The last remaining player tile wins!
-                        </div>
+                    <div id="mines-users-container" class="lotto-scrollable">
+                        <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>
                     </div>
+                    <button class="btn-clear-board" style="width: 100%; padding: 10px; border-color: #f43f5e; color: #f43f5e; margin-top: 15px; flex-shrink: 0;" onclick="clearMinesEntries()">
+                        Delete Entries
+                    </button>
+                </div>
+
+                <!-- Right: Grid Area -->
+                <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;">
+                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center;"></div>
                 </div>
             </div>
         </div>
@@ -1238,14 +1245,15 @@
         let lottoEntries = new Map(); // username -> { isSubscriber, timestamp }
         let lottoBlacklist = new Set();
 
+        // MINES GAME STATE
+        let minesSize = 4;
+        let minesEntries = new Map(); // username -> timestamp
+        let minesBoardData = [];
+
         let tournamentSize = 8;
         let tournamentRounds = [];
         let tournamentScores = [];
         let autoCloseTimeout = null;
-
-        // MINES GAME STATE
-        let minesSize = 4;
-        let minesBoardData = [];
 
         const kickAvatarCache = new Map();
         const pendingAvatarFetches = new Set();
@@ -1825,7 +1833,7 @@
                 renderTournamentBracket();
                 setTimeout(drawConnectorLines, 100);
             } else if (mode === 'mines') {
-                if (minesBoardData.length === 0) generateMinesBoard();
+                if (minesBoardData.length === 0) renderMinesGridPlaceholder();
                 else renderMinesBoard();
             }
             setTimeout(initSliders, 50);
@@ -1903,6 +1911,18 @@
                     renderLottoEntries();
                 }
             }
+
+            // MINES ENTRY LOGIC
+            const minesKeyField = document.getElementById('mines-keyword-input');
+            if (minesKeyField) {
+                const minesKey = minesKeyField.value.trim().toLowerCase();
+                if (contentClean === minesKey) {
+                    if (!minesEntries.has(senderName)) {
+                        minesEntries.set(senderName, { timestamp: Date.now() });
+                        renderMinesEntries();
+                    }
+                }
+            }
         }
 
         function clearLottoEntries() {
@@ -1911,6 +1931,12 @@
             renderLottoEntries();
         }
         window.clearLottoEntries = clearLottoEntries;
+
+        function clearMinesEntries() {
+            minesEntries.clear();
+            renderMinesEntries();
+        }
+        window.clearMinesEntries = clearMinesEntries;
 
         function getValidEntries(entriesMap, sliderId) {
             const slider = document.getElementById(sliderId);
@@ -1975,6 +2001,38 @@
                     subBadge.textContent = "SUB";
                     el.appendChild(subBadge);
                 }
+
+                container.appendChild(el);
+            }
+            if (countLabel) countLabel.textContent = `(${listArr.length})`;
+        }
+
+        async function renderMinesEntries() {
+            const container = document.getElementById('mines-users-container');
+            const countLabel = document.getElementById('mines-eligible-count');
+            if (!container) return;
+            container.innerHTML = "";
+            const listArr = Array.from(minesEntries.keys());
+
+            if (listArr.length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>';
+                if (countLabel) countLabel.textContent = "(0)";
+                return;
+            }
+
+            for (const user of listArr) {
+                const avatarUrl = await fetchKickAvatar(user);
+                const el = document.createElement('div');
+                el.className = 'eligible-user-row';
+                
+                const img = document.createElement('img');
+                img.src = avatarUrl;
+                img.onerror = () => { img.src = getDefaultAvatar(); };
+                el.appendChild(img);
+
+                const span = document.createElement('span');
+                span.textContent = user;
+                el.appendChild(span);
 
                 container.appendChild(el);
             }
@@ -2146,18 +2204,36 @@
                     else btn.classList.remove('active');
                 }
             });
-            generateMinesBoard();
+            renderMinesGridPlaceholder();
         }
         window.setMinesSize = setMinesSize;
 
-        async function generateMinesBoard() {
-            const validMap = getValidEntries(lottoEntries, 'active-time-slider');
-            const players = Array.from(validMap.keys());
-            
+        function renderMinesGridPlaceholder() {
+            const grid = document.getElementById('mines-grid');
+            if (!grid) return;
+            const totalTiles = minesSize * minesSize;
+            grid.style.gridTemplateColumns = `repeat(${minesSize}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${minesSize}, 1fr)`;
+            grid.innerHTML = "";
+
+            for (let i = 0; i < totalTiles; i++) {
+                const el = document.createElement('div');
+                el.className = 'mine-tile';
+                el.innerHTML = `<span style="font-size: 1.6rem; font-weight: 900; color: var(--text-muted);">?</span>`;
+                grid.appendChild(el);
+            }
+        }
+
+        async function startMinesGame() {
+            const players = Array.from(minesEntries.keys());
+            if (players.length === 0) {
+                showToast("No players have entered the mines keyword yet!", "error");
+                return;
+            }
+
             const totalTiles = minesSize * minesSize;
             minesBoardData = [];
 
-            // Shuffle players
             const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < totalTiles; i++) {
@@ -2182,32 +2258,16 @@
                 }
             }
 
-            // Shuffle board tiles
             minesBoardData.sort(() => Math.random() - 0.5);
             renderMinesBoard();
-            
-            const statusPill = document.getElementById('mines-status-pill');
-            if (statusPill) statusPill.textContent = `${shuffledPlayers.length} Players Loaded`;
-            
-            const sidebar = document.getElementById('mines-sidebar-content');
-            if (sidebar) {
-                sidebar.innerHTML = `
-                    <div style="color: var(--accent-green); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; margin-bottom: 5px;">Board Ready (${minesSize}x${minesSize})</div>
-                    <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4;">
-                        Total Tiles: <strong style="color: #fff;">${totalTiles}</strong><br>
-                        Players on Board: <strong style="color: #fff;">${Math.min(players.length, totalTiles)}</strong><br>
-                        Blank Spots: <strong style="color: #fff;">${Math.max(0, totalTiles - players.length)}</strong>
-                    </div>
-                `;
-            }
+            showToast(`Mines board built with ${Math.min(players.length, totalTiles)} players!`);
         }
-        window.generateMinesBoard = generateMinesBoard;
+        window.startMinesGame = startMinesGame;
 
         function resetMinesBoard() {
-            minesBoardData.forEach(tile => tile.revealed = false);
-            renderMinesBoard();
-            const statusPill = document.getElementById('mines-status-pill');
-            if (statusPill) statusPill.textContent = `Reset`;
+            minesBoardData = [];
+            renderMinesGridPlaceholder();
+            showToast("Mines board reset.");
         }
         window.resetMinesBoard = resetMinesBoard;
 
@@ -2233,10 +2293,7 @@
                             <span style="font-size: 0.75rem; font-weight: 900; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center;">${tile.username}</span>
                         `;
                     } else {
-                        el.innerHTML = `
-                            <span style="font-size: 1.2rem;">❌</span>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #f43f5e; text-transform: uppercase;">Empty</span>
-                        `;
+                        el.innerHTML = ``;
                     }
                 }
                 grid.appendChild(el);
@@ -2249,11 +2306,9 @@
             tile.revealed = true;
             renderMinesBoard();
 
-            // Check remaining unrevealed player tiles
             const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
             
             if (tile.type === 'player' && unrevealedPlayers.length === 0) {
-                // Last player tile remaining!
                 triggerMinesWinner(tile.username);
             }
         }
@@ -2539,6 +2594,7 @@
         loadTournamentData();
         renderTournamentBracket();
         initSliders();
+        renderMinesGridPlaceholder();
     </script>
 </body>
 </html>
