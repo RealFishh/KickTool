@@ -1190,6 +1190,7 @@
             } else {
                 pill.textContent = `${val}m`;
             }
+            renderLottoEntries();
         }
         window.updateActiveTimeDisplay = updateActiveTimeDisplay;
 
@@ -1205,6 +1206,8 @@
             } else {
                 pill.textContent = `${val}m`;
             }
+            renderWheelEntries();
+            drawWheel();
         }
         window.updateWheelActiveTimeDisplay = updateWheelActiveTimeDisplay;
 
@@ -1223,11 +1226,11 @@
         let totalRollsCount = 0;
 
         let lottoActive = true; 
-        let lottoEntries = new Map();
+        let lottoEntries = new Map(); // username -> { isSubscriber, timestamp }
         let lottoBlacklist = new Set();
 
         let wheelActive = true;
-        let wheelEntries = new Map();
+        let wheelEntries = new Map(); // username -> { isSubscriber, timestamp }
         let wheelSpinning = false;
         let wheelBlacklist = new Set();
 
@@ -1897,16 +1900,16 @@
 
             const lottoKey = document.getElementById('lotto-keyword-input').value.trim().toLowerCase();
             if (lottoActive && contentClean === lottoKey) {
-                if (!lottoEntries.has(senderName) && !lottoBlacklist.has(senderName)) {
-                    lottoEntries.set(senderName, isSubscriber);
+                if (!lottoBlacklist.has(senderName)) {
+                    lottoEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderLottoEntries();
                 }
             }
 
             const wheelKey = document.getElementById('wheel-keyword-input').value.trim().toLowerCase();
             if (wheelActive && contentClean === wheelKey) {
-                if (!wheelEntries.has(senderName) && !wheelBlacklist.has(senderName) && !wheelSpinning) {
-                    wheelEntries.set(senderName, isSubscriber);
+                if (!wheelBlacklist.has(senderName) && !wheelSpinning) {
+                    wheelEntries.set(senderName, { isSubscriber, timestamp: Date.now() });
                     renderWheelEntries();
                     drawWheel();
                 }
@@ -1920,12 +1923,27 @@
         }
         window.clearLottoEntries = clearLottoEntries;
 
+        function getValidEntries(entriesMap, sliderId) {
+            const slider = document.getElementById(sliderId);
+            const activeMinutes = slider ? parseInt(slider.value, 10) : 0;
+            const now = Date.now();
+            const valid = new Map();
+
+            for (const [user, data] of entriesMap.entries()) {
+                if (activeMinutes === 0 || (now - data.timestamp) <= (activeMinutes * 60 * 1000)) {
+                    valid.set(user, data);
+                }
+            }
+            return valid;
+        }
+
         async function renderLottoEntries() {
             const container = document.getElementById('lotto-users-container');
             const countLabel = document.getElementById('lotto-eligible-count');
             if (!container) return;
             container.innerHTML = "";
-            const listArr = Array.from(lottoEntries.keys());
+            const validMap = getValidEntries(lottoEntries, 'active-time-slider');
+            const listArr = Array.from(validMap.keys());
 
             if (listArr.length === 0) {
                 container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>';
@@ -1999,8 +2017,9 @@
                 return;
             }
 
-            const pool = Array.from(lottoEntries.keys());
-            if (pool.length === 0) { alert("Entries list is empty."); return; }
+            const validMap = getValidEntries(lottoEntries, 'active-time-slider');
+            const pool = Array.from(validMap.keys());
+            if (pool.length === 0) { alert("No eligible entries within active time window."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
             
             totalRollsCount++;
@@ -2108,7 +2127,8 @@
             const countLabel = document.getElementById('wheel-eligible-count');
             if (!container) return;
             container.innerHTML = "";
-            const listArr = Array.from(wheelEntries.keys());
+            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
+            const listArr = Array.from(validMap.keys());
 
             if (listArr.length === 0) {
                 container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>';
@@ -2146,7 +2166,8 @@
             const radius = canvas.width / 2 - 15;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const entries = Array.from(wheelEntries.keys());
+            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
+            const entries = Array.from(validMap.keys());
 
             if (entries.length === 0) {
                 ctx.beginPath();
@@ -2197,8 +2218,9 @@
                 return;
             }
 
-            const pool = Array.from(wheelEntries.keys());
-            if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
+            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
+            const pool = Array.from(validMap.keys());
+            if (pool.length === 0) { alert("No eligible entries within active time window."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
             
             totalRollsCount++;
@@ -2510,6 +2532,16 @@
             }
             requestAnimationFrame(frame);
         }
+
+        // Periodic check to auto-expire entries based on active time slider
+        setInterval(() => {
+            if (currentActiveView === 'lotto') {
+                renderLottoEntries();
+            } else if (currentActiveView === 'wheel') {
+                renderWheelEntries();
+                drawWheel();
+            }
+        }, 2000);
 
         checkOverlayMode();
         checkStartupKickAuth();
