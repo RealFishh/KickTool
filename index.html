@@ -2304,17 +2304,31 @@
                 el.className = `mine-tile ${tile.revealed ? (tile.type === 'player' ? 'revealed' : 'blank-revealed') : ''}`;
                 
                 if (!tile.revealed) {
-                    el.innerHTML = `<span style="font-size: 1.8rem; font-weight: 900; color: var(--text-muted);">?</span>`;
+                    const qSpan = document.createElement('span');
+                    qSpan.style.cssText = "font-size: 1.8rem; font-weight: 900; color: var(--text-muted);";
+                    qSpan.textContent = "?";
+                    el.appendChild(qSpan);
                     el.addEventListener('click', () => revealMineTile(idx));
                 } else {
                     if (tile.type === 'player') {
                         const avatarSrc = (tile.avatar && !tile.avatar.includes('default')) ? tile.avatar : getDefaultAvatar();
-                        el.innerHTML = `
-                            <img src="${avatarSrc}" style="width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;" onerror="this.src=getDefaultAvatar()">
-                            <span style="font-size: 0.95rem; font-weight: 950; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: 0 4px;">${tile.username}</span>
-                        `;
+                        
+                        const img = document.createElement('img');
+                        img.src = avatarSrc;
+                        img.style.cssText = "width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;";
+                        img.onerror = () => { img.src = getDefaultAvatar(); };
+                        el.appendChild(img);
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.style.cssText = "font-size: 0.95rem; font-weight: 950; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: 0 4px;";
+                        nameSpan.textContent = tile.username;
+                        el.appendChild(nameSpan);
                     } else {
-                        el.innerHTML = ``;
+                        // Solid red blank tile
+                        const blankSpan = document.createElement('span');
+                        blankSpan.style.cssText = "font-size: 0.8rem; font-weight: 900; color: #fff; text-transform: uppercase;";
+                        blankSpan.textContent = "";
+                        el.appendChild(blankSpan);
                     }
                 }
                 grid.appendChild(el);
@@ -2325,24 +2339,18 @@
             if (!minesGameOpen) return;
             const tile = minesBoardData[idx];
             if (!tile || tile.revealed) return;
+            
             tile.revealed = true;
             renderMinesBoard();
 
-            // Check if only 1 tile is left unrevealed on the entire board
+            // Check if this was the very last tile remaining on the board
             const unrevealedTiles = minesBoardData.filter(t => !t.revealed);
             
             if (unrevealedTiles.length === 0) {
-                // Last tile on board! If it's a player, they win.
                 if (tile.type === 'player') {
                     triggerMinesWinner(tile.username);
                 } else {
-                    showToast("Last tile uncovered was a blank spot!", "error");
-                }
-            } else {
-                // Also check if only 1 player tile is left unrevealed among all tiles
-                const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
-                if (unrevealedPlayers.length === 1 && tile.type === 'player') {
-                    triggerMinesWinner(unrevealedPlayers[0].username);
+                    showToast("The last tile clicked was a blank spot!", "error");
                 }
             }
         }
