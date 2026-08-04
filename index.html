@@ -121,7 +121,7 @@
             justify-content: center !important;
         }
 
-        /* 1. LOTTO OVERLAY MODE */
+        /* LOTTO OVERLAY MODE */
         body.obs-overlay-mode #lotto-view.active .lotto-workspace {
             width: 100vw !important;
             max-width: 100vw !important;
@@ -153,38 +153,6 @@
             box-shadow: none !important;
             width: 90vw !important;
             max-width: 1200px !important;
-        }
-
-        /* 2. WHEEL OVERLAY MODE */
-        body.obs-overlay-mode #wheel-view.active .lotto-workspace {
-            width: 100vw !important;
-            max-width: 100vw !important;
-            height: 100vh !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            grid-template-columns: 1fr !important;
-        }
-        body.obs-overlay-mode #wheel-view.active .lotto-card,
-        body.obs-overlay-mode #wheel-view.active .lotto-config-row,
-        body.obs-overlay-mode #wheel-view.active .lotto-roll-btn {
-            display: none !important;
-        }
-        body.obs-overlay-mode #wheel-view.active .lotto-center-layout {
-            width: 100% !important;
-            height: 100% !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: transparent !important;
-        }
-        body.obs-overlay-mode #wheel-view.active .lotto-spinner-outer {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
         }
 
         #bg-canvas {
@@ -348,7 +316,7 @@
             color: var(--accent-green);
         }
 
-        /* LOTTO & WHEEL WORKSPACE LAYOUTS */
+        /* LOTTO WORKSPACE LAYOUT */
         .lotto-workspace {
             display: grid;
             grid-template-columns: 320px 1fr 340px;
@@ -653,24 +621,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.8);
         }
 
-        #wheel-view .lotto-workspace {
-            grid-template-columns: 270px 1fr 310px !important;
-            max-width: 1700px !important;
-            width: 96vw !important;
-            height: 700px !important;
-        }
-
-        #wheel-view .lotto-spinner-outer {
-            height: 580px !important;
-            background-color: transparent !important;
-            border: none !important;
-        }
-
-        #wheel-view #wheel-spinner-container {
-            width: 560px !important;
-            height: 560px !important;
-        }
-
         /* TOURNAMENT SIZE PILL BUTTONS */
         .tournament-size-btn {
             background: transparent;
@@ -817,31 +767,15 @@
             </div>
 
             <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">2. Spinning Wheel Overlay</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="obs-wheel-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
-                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-wheel-url', this)">Copy</button>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Keyword Giveaway Overlay</label>
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">2. Keyword Giveaway Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-lotto-kw-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-lotto-kw-url', this)">Copy</button>
                 </div>
             </div>
 
-            <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">4. Wheel Keyword Overlay</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="obs-wheel-kw-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
-                    <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-wheel-kw-url', this)">Copy</button>
-                </div>
-            </div>
-
             <div style="margin-bottom: 20px;">
-                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">5. Winner Live Chat Overlay</label>
+                <label style="display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">3. Winner Live Chat Overlay</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="obs-chat-url" readonly class="password-input" style="margin: 0; font-size: 0.8rem; padding: 8px; text-align: left;" value="">
                     <button class="btn" style="width: auto; padding: 0 14px; background: var(--accent-green); color: #000000; font-size: 0.8rem;" onclick="copyObsUrl('obs-chat-url', this)">Copy</button>
@@ -912,7 +846,6 @@
     <!-- Top Navigation Controls -->
     <div class="workspace-navbar" id="main-navbar">
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword</button>
-        <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
         <button class="workspace-btn" onclick="openObsModal()" style="color: var(--accent-green);">OBS Links</button>
 
@@ -1050,93 +983,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 2: SPINNING WHEEL VIEW -->
-    <div id="wheel-view" class="workspace-view">
-        <div class="lotto-workspace">
-            <div class="lotto-card">
-                <div class="lotto-card-title">
-                    Eligible Users
-                    <span id="wheel-eligible-count" class="lotto-pill-count">(0)</span>
-                </div>
-                <div id="wheel-users-container" class="lotto-scrollable">
-                    <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>
-                </div>
-                <button class="btn-clear-board" style="width: 100%; padding: 10px; border-color: #f43f5e; color: #f43f5e; margin-top: 15px; flex-shrink: 0;" onclick="clearWheelEntries()">
-                    Delete Entries
-                </button>
-            </div>
-
-            <div class="lotto-center-layout">
-                <div class="lotto-config-row">
-                    <!-- 1. Entry Keyword -->
-                    <div class="lotto-control-box">
-                        <div class="lotto-control-label">
-                            Entry Keyword
-                            <span id="wheel-keyword-hide-btn" style="cursor: pointer; color: var(--accent-green); display: flex; align-items: center;" onclick="toggleWheelKeywordVisibility()" title="Toggle Visibility">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </span>
-                        </div>
-                        <div class="lotto-input-wrapper">
-                            <input type="text" id="wheel-keyword-input" class="lotto-keyword-field" value="wheel" oninput="syncWheelKeyword(this.value)">
-                        </div>
-                    </div>
-
-                    <input type="hidden" id="wheel-sub-luck-slider" value="1">
-
-                    <!-- 2. Sub Luck -->
-                    <div class="lotto-control-box">
-                        <div class="lotto-control-label">
-                            <span style="display: flex; align-items: center; gap: 4px;">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-green);"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-2-4.5-2-7 0 0 7 2.5 7 9a4.5 4.5 0 0 1-9 0c0-.85.22-1.65.6-2.35"></path></svg>
-                                Sub luck
-                            </span>
-                            <span id="wheel-sub-luck-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">1x</span>
-                        </div>
-                        <div class="lotto-slider-track">
-                            <input type="range" id="wheel-sub-luck-visible-slider" class="lotto-slider" min="1" max="10" value="1" oninput="document.getElementById('wheel-sub-luck-slider').value = this.value; updateWheelSubLuckDisplay(this.value); drawWheel();">
-                        </div>
-                    </div>
-
-                    <!-- 3. Active in time -->
-                    <div class="lotto-control-box">
-                        <div class="lotto-control-label">
-                            <span style="display: flex; align-items: center; gap: 4px;">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                Active in time
-                            </span>
-                            <span id="wheel-active-time-pill" style="background: color-mix(in srgb, var(--accent-green) 15%, transparent); color: var(--accent-green); padding: 2px 7px; border-radius: 6px; font-size: 0.75rem; font-weight: 900;">off</span>
-                        </div>
-                        <div class="lotto-slider-track">
-                            <input type="range" id="wheel-active-time-slider" class="lotto-slider" min="0" max="60" value="0" oninput="updateWheelActiveTimeDisplay(this.value)">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lotto-spinner-outer" style="overflow: visible; display: flex; align-items: center; justify-content: center;">
-                    <div id="wheel-spinner-container" style="position: relative; width: 560px; height: 560px; display: flex; align-items: center; justify-content: center;">
-                        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 20px solid var(--accent-green); z-index: 100;"></div>
-                        <canvas id="wheel-canvas" width="560" height="560" style="border-radius: 50%; border: 2px solid var(--border-gray); transform: rotate(0deg);"></canvas>
-                    </div>
-                </div>
-
-                <button id="wheel-main-roll-btn" class="lotto-roll-btn" onclick="startWheelSpinSequenceRemotely()">
-                    Spin Wheel
-                </button>
-            </div>
-
-            <div class="lotto-card">
-                <div class="lotto-card-title">
-                    Winner Chat
-                    <input type="text" id="active-wheel-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
-                </div>
-                <div id="wheel-chat-container" class="lotto-scrollable">
-                    <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- WORKSPACE 3: TOURNAMENT BRACKET VIEW -->
+    <!-- WORKSPACE 2: TOURNAMENT BRACKET VIEW -->
     <div id="tournament-view" class="workspace-view">
         <div style="display: flex; flex-direction: column; width: 95vw; max-width: 1500px; height: calc(100vh - 100px); box-sizing: border-box; gap: 14px; z-index: 10;">
             <div style="display: flex; gap: 12px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 12px 20px; border-radius: 12px; align-items: center; justify-content: flex-start; flex-shrink: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -1159,7 +1006,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 4: DEDICATED KEYWORD OVERLAY VIEW -->
+    <!-- WORKSPACE 3: DEDICATED KEYWORD OVERLAY VIEW -->
     <div id="keyword-view" class="workspace-view">
         <div style="background: rgba(18, 18, 21, 0.95); border: 3px solid var(--accent-green); padding: 35px 70px; border-radius: 24px; box-shadow: 0 0 60px color-mix(in srgb, var(--accent-green) 40%, transparent); text-align: center;">
             <div style="font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px;">Active Giveaway Keyword</div>
@@ -1167,7 +1014,7 @@
         </div>
     </div>
 
-    <!-- WORKSPACE 5: DEDICATED WINNER CHAT OVERLAY VIEW -->
+    <!-- WORKSPACE 4: DEDICATED WINNER CHAT OVERLAY VIEW -->
     <div id="chat-view" class="workspace-view">
         <div style="width: 440px; height: 520px; background: rgba(18, 18, 21, 0.92); border: 2px solid var(--border-gray); border-radius: 20px; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; backdrop-filter: blur(12px); box-shadow: 0 20px 50px rgba(0,0,0,0.9);">
             <div style="font-size: 1.1rem; font-weight: 900; color: var(--accent-green); border-bottom: 1px solid var(--border-gray); padding-bottom: 12px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center;">
@@ -1275,23 +1122,6 @@
         }
         window.updateActiveTimeDisplay = updateActiveTimeDisplay;
 
-        function updateWheelSubLuckDisplay(val) {
-            document.getElementById('wheel-sub-luck-pill').textContent = `${val}x`;
-        }
-        window.updateWheelSubLuckDisplay = updateWheelSubLuckDisplay;
-
-        function updateWheelActiveTimeDisplay(val) {
-            const pill = document.getElementById('wheel-active-time-pill');
-            if (parseInt(val) === 0) {
-                pill.textContent = "off";
-            } else {
-                pill.textContent = `${val}m`;
-            }
-            renderWheelEntries();
-            drawWheel();
-        }
-        window.updateWheelActiveTimeDisplay = updateWheelActiveTimeDisplay;
-
         // DYNAMIC DEFAULT AVATAR MATCHING CURRENT THEME COLOR
         function getDefaultAvatar() {
             const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-green').trim() || '#53fc18';
@@ -1309,11 +1139,6 @@
         let lottoActive = true; 
         let lottoEntries = new Map(); // username -> { isSubscriber, timestamp }
         let lottoBlacklist = new Set();
-
-        let wheelActive = true;
-        let wheelEntries = new Map(); // username -> { isSubscriber, timestamp }
-        let wheelSpinning = false;
-        let wheelBlacklist = new Set();
 
         let tournamentSize = 8;
         let tournamentRounds = [];
@@ -1338,9 +1163,7 @@
             const channel = getActiveChannel().toLowerCase();
             const baseUrl = window.location.origin + window.location.pathname;
             document.getElementById('obs-lotto-url').value = `${baseUrl}?mode=overlay&view=lotto&channel=${channel}`;
-            document.getElementById('obs-wheel-url').value = `${baseUrl}?mode=overlay&view=wheel&channel=${channel}`;
             document.getElementById('obs-lotto-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=lotto&channel=${channel}`;
-            document.getElementById('obs-wheel-kw-url').value = `${baseUrl}?mode=overlay&view=keyword&type=wheel&channel=${channel}`;
             document.getElementById('obs-chat-url').value = `${baseUrl}?mode=overlay&view=chat&channel=${channel}`;
             document.getElementById('obs-modal').style.display = 'flex';
         }
@@ -1368,13 +1191,6 @@
         }
         window.syncLottoKeyword = syncLottoKeyword;
 
-        function syncWheelKeyword(val) {
-            const cleanVal = val.trim();
-            const channel = getActiveChannel().toLowerCase();
-            set(ref(db, `channels/${channel}/wheelKeyword`), cleanVal);
-        }
-        window.syncWheelKeyword = syncWheelKeyword;
-
         function syncChatTarget(val) {
             const cleanVal = val.trim();
             const channel = getActiveChannel().toLowerCase();
@@ -1399,14 +1215,13 @@
             if (params.get('mode') === 'overlay') {
                 document.body.classList.add('obs-overlay-mode');
                 const view = params.get('view') || 'lotto';
-                const type = params.get('type') || 'lotto';
                 const channel = (params.get('channel') || 'default_streamer').toLowerCase();
                 switchWorkspace(view);
 
                 if (view === 'keyword') {
-                    const kwPath = type === 'wheel' ? `channels/${channel}/wheelKeyword` : `channels/${channel}/lottoKeyword`;
+                    const kwPath = `channels/${channel}/lottoKeyword`;
                     onValue(ref(db, kwPath), (snapshot) => {
-                        const kw = snapshot.val() || (type === 'wheel' ? 'wheel' : 'gw');
+                        const kw = snapshot.val() || 'gw';
                         updateObsKeywordDisplay(kw);
                     });
                 }
@@ -1421,8 +1236,6 @@
                     if (action && action.type) {
                         if (action.type === 'START_LOTTO') {
                             startLottoSpinSequence(action.winner, action.pool);
-                        } else if (action.type === 'START_WHEEL') {
-                            startWheelSpinSequence(action.winner, action.entries);
                         }
                     }
                 });
@@ -1441,13 +1254,6 @@
                     if (kw) {
                         const lottoIn = document.getElementById('lotto-keyword-input');
                         if (lottoIn && lottoIn.value !== kw) lottoIn.value = kw;
-                    }
-                });
-                onValue(ref(db, `channels/${channel}/wheelKeyword`), (snapshot) => {
-                    const kw = snapshot.val();
-                    if (kw) {
-                        const wheelIn = document.getElementById('wheel-keyword-input');
-                        if (wheelIn && wheelIn.value !== kw) wheelIn.value = kw;
                     }
                 });
             }
@@ -1901,7 +1707,7 @@
 
         function switchWorkspace(mode) {
             currentActiveView = mode;
-            ['lotto', 'wheel', 'tournament', 'keyword', 'chat'].forEach(m => {
+            ['lotto', 'tournament', 'keyword', 'chat'].forEach(m => {
                 const btn = document.getElementById(`ws-btn-${m}`);
                 const view = document.getElementById(`${m}-view`);
                 if (btn) btn.classList.remove('active');
@@ -1916,8 +1722,6 @@
             if (mode === 'tournament') {
                 renderTournamentBracket();
                 setTimeout(drawConnectorLines, 100);
-            } else if (mode === 'wheel') {
-                drawWheel();
             }
             setTimeout(initSliders, 50);
         }
@@ -1935,19 +1739,6 @@
             }
         }
         window.toggleKeywordVisibility = toggleKeywordVisibility;
-
-        function toggleWheelKeywordVisibility() {
-            const field = document.getElementById('wheel-keyword-input');
-            const btn = document.getElementById('wheel-keyword-hide-btn');
-            if (field.type === "password") { 
-                field.type = "text"; 
-                btn.innerHTML = eyeOffSVG; 
-            } else { 
-                field.type = "password"; 
-                btn.innerHTML = eyeOpenSVG; 
-            }
-        }
-        window.toggleWheelKeywordVisibility = toggleWheelKeywordVisibility;
 
         let chatSocket = null;
 
@@ -1987,7 +1778,6 @@
         function processIncomingChatMessage(senderName, content, isSubscriber = false) {
             const contentClean = content.toLowerCase();
             addLottoChatMessage(senderName, content);
-            addWheelChatMessage(senderName, content);
 
             // LOTTO ENTRY & ACTIVE TIME LOGIC
             const lottoActiveTimeVal = parseInt(document.getElementById('active-time-slider').value, 10);
@@ -2006,27 +1796,6 @@
                     const subStatus = existing ? (existing.isSubscriber || isSubscriber) : isSubscriber;
                     lottoEntries.set(senderName, { isSubscriber: subStatus, timestamp: Date.now() });
                     renderLottoEntries();
-                }
-            }
-
-            // WHEEL ENTRY & ACTIVE TIME LOGIC
-            const wheelActiveTimeVal = parseInt(document.getElementById('wheel-active-time-slider').value, 10);
-            const wheelKey = document.getElementById('wheel-keyword-input').value.trim().toLowerCase();
-
-            let shouldEnterWheel = false;
-            if (wheelActiveTimeVal > 0) {
-                shouldEnterWheel = true;
-            } else {
-                shouldEnterWheel = (contentClean === wheelKey);
-            }
-
-            if (wheelActive && shouldEnterWheel) {
-                if (!wheelBlacklist.has(senderName) && !wheelSpinning) {
-                    const existing = wheelEntries.get(senderName);
-                    const subStatus = existing ? (existing.isSubscriber || isSubscriber) : isSubscriber;
-                    wheelEntries.set(senderName, { isSubscriber: subStatus, timestamp: Date.now() });
-                    renderWheelEntries();
-                    drawWheel();
                 }
             }
         }
@@ -2261,193 +2030,6 @@
             if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
         }
         window.closeReveal = closeReveal;
-
-        function clearWheelEntries() {
-            wheelEntries.clear();
-            wheelBlacklist.clear();
-            renderWheelEntries();
-            drawWheel();
-        }
-        window.clearWheelEntries = clearWheelEntries;
-
-        async function renderWheelEntries() {
-            const container = document.getElementById('wheel-users-container');
-            const countLabel = document.getElementById('wheel-eligible-count');
-            if (!container) return;
-            container.innerHTML = "";
-            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
-            const listArr = Array.from(validMap.keys());
-
-            if (listArr.length === 0) {
-                container.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Chat Activity...</div>';
-                if (countLabel) countLabel.textContent = "(0)";
-                return;
-            }
-
-            for (const user of listArr) {
-                const userData = validMap.get(user);
-                const avatarUrl = await fetchKickAvatar(user);
-                const el = document.createElement('div');
-                el.className = 'eligible-user-row';
-                
-                const img = document.createElement('img');
-                img.src = avatarUrl;
-                img.onerror = () => { img.src = getDefaultAvatar(); };
-                el.appendChild(img);
-
-                const span = document.createElement('span');
-                span.textContent = user;
-                el.appendChild(span);
-
-                if (userData && userData.isSubscriber) {
-                    const subBadge = document.createElement('span');
-                    subBadge.style.cssText = "background: var(--accent-green); color: #000000; font-size: 0.65rem; font-weight: 900; padding: 1px 6px; border-radius: 4px; margin-left: auto; text-transform: uppercase;";
-                    subBadge.textContent = "SUB";
-                    el.appendChild(subBadge);
-                }
-
-                container.appendChild(el);
-            }
-            if (countLabel) countLabel.textContent = `(${listArr.length})`;
-        }
-
-        function addWheelChatMessage(username, content) {}
-
-        function drawWheel() {
-            const canvas = document.getElementById('wheel-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            const radius = canvas.width / 2 - 15;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
-            const weightedPool = getWeightedPool(validMap, 'wheel-sub-luck-slider');
-
-            if (weightedPool.length === 0) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#0a0a0a';
-                ctx.fill();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#27272a';
-                ctx.stroke();
-                ctx.fillStyle = 'var(--text-muted)';
-                ctx.font = 'bold 16px Segoe UI';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('NO ENTRIES', cx, cy);
-                return;
-            }
-
-            const angleStep = (Math.PI * 2) / weightedPool.length;
-            const colors = ['#121215', '#18181b', '#1e1e24'];
-
-            weightedPool.forEach((user, index) => {
-                const startAng = index * angleStep;
-                const endAng = startAng + angleStep;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, radius, startAng, endAng);
-                ctx.fillStyle = colors[index % colors.length];
-                ctx.fill();
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = '#27272a';
-                ctx.stroke();
-
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(startAng + angleStep / 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 13px Segoe UI';
-                ctx.textAlign = 'right';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(user.length > 12 ? user.substring(0, 10) + '..' : user, radius - 20, 0);
-                ctx.restore();
-            });
-        }
-
-        function startWheelSpinSequenceRemotely() {
-            if (!loggedInKickUser) {
-                openKickLoginModal();
-                return;
-            }
-
-            const validMap = getValidEntries(wheelEntries, 'wheel-active-time-slider');
-            const weightedPool = getWeightedPool(validMap, 'wheel-sub-luck-slider');
-            if (weightedPool.length === 0) { 
-                showToast("No eligible entries within active time window.", "error"); 
-                return; 
-            }
-            const winner = weightedPool[Math.floor(Math.random() * weightedPool.length)];
-            
-            totalRollsCount++;
-            localStorage.setItem('kick_user_total_rolls', totalRollsCount);
-
-            const channel = getActiveChannel().toLowerCase();
-            set(ref(db, `channels/${channel}/action`), {
-                type: 'START_WHEEL',
-                winner: winner,
-                entries: weightedPool,
-                timestamp: Date.now()
-            });
-
-            startWheelSpinSequence(winner, weightedPool);
-        }
-        window.startWheelSpinSequenceRemotely = startWheelSpinSequenceRemotely;
-
-        function startWheelSpinSequence(winner, entries) {
-            if (!entries || entries.length === 0) return;
-            const index = entries.indexOf(winner);
-            if (index === -1) return;
-
-            const wheelBtn = document.getElementById('wheel-main-roll-btn');
-            if (wheelBtn) {
-                wheelBtn.disabled = true;
-                wheelBtn.textContent = "SPINNING...";
-            }
-
-            const canvas = document.getElementById('wheel-canvas');
-            if (!canvas) return;
-            const sliceAngle = 360 / entries.length;
-            const targetRotation = 2160 + (360 - (index * sliceAngle + sliceAngle / 2));
-
-            wheelSpinning = true;
-            canvas.style.transition = 'transform 8s cubic-bezier(0.1, 0.8, 0.1, 1)';
-            canvas.style.transform = `rotate(${targetRotation}deg)`;
-
-            setTimeout(() => {
-                wheelSpinning = false;
-                if (wheelBtn) {
-                    wheelBtn.disabled = false;
-                    wheelBtn.textContent = "Spin Wheel";
-                }
-                triggerWheelWinnerReveal(winner);
-            }, 8000);
-        }
-
-        function triggerWheelWinnerReveal(winner) {
-            const lottoChat = document.getElementById('lotto-chat-container');
-            if (lottoChat) lottoChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>';
-            
-            const obsChat = document.getElementById('obs-chat-messages-container');
-            if (obsChat) obsChat.innerHTML = '<div style="color: var(--text-muted); font-style: italic; font-size: 0.95rem; text-align: center; margin-top: 40px;">Awaiting Chat Feed...</div>';
-
-            document.getElementById('active-winner-chat-target').value = winner;
-            syncChatTarget(winner);
-
-            wheelBlacklist.add(winner);
-            wheelEntries.delete(winner);
-            renderWheelEntries();
-            drawWheel();
-
-            document.getElementById('epic-overlay').classList.add('active');
-            document.getElementById('lotto-winner-reveal-name').textContent = winner;
-
-            if (autoCloseTimeout) clearTimeout(autoCloseTimeout);
-            autoCloseTimeout = setTimeout(closeReveal, 4000);
-        }
 
         // --- Tournament Logic ---
         function initTournamentData(size) {
@@ -2716,9 +2298,6 @@
         setInterval(() => {
             if (currentActiveView === 'lotto') {
                 renderLottoEntries();
-            } else if (currentActiveView === 'wheel') {
-                renderWheelEntries();
-                drawWheel();
             }
         }, 2000);
 
