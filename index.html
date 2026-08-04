@@ -322,8 +322,8 @@
             grid-template-columns: 320px 1fr 340px;
             gap: 20px;
             width: 95vw;
-            max-width: 1700px;
-            height: 76vh; 
+            max-width: 1600px;
+            height: 640px; 
             box-sizing: border-box;
             z-index: 10;
         }
@@ -642,24 +642,25 @@
         }
 
         .mine-tile {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px;
+            background-color: #09090b;
+            border: 2px solid var(--border-gray);
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
             user-select: none;
             overflow: hidden;
+            padding: 4px;
             box-sizing: border-box;
         }
         .mine-tile:hover:not(.revealed) {
-            background-color: #334155;
             border-color: var(--accent-green);
             transform: translateY(-2px);
+            box-shadow: 0 0 20px color-mix(in srgb, var(--accent-green) 30%, transparent);
         }
         .mine-tile.revealed {
             border-color: var(--accent-green);
@@ -667,8 +668,8 @@
             cursor: default;
         }
         .mine-tile.blank-revealed {
-            border-color: #1e293b;
-            background: #0f172a;
+            border-color: #ef4444;
+            background: #991b1b;
             cursor: default;
         }
 
@@ -1061,19 +1062,11 @@
     <!-- WORKSPACE 3: MINES GAME VIEW -->
     <div id="mines-view" class="workspace-view">
         <div class="lotto-workspace">
-            <!-- Left Card: Eligible Users & Keyword -->
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Eligible Users
                     <span id="mines-eligible-count" class="lotto-pill-count">(0)</span>
                 </div>
-                
-                <!-- Separate Entry Keyword Tab -->
-                <div style="background: #09090b; border: 1px solid var(--border-gray); border-radius: 10px; padding: 10px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px;">
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Entry Keyword</span>
-                    <input type="text" id="mines-keyword-input" class="lotto-keyword-field" value="mines" style="font-size: 1rem; padding: 6px;">
-                </div>
-
                 <div id="mines-users-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Waiting for Keyword Entry...</div>
                 </div>
@@ -1082,10 +1075,8 @@
                 </button>
             </div>
 
-            <!-- Center: Bigger Grid & Start Button Underneath -->
-            <div style="display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: center; height: 100%;">
-                <div style="display: flex; align-items: center; gap: 6px; background: var(--bg-card); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-gray);">
-                    <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-right: 6px;">Grid Size:</span>
+            <div class="lotto-center-layout" style="height: 100%;">
+                <div style="display: flex; gap: 10px; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 10px 15px; border-radius: 12px; align-items: center; justify-content: space-between; flex-shrink: 0;">
                     <div style="display: flex; align-items: center; gap: 3px; background: #000000; padding: 3px; border-radius: 8px; border: 1px solid var(--border-gray);">
                         <button class="mines-size-btn" onclick="setMinesSize(2)">2x2</button>
                         <button class="mines-size-btn" onclick="setMinesSize(3)">3x3</button>
@@ -1095,23 +1086,27 @@
                         <button class="mines-size-btn" onclick="setMinesSize(7)">7x7</button>
                         <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
                     </div>
+
+                    <div style="display: flex; align-items: center; gap: 6px; background: #000; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-gray);">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Keyword:</span>
+                        <input type="text" id="mines-keyword-input" value="mines" style="background: transparent; border: none; color: var(--accent-green); font-size: 0.9rem; font-weight: 900; width: 75px; outline: none; text-align: center;">
+                    </div>
+
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-clear-board" style="margin: 0; padding: 6px 12px; background: var(--accent-green); color: #000; border-color: var(--accent-green); font-weight: 900;" onclick="startMinesGame()">START</button>
+                        <button class="btn-clear-board" style="margin: 0; padding: 6px 10px; border-color: #f43f5e; color: #f43f5e;" onclick="resetMinesBoard()">Reset</button>
+                    </div>
                 </div>
 
-                <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 20px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex-grow: 1; width: 100%; max-width: 800px; max-height: 800px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
-                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; align-content: center; justify-content: center; filter: blur(4px); transition: filter 0.4s ease, opacity 0.4s ease; opacity: 0.7;"></div>
-                </div>
-
-                <div style="display: flex; gap: 12px; width: 100%; max-width: 800px;">
-                    <button id="mines-start-btn" class="btn" style="background: var(--accent-green); color: #000000; padding: 14px; font-size: 1.2rem;" onclick="startMinesGame()">START GAME</button>
-                    <button class="btn" style="background: #18181b; color: #f43f5e; border-color: #f43f5e; width: auto; padding: 14px 24px;" onclick="resetMinesBoard()">Reset</button>
+                <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex-grow: 1; overflow: auto; position: relative; height: 100%;">
+                    <div id="mines-grid" style="display: grid; gap: 10px; width: 100%; height: 100%; max-width: 580px; max-height: 580px; align-content: center; justify-content: center; filter: blur(4px); transition: filter 0.4s ease, opacity 0.4s ease; opacity: 0.7;"></div>
                 </div>
             </div>
 
-            <!-- Right Card: Winner Chat -->
             <div class="lotto-card">
                 <div class="lotto-card-title">
                     Winner Chat
-                    <input type="text" id="active-mines-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;">
+                    <input type="text" id="active-mines-winner-chat-target" placeholder="Winner Name..." style="background: #000000; border: 1px solid var(--border-gray); color: var(--accent-green); padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; width: 120px; font-weight: 800; text-align: center; outline: none;" oninput="syncChatTarget(this.value)">
                 </div>
                 <div id="mines-chat-container" class="lotto-scrollable">
                     <div style="color: var(--text-muted); font-style: italic; font-size: 1rem; text-align: center; margin-top: 30px;">Awaiting Chat Feed...</div>
@@ -2303,10 +2298,6 @@
                 grid.style.opacity = "1";
             }
 
-            // Hide start button once game starts
-            const startBtn = document.getElementById('mines-start-btn');
-            if (startBtn) startBtn.style.display = 'none';
-
             renderMinesBoard();
             showToast(`Mines game started! ${Math.min(players.length, totalTiles)} entries hidden.`);
         }
@@ -2316,10 +2307,6 @@
             minesBoardData = [];
             minesGameOpen = false;
             renderMinesGridPlaceholder();
-            
-            const startBtn = document.getElementById('mines-start-btn');
-            if (startBtn) startBtn.style.display = 'block';
-
             showToast("Mines board reset.");
         }
         window.resetMinesBoard = resetMinesBoard;
@@ -2334,13 +2321,20 @@
             grid.style.opacity = "1";
             grid.innerHTML = "";
 
-            let pfpSize = minesSize >= 6 ? "82%" : "78%";
+            // Calculate dynamic PFP sizing based on board grid size
+            let pfpSize = "80%";
+            if (minesSize >= 6) pfpSize = "85%";
+            else if (minesSize >= 4) pfpSize = "82%";
 
             minesBoardData.forEach((tile, idx) => {
                 const el = document.createElement('div');
                 el.className = `mine-tile ${tile.revealed ? (tile.type === 'player' ? 'revealed' : 'blank-revealed') : ''}`;
                 
                 if (!tile.revealed) {
+                    const qSpan = document.createElement('span');
+                    qSpan.style.cssText = "font-size: 1.8rem; font-weight: 900; color: var(--text-muted);";
+                    qSpan.textContent = "?";
+                    el.appendChild(qSpan);
                     el.addEventListener('click', () => revealMineTile(idx));
                 } else {
                     if (tile.type === 'player') {
@@ -2348,9 +2342,15 @@
                         
                         const img = document.createElement('img');
                         img.src = avatarSrc;
-                        img.style.cssText = `width: ${pfpSize}; height: ${pfpSize}; max-width: 110px; max-height: 110px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; background: #000; box-shadow: 0 0 15px color-mix(in srgb, var(--accent-green) 40%, transparent);`;
+                        img.style.cssText = `width: ${pfpSize}; height: ${pfpSize}; max-width: 95px; max-height: 95px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; background: #000; box-shadow: 0 0 15px color-mix(in srgb, var(--accent-green) 40%, transparent);`;
                         img.onerror = () => { img.src = getDefaultAvatar(); };
                         el.appendChild(img);
+                    } else {
+                        // Solid red blank tile
+                        const blankSpan = document.createElement('span');
+                        blankSpan.style.cssText = "font-size: 0.8rem; font-weight: 900; color: #fff; text-transform: uppercase;";
+                        blankSpan.textContent = "";
+                        el.appendChild(blankSpan);
                     }
                 }
                 grid.appendChild(el);
@@ -2365,7 +2365,7 @@
             tile.revealed = true;
             renderMinesBoard();
 
-            // Check if this was the very last tile remaining on the board
+            // Check if this was the last tile remaining on the board
             const unrevealedTiles = minesBoardData.filter(t => !t.revealed);
             
             if (unrevealedTiles.length === 0) {
