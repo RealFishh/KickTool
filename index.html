@@ -740,7 +740,7 @@
             <h2 style="color: var(--accent-green); margin: 0 0 10px 0; font-weight: 900; font-size: 1.8rem; letter-spacing: 1px;">KICK LOGIN</h2>
             <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">Enter your Kick channel name to verify ownership via chat.</p>
             
-            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., Tester_1_151" autocomplete="off">
+            <input type="text" id="kick-login-username" class="password-input" placeholder="e.g., your_channel_name" autocomplete="off">
             <div id="kick-login-error" class="password-error">CHANNEL NOT FOUND</div>
             
             <button id="submit-kick-login" class="btn" style="background: var(--accent-green); color: #000000;" onclick="startKickVerificationFlow()">CONNECT CHANNEL</button>
@@ -1509,6 +1509,13 @@
             }
         });
 
+        function openKickLoginModal() {
+            document.getElementById('kick-login-modal').style.display = 'flex';
+            document.getElementById('kick-login-username').value = '';
+            document.getElementById('kick-login-username').focus();
+        }
+        window.openKickLoginModal = openKickLoginModal;
+
         function handleProfileDropdownAction() {
             const menu = document.getElementById('profile-dropdown-menu');
             if (menu) menu.style.display = 'none';
@@ -1518,9 +1525,7 @@
             if (loggedInKickUser) {
                 handleKickLogout();
             } else {
-                document.getElementById('kick-login-modal').style.display = 'flex';
-                document.getElementById('kick-login-username').value = '';
-                document.getElementById('kick-login-username').focus();
+                openKickLoginModal();
             }
         }
         window.handleProfileDropdownAction = handleProfileDropdownAction;
@@ -1989,6 +1994,11 @@
         }
 
         function startLottoSpinSequenceRemotely() {
+            if (!loggedInKickUser) {
+                openKickLoginModal();
+                return;
+            }
+
             const pool = Array.from(lottoEntries.keys());
             if (pool.length === 0) { alert("Entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
@@ -2182,6 +2192,11 @@
         }
 
         function startWheelSpinSequenceRemotely() {
+            if (!loggedInKickUser) {
+                openKickLoginModal();
+                return;
+            }
+
             const pool = Array.from(wheelEntries.keys());
             if (pool.length === 0) { alert("Wheel entries list is empty."); return; }
             const winner = pool[Math.floor(Math.random() * pool.length)];
