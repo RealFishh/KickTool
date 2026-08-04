@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kick Tool</title>
+    <!-- Favicon Logo -->
+    <link rel="icon" type="image/png" href="mylogo.png">
     <style>
         :root {
             --bg-black: #09090b;
@@ -49,6 +51,13 @@
             overflow: hidden;
             perspective: 1000px;
             position: relative;
+        }
+
+        /* LOADING SPLASH SCREEN ANIMATION */
+        @keyframes pulseLogo {
+            0% { transform: scale(1); box-shadow: 0 0 20px color-mix(in srgb, var(--accent-green) 30%, transparent); }
+            50% { transform: scale(1.06); box-shadow: 0 0 45px color-mix(in srgb, var(--accent-green) 75%, transparent); }
+            100% { transform: scale(1); box-shadow: 0 0 20px color-mix(in srgb, var(--accent-green) 30%, transparent); }
         }
 
         /* OBS TRANSPARENT OVERLAY MODE */
@@ -692,6 +701,14 @@
 </head>
 <body>
 
+    <!-- Site Loading Splash Screen -->
+    <div id="site-loading-screen" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-black); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; transition: opacity 0.5s ease, visibility 0.5s ease;">
+        <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; border: 3px solid var(--accent-green); box-shadow: 0 0 30px color-mix(in srgb, var(--accent-green) 50%, transparent); display: flex; align-items: center; justify-content: center; background: var(--bg-card); animation: pulseLogo 1.5s infinite ease-in-out;">
+            <img src="mylogo.png" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src=getDefaultAvatar()">
+        </div>
+        <div style="font-size: 0.9rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 3px;">Loading Kick Tool...</div>
+    </div>
+
     <!-- Professional Startup Kick Login Modal -->
     <div id="kick-login-modal" class="kick-login-modal-overlay" style="display: none;">
         <div class="kick-login-modal" id="kick-login-modal-box">
@@ -808,6 +825,11 @@
 
     <!-- Top Navigation Controls -->
     <div class="workspace-navbar" id="main-navbar">
+        <!-- Logo Added Here -->
+        <div style="width: 26px; height: 26px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-green); flex-shrink: 0; margin-right: 4px; display: flex; align-items: center; justify-content: center; background: #000;">
+            <img src="mylogo.png" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src=getDefaultAvatar()">
+        </div>
+
         <button id="ws-btn-lotto" class="workspace-btn active" onclick="switchWorkspace('lotto')">Keyword</button>
         <button id="ws-btn-wheel" class="workspace-btn" onclick="switchWorkspace('wheel')">Wheel</button>
         <button id="ws-btn-tournament" class="workspace-btn" onclick="switchWorkspace('tournament')">Tournament</button>
@@ -1107,6 +1129,18 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const analytics = getAnalytics(app);
+
+        // HIDE LOADING SCREEN ON STARTUP
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('site-loading-screen');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    setTimeout(() => loader.remove(), 500);
+                }
+            }, 600);
+        });
 
         // SLIDER FILL HANDLER
         function updateSliderFill(slider) {
