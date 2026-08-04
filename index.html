@@ -461,9 +461,15 @@
             box-shadow: 0 4px 20px color-mix(in srgb, var(--accent-green) 25%, transparent);
         }
 
-        .lotto-roll-btn:hover {
+        .lotto-roll-btn:hover:not(:disabled) {
             background: var(--accent-green-hover);
             transform: scale(1.01);
+        }
+
+        .lotto-roll-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            filter: grayscale(20%);
         }
 
         .eligible-user-row {
@@ -1274,7 +1280,7 @@
 
                 onValue(ref(db, `channels/${channel}/action`), (snapshot) => {
                     const action = snapshot.val();
-                    if (action && action.timestamp && (Date.now() - action.timestamp < 10000)) {
+                    if (action && action.type) {
                         if (action.type === 'START_LOTTO') {
                             startLottoSpinSequence(action.winner, action.pool);
                         } else if (action.type === 'START_WHEEL') {
@@ -1285,7 +1291,7 @@
 
                 onValue(ref(db, `channels/${channel}/chatMessage`), (snapshot) => {
                     const msg = snapshot.val();
-                    if (msg && msg.timestamp && (Date.now() - msg.timestamp < 10000)) {
+                    if (msg && msg.username && msg.content) {
                         appendObsChatMessage(msg.username, msg.content, msg.target);
                     }
                 });
@@ -1527,7 +1533,6 @@
                             const sender = (chatEventData.sender.username || "").toLowerCase().trim();
                             const text = chatEventData.content.trim().toLowerCase();
                             
-                            // Relaxed verification match
                             if (
                                 (sender === channelOriginalName.toLowerCase() || sender === channelSlug.toLowerCase() || sender === inputVal.toLowerCase()) && 
                                 text === `!verify ${verifyCode}`
@@ -1909,7 +1914,8 @@
                 username: username,
                 content: content,
                 target: targetName,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                nonce: Math.random()
             });
             appendObsChatMessage(username, content, targetName);
         }
@@ -1951,6 +1957,12 @@
         async function startLottoSpinSequence(winner, pool) {
             if (!pool || pool.length === 0) return;
 
+            const rollBtn = document.getElementById('lotto-main-roll-btn');
+            if (rollBtn) {
+                rollBtn.disabled = true;
+                rollBtn.textContent = "ROLLING...";
+            }
+
             const strip = [];
             const targetIdx = itemsCount - 6;
             for (let i = 0; i < itemsCount; i++) strip.push(pool[Math.floor(Math.random() * pool.length)]);
@@ -1984,6 +1996,10 @@
             const targetOffset = (targetIdx * itemWidth) - (containerWidth / 2) + (itemWidth / 2);
 
             animateWheel(carousel, targetOffset, containerWidth, 8000, () => {}, () => {
+                if (rollBtn) {
+                    rollBtn.disabled = false;
+                    rollBtn.textContent = "Roll Winner";
+                }
                 triggerLottoWinnerReveal(winner);
             });
         }
@@ -2136,6 +2152,12 @@
             const index = entries.indexOf(winner);
             if (index === -1) return;
 
+            const wheelBtn = document.getElementById('wheel-main-roll-btn');
+            if (wheelBtn) {
+                wheelBtn.disabled = true;
+                wheelBtn.textContent = "SPINNING...";
+            }
+
             const canvas = document.getElementById('wheel-canvas');
             if (!canvas) return;
             const sliceAngle = 360 / entries.length;
@@ -2147,6 +2169,10 @@
 
             setTimeout(() => {
                 wheelSpinning = false;
+                if (wheelBtn) {
+                    wheelBtn.disabled = false;
+                    wheelBtn.textContent = "Spin Wheel";
+                }
                 triggerWheelWinnerReveal(winner);
             }, 8000);
         }
