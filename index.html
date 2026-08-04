@@ -1631,18 +1631,24 @@
 
             pendingAvatarFetches.add(cleanName);
             try {
-                let response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName)}`);
-                if (!response.ok) {
-                    response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName.toLowerCase())}`);
-                }
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.user && data.user.profile_pic) {
-                        const picUrl = data.user.profile_pic;
-                        if (picUrl && !picUrl.includes("user_default")) {
-                            kickAvatarCache.set(cleanName, picUrl);
-                            pendingAvatarFetches.delete(cleanName);
-                            return picUrl;
+                const variants = [
+                    cleanName,
+                    cleanName.toLowerCase(),
+                    cleanName.replace(/_/g, '-'),
+                    cleanName.toLowerCase().replace(/_/g, '-')
+                ];
+
+                for (const v of variants) {
+                    let response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(v)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && data.user && data.user.profile_pic) {
+                            const picUrl = data.user.profile_pic;
+                            if (picUrl && !picUrl.includes("user_default")) {
+                                kickAvatarCache.set(cleanName, picUrl);
+                                pendingAvatarFetches.delete(cleanName);
+                                return picUrl;
+                            }
                         }
                     }
                 }
@@ -1656,26 +1662,34 @@
         async function fetchChatroomId(channelName) {
             const cleanName = channelName.trim();
             if (!cleanName) return null;
-            try {
-                let response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName)}`);
-                if (!response.ok) {
-                    response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(cleanName.toLowerCase())}`);
-                }
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.chatroom && data.chatroom.id) {
-                        const originalName = (data.user && data.user.username) ? data.user.username : cleanName;
-                        const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : getDefaultAvatar();
-                        kickAvatarCache.set(data.slug, avatar);
-                        return {
-                            chatroomId: data.chatroom.id,
-                            slug: data.slug,
-                            originalName: originalName,
-                            avatar: avatar
-                        };
+
+            // Generate variants to bypass underscore and casing issues
+            const variants = [
+                cleanName,
+                cleanName.toLowerCase(),
+                cleanName.replace(/_/g, '-'),
+                cleanName.toLowerCase().replace(/_/g, '-')
+            ];
+
+            for (const v of variants) {
+                try {
+                    let response = await fetch(`https://kick.com/api/v1/channels/${encodeURIComponent(v)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && data.chatroom && data.chatroom.id) {
+                            const originalName = (data.user && data.user.username) ? data.user.username : cleanName;
+                            const avatar = (data.user && data.user.profile_pic && !data.user.profile_pic.includes("user_default")) ? data.user.profile_pic : getDefaultAvatar();
+                            kickAvatarCache.set(data.slug, avatar);
+                            return {
+                                chatroomId: data.chatroom.id,
+                                slug: data.slug,
+                                originalName: originalName,
+                                avatar: avatar
+                            };
+                        }
                     }
-                }
-            } catch (e) {}
+                } catch (e) {}
+            }
             return null;
         }
 
