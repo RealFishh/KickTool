@@ -1073,10 +1073,10 @@
             </div>
 
             <div class="lotto-center-layout" style="height: 100%;">
-                <!-- Top Control Bar: ENTRY KEYWORD Tab -->
-                <div style="display: flex; gap: 10px; align-items: center; justify-content: center; flex-shrink: 0; width: 100%;">
-                    <!-- Smaller ENTRY KEYWORD Box -->
-                    <div class="lotto-control-box" style="width: 220px; flex-shrink: 0;">
+                <!-- Top Bar: Entry Keyword Box placed right next to Game Size Selector -->
+                <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-shrink: 0; width: 100%;">
+                    <!-- Entry Keyword Box -->
+                    <div class="lotto-control-box" style="width: 195px; flex-shrink: 0;">
                         <div class="lotto-control-label">
                             ENTRY KEYWORD
                             <span id="mines-keyword-hide-btn" style="cursor: pointer; color: var(--accent-green); display: flex; align-items: center;" onclick="toggleMinesKeywordVisibility()" title="Toggle Visibility">
@@ -1087,18 +1087,17 @@
                             <input type="text" id="mines-keyword-input" class="lotto-keyword-field" value="mines" style="font-size: 0.95rem; padding: 5px;">
                         </div>
                     </div>
-                </div>
 
-                <!-- Board Size Selector Bar -->
-                <div style="display: flex; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 5px 10px; border-radius: 12px; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <div style="display: flex; align-items: center; gap: 3px; background: #000000; padding: 3px; border-radius: 8px; border: 1px solid var(--border-gray);">
-                        <button class="mines-size-btn" onclick="setMinesSize(2)">2x2</button>
-                        <button class="mines-size-btn" onclick="setMinesSize(3)">3x3</button>
-                        <button id="m-btn-4" class="mines-size-btn active" onclick="setMinesSize(4)">4x4</button>
-                        <button class="mines-size-btn" onclick="setMinesSize(5)">5x5</button>
-                        <button class="mines-size-btn" onclick="setMinesSize(6)">6x6</button>
-                        <button class="mines-size-btn" onclick="setMinesSize(7)">7x7</button>
-                        <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
+                    <!-- Board Size Selector Bar (Without 2x2) -->
+                    <div style="display: flex; background-color: var(--bg-card); border: 1px solid var(--border-gray); padding: 5px 10px; border-radius: 12px; align-items: center; justify-content: center;">
+                        <div style="display: flex; align-items: center; gap: 3px; background: #000000; padding: 3px; border-radius: 8px; border: 1px solid var(--border-gray);">
+                            <button class="mines-size-btn" onclick="setMinesSize(3)">3x3</button>
+                            <button id="m-btn-4" class="mines-size-btn active" onclick="setMinesSize(4)">4x4</button>
+                            <button class="mines-size-btn" onclick="setMinesSize(5)">5x5</button>
+                            <button class="mines-size-btn" onclick="setMinesSize(6)">6x6</button>
+                            <button class="mines-size-btn" onclick="setMinesSize(7)">7x7</button>
+                            <button class="mines-size-btn" onclick="setMinesSize(8)">8x8</button>
+                        </div>
                     </div>
                 </div>
 
@@ -2253,8 +2252,8 @@
                 return;
             }
             minesSize = size;
-            [2, 3, 4, 5, 6, 7, 8].forEach(s => {
-                const btn = document.querySelector(`button.mines-size-btn:nth-child(${s-1})`) || document.getElementById(`m-btn-${s}`);
+            [3, 4, 5, 6, 7, 8].forEach(s => {
+                const btn = document.getElementById(`m-btn-${s}`) || document.querySelector(`button.mines-size-btn:nth-child(${s-2})`);
                 if (btn) {
                     if (s === size) btn.classList.add('active');
                     else btn.classList.remove('active');
@@ -2310,22 +2309,37 @@
 
             updateMinesActionBar();
 
-            // Populate all tiles with real players (cycling through players so there are NO blank tiles!)
-            for (let i = 0; i < totalTiles; i++) {
-                const username = players[i % players.length];
-                const avatar = await fetchKickAvatar(username);
-                minesBoardData.push({
-                    id: i,
-                    type: 'player',
-                    username: username,
-                    avatar: avatar,
-                    revealed: false
-                });
-            }
+            // Allocate roughly half player tiles and half blank tiles
+            let numPlayers = Math.min(totalTiles - 1, Math.max(1, Math.floor(totalTiles / 2)));
+            let numBlanks = totalTiles - numPlayers;
 
-            // Shuffle board data randomly so player positions are randomized
-            minesBoardData.sort(() => Math.random() - 0.5);
-            minesBoardData.forEach((tile, idx) => { tile.id = idx; });
+            let tempTypes = [];
+            for (let i = 0; i < numPlayers; i++) tempTypes.push('player');
+            for (let i = 0; i < numBlanks; i++) tempTypes.push('blank');
+            tempTypes.sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < totalTiles; i++) {
+                const type = tempTypes[i];
+                if (type === 'player') {
+                    const username = players[Math.floor(Math.random() * players.length)];
+                    const avatar = await fetchKickAvatar(username);
+                    minesBoardData.push({
+                        id: i,
+                        type: 'player',
+                        username: username,
+                        avatar: avatar,
+                        revealed: false
+                    });
+                } else {
+                    minesBoardData.push({
+                        id: i,
+                        type: 'blank',
+                        username: 'Blank',
+                        avatar: null,
+                        revealed: false
+                    });
+                }
+            }
 
             const grid = document.getElementById('mines-grid');
             if (grid) {
@@ -2334,7 +2348,7 @@
             }
 
             renderMinesBoard();
-            showToast(`Mines game started! Board generated.`);
+            showToast(`Mines game started with blank spaces!`);
         }
         window.startMinesGame = startMinesGame;
 
@@ -2369,30 +2383,50 @@
                 if (!tile.revealed) {
                     el.addEventListener('click', () => revealMineTile(idx));
                 } else {
-                    const avatarSrc = (tile.avatar && !tile.avatar.includes('default')) ? tile.avatar : getDefaultAvatar();
-                    
-                    const img = document.createElement('img');
-                    img.src = avatarSrc;
-                    img.style.cssText = `width: ${pfpSize}; height: ${pfpSize}; max-width: 160px; max-height: 160px; border-radius: 50%; border: 3.5px solid var(--accent-green); object-fit: cover; background: #000; box-shadow: 0 0 25px color-mix(in srgb, var(--accent-green) 50%, transparent);`;
-                    img.onerror = () => { img.src = getDefaultAvatar(); };
-                    el.appendChild(img);
+                    if (tile.type === 'player') {
+                        const avatarSrc = (tile.avatar && !tile.avatar.includes('default')) ? tile.avatar : getDefaultAvatar();
+                        
+                        const img = document.createElement('img');
+                        img.src = avatarSrc;
+                        img.style.cssText = `width: ${pfpSize}; height: ${pfpSize}; max-width: 160px; max-height: 160px; border-radius: 50%; border: 3.5px solid var(--accent-green); object-fit: cover; background: #000; box-shadow: 0 0 25px color-mix(in srgb, var(--accent-green) 50%, transparent);`;
+                        img.onerror = () => { img.src = getDefaultAvatar(); };
+                        el.appendChild(img);
+                    } else {
+                        const blankSpan = document.createElement('span');
+                        blankSpan.style.cssText = "font-size: 0.85rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; opacity: 0.4;";
+                        blankSpan.textContent = "BLANK";
+                        el.appendChild(blankSpan);
+                    }
                 }
                 grid.appendChild(el);
             });
         }
 
-        function revealMineTile(idx) {
+        async function revealMineTile(idx) {
             if (!minesGameOpen) return;
+            
+            // Ensure blank spaces cannot win and the last tile is guaranteed to be a human player!
+            const unrevealedBefore = minesBoardData.filter(t => !t.revealed);
+            if (unrevealedBefore.length === 1 && minesBoardData[idx].type === 'blank') {
+                const players = Array.from(minesEntries.keys());
+                const randomPlayer = players.length > 0 ? players[Math.floor(Math.random() * players.length)] : 'Winner';
+                minesBoardData[idx].type = 'player';
+                minesBoardData[idx].username = randomPlayer;
+                const avatar = await fetchKickAvatar(randomPlayer);
+                minesBoardData[idx].avatar = avatar;
+                renderMinesBoard();
+            }
+
             const tile = minesBoardData[idx];
             if (!tile || tile.revealed) return;
             
             tile.revealed = true;
             renderMinesBoard();
 
-            // Check if all tiles are revealed (Winner is the last tile to be revealed)
+            // Check if all tiles are revealed (Winner is the last tile revealed)
             const unrevealedAfter = minesBoardData.filter(t => !t.revealed);
             if (unrevealedAfter.length === 0) {
-                const winnerName = tile.username || 'Winner';
+                const winnerName = tile.type === 'player' ? tile.username : (Array.from(minesEntries.keys())[0] || 'Winner');
                 triggerMinesWinner(winnerName);
             }
         }
@@ -2405,7 +2439,6 @@
             const unrevealed = minesBoardData.filter(t => !t.revealed);
             if (unrevealed.length === 0) return;
             
-            // Pick a random unrevealed tile
             const randomTile = unrevealed[Math.floor(Math.random() * unrevealed.length)];
             revealMineTile(randomTile.id);
         }
