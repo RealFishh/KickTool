@@ -2309,27 +2309,32 @@
 
             updateMinesActionBar();
 
-            // Shuffle unique players to ensure NO duplicate pictures on the board
+            // Shuffle unique players to ensure NO duplicates on the board
             let shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
 
-            // Allocate player slots and blank slots (ensuring each player appears at most once)
-            let numPlayers = Math.min(shuffledPlayers.length, totalTiles - 1);
-            if (numPlayers < 1) numPlayers = 1;
-            let numBlanks = totalTiles - numPlayers;
+            // Allocate unique players and blank spaces
+            let numBlanks = Math.max(1, Math.floor(totalTiles / 2));
+            let numPlayers = totalTiles - numBlanks;
 
             let selectedPlayers = shuffledPlayers.slice(0, numPlayers);
 
-            let tempTypes = [];
-            for (let i = 0; i < selectedPlayers.length; i++) {
-                tempTypes.push({ type: 'player', username: selectedPlayers[i] });
-            }
+            let tileContents = [];
+            selectedPlayers.forEach(p => tileContents.push({ type: 'player', username: p }));
             for (let i = 0; i < numBlanks; i++) {
-                tempTypes.push({ type: 'blank', username: 'Blank' });
+                tileContents.push({ type: 'blank', username: 'Blank' });
             }
-            tempTypes.sort(() => Math.random() - 0.5);
+
+            while (tileContents.length < totalTiles) {
+                tileContents.push({ type: 'blank', username: 'Blank' });
+            }
+            if (tileContents.length > totalTiles) {
+                tileContents = tileContents.slice(0, totalTiles);
+            }
+
+            tileContents.sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < totalTiles; i++) {
-                const item = tempTypes[i];
+                const item = tileContents[i];
                 if (item.type === 'player') {
                     const avatar = await fetchKickAvatar(item.username);
                     minesBoardData.push({
@@ -2414,14 +2419,16 @@
         async function revealMineTile(idx) {
             if (!minesGameOpen) return;
             
-            // Guaranteed win on last tile: If only 1 unrevealed tile is left and it's blank, convert it to a random unique player
+            // GUARANTEED LAST TILE WINNER: When only 1 unrevealed tile remains, it is forced to be a real human player!
             const unrevealedBefore = minesBoardData.filter(t => !t.revealed);
-            if (unrevealedBefore.length === 1 && minesBoardData[idx].type === 'blank') {
+            if (unrevealedBefore.length === 1) {
                 const players = Array.from(minesEntries.keys());
-                const randomPlayer = players.length > 0 ? players[Math.floor(Math.random() * players.length)] : 'Winner';
+                let shuffled = [...players].sort(() => Math.random() - 0.5);
+                let finalWinner = shuffled[0];
+                
                 minesBoardData[idx].type = 'player';
-                minesBoardData[idx].username = randomPlayer;
-                const avatar = await fetchKickAvatar(randomPlayer);
+                minesBoardData[idx].username = finalWinner;
+                const avatar = await fetchKickAvatar(finalWinner);
                 minesBoardData[idx].avatar = avatar;
                 renderMinesBoard();
             }
