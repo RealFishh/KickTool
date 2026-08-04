@@ -2309,24 +2309,33 @@
 
             updateMinesActionBar();
 
-            // Allocate roughly half player tiles and half blank tiles
-            let numPlayers = Math.min(totalTiles - 1, Math.max(1, Math.floor(totalTiles / 2)));
+            // Shuffle unique players to ensure NO duplicate pictures on the board
+            let shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
+
+            // Allocate player slots and blank slots (ensuring each player appears at most once)
+            let numPlayers = Math.min(shuffledPlayers.length, totalTiles - 1);
+            if (numPlayers < 1) numPlayers = 1;
             let numBlanks = totalTiles - numPlayers;
 
+            let selectedPlayers = shuffledPlayers.slice(0, numPlayers);
+
             let tempTypes = [];
-            for (let i = 0; i < numPlayers; i++) tempTypes.push('player');
-            for (let i = 0; i < numBlanks; i++) tempTypes.push('blank');
+            for (let i = 0; i < selectedPlayers.length; i++) {
+                tempTypes.push({ type: 'player', username: selectedPlayers[i] });
+            }
+            for (let i = 0; i < numBlanks; i++) {
+                tempTypes.push({ type: 'blank', username: 'Blank' });
+            }
             tempTypes.sort(() => Math.random() - 0.5);
 
             for (let i = 0; i < totalTiles; i++) {
-                const type = tempTypes[i];
-                if (type === 'player') {
-                    const username = players[Math.floor(Math.random() * players.length)];
-                    const avatar = await fetchKickAvatar(username);
+                const item = tempTypes[i];
+                if (item.type === 'player') {
+                    const avatar = await fetchKickAvatar(item.username);
                     minesBoardData.push({
                         id: i,
                         type: 'player',
-                        username: username,
+                        username: item.username,
                         avatar: avatar,
                         revealed: false
                     });
@@ -2348,7 +2357,7 @@
             }
 
             renderMinesBoard();
-            showToast(`Mines game started with blank spaces!`);
+            showToast(`Mines game started with unique players and blank spaces!`);
         }
         window.startMinesGame = startMinesGame;
 
@@ -2405,7 +2414,7 @@
         async function revealMineTile(idx) {
             if (!minesGameOpen) return;
             
-            // Ensure blank spaces cannot win and the last tile is guaranteed to be a human player!
+            // Guaranteed win on last tile: If only 1 unrevealed tile is left and it's blank, convert it to a random unique player
             const unrevealedBefore = minesBoardData.filter(t => !t.revealed);
             if (unrevealedBefore.length === 1 && minesBoardData[idx].type === 'blank') {
                 const players = Array.from(minesEntries.keys());
