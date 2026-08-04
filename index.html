@@ -1105,7 +1105,7 @@
 
                 <!-- Right: Grid Area -->
                 <div id="mines-grid-container" style="background-color: var(--bg-card); border: 1px solid var(--border-gray); border-radius: 16px; padding: 25px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: auto; position: relative;">
-                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center; filter: blur(10px); transition: filter 0.4s ease, opacity 0.4s ease; opacity: 0.5; pointer-events: none;"></div>
+                    <div id="mines-grid" style="display: grid; gap: 12px; width: 100%; height: 100%; max-width: 750px; max-height: 750px; align-content: center; justify-content: center; filter: blur(4px); transition: filter 0.4s ease, opacity 0.4s ease; opacity: 0.7;"></div>
                 </div>
             </div>
         </div>
@@ -2221,8 +2221,8 @@
             const totalTiles = minesSize * minesSize;
             grid.style.gridTemplateColumns = `repeat(${minesSize}, 1fr)`;
             grid.style.gridTemplateRows = `repeat(${minesSize}, 1fr)`;
-            grid.style.filter = "blur(10px)";
-            grid.style.opacity = "0.4";
+            grid.style.filter = "blur(4px)";
+            grid.style.opacity = "0.7";
             grid.innerHTML = "";
 
             for (let i = 0; i < totalTiles; i++) {
@@ -2305,10 +2305,10 @@
                 
                 if (!tile.revealed) {
                     el.innerHTML = `<span style="font-size: 1.8rem; font-weight: 900; color: var(--text-muted);">?</span>`;
-                    el.onclick = () => revealMineTile(idx);
+                    el.addEventListener('click', () => revealMineTile(idx));
                 } else {
                     if (tile.type === 'player') {
-                        const avatarSrc = tile.avatar || getDefaultAvatar();
+                        const avatarSrc = (tile.avatar && !tile.avatar.includes('default')) ? tile.avatar : getDefaultAvatar();
                         el.innerHTML = `
                             <img src="${avatarSrc}" style="width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--accent-green); object-fit: cover; margin-bottom: 8px; background: #000;" onerror="this.src=getDefaultAvatar()">
                             <span style="font-size: 0.95rem; font-weight: 950; color: #fff; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; padding: 0 4px;">${tile.username}</span>
@@ -2328,11 +2328,22 @@
             tile.revealed = true;
             renderMinesBoard();
 
-            // Check if only 1 player tile is left unrevealed on the board
-            const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
+            // Check if only 1 tile is left unrevealed on the entire board
+            const unrevealedTiles = minesBoardData.filter(t => !t.revealed);
             
-            if (unrevealedPlayers.length === 1 && tile.type === 'player') {
-                triggerMinesWinner(unrevealedPlayers[0].username);
+            if (unrevealedTiles.length === 0) {
+                // Last tile on board! If it's a player, they win.
+                if (tile.type === 'player') {
+                    triggerMinesWinner(tile.username);
+                } else {
+                    showToast("Last tile uncovered was a blank spot!", "error");
+                }
+            } else {
+                // Also check if only 1 player tile is left unrevealed among all tiles
+                const unrevealedPlayers = minesBoardData.filter(t => t.type === 'player' && !t.revealed);
+                if (unrevealedPlayers.length === 1 && tile.type === 'player') {
+                    triggerMinesWinner(unrevealedPlayers[0].username);
+                }
             }
         }
 
